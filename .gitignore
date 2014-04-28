@@ -1,0 +1,13 @@
+*~
+.~*#
+.nfs*
+*.mat
+*.fig
+*.aux
+*.log
+*.blg
+*.out
+*.pdf
+*.gz
+*.ods
+*.eps
