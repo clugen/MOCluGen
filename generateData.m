@@ -66,8 +66,9 @@ function [data, clustPoints, idx, centers, slopes, lengths] = ...
 %
 %   scatter(data(:,1), data(:,2), 8, idx);
 
-%  N. Fachada
-%  Instituto Superior Técnico, Lisboa, Portugal
+% Copyright (c) 2014-2020 Nuno Fachada
+% Distributed under the MIT License (See accompanying file LICENSE or copy 
+% at http://opensource.org/licenses/MIT)
 
 % Make sure totalPoints >= numClusts
 if totalPoints < numClusts
