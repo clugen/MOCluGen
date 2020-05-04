@@ -66,7 +66,7 @@ function [data, clustPoints, idx, centers, slopes, lengths] = ...
 %
 %   scatter(data(:,1), data(:,2), 8, idx);
 
-% Copyright (c) 2014-2020 Nuno Fachada
+% Copyright (c) 2012-2020 Nuno Fachada
 % Distributed under the MIT License (See accompanying file LICENSE or copy 
 % at http://opensource.org/licenses/MIT)
 
@@ -83,12 +83,12 @@ clustPoints = round(clustPoints * totalPoints);
 % Make sure totalPoints is respected
 while sum(clustPoints) < totalPoints
     % If one point is missing add it to the smaller cluster
-    [C,I] = min(clustPoints);
+    [C, I] = min(clustPoints);
     clustPoints(I(1)) = C + 1;
 end;
 while sum(clustPoints) > totalPoints
     % If there is one extra point, remove it from larger cluster
-    [C,I] = max(clustPoints);
+    [C, I] = max(clustPoints);
     clustPoints(I(1)) = C - 1;
 end;
 
@@ -97,10 +97,10 @@ emptyClusts = find(clustPoints == 0);
 if ~isempty(emptyClusts)
     % If there are empty clusters...
     numEmptyClusts = size(emptyClusts, 1);
-    for i=1:numEmptyClusts
+    for i = 1:numEmptyClusts
         % ...get a point from the largest cluster and assign it to the
         % empty cluster
-        [C,I] = max(clustPoints);
+        [C, I] = max(clustPoints);
         clustPoints(I(1)) = C - 1;
         clustPoints(emptyClusts(i)) = 1;
     end;
@@ -124,16 +124,19 @@ centers = [xCenters yCenters];
 slopes = slope + slopeStd * randn(numClusts, 1);
 
 % Create clusters
-for i=1:numClusts
+for i = 1:numClusts
+
     % Determine length of line where this cluster will be based
-    lengths(i) = abs(lengthAvg + lengthStd*randn);
+    lengths(i) = abs(lengthAvg + lengthStd * randn);
+
     % Determine how many points have been assigned to previous clusters
     sumClustPoints = 0;
     if i > 1
         sumClustPoints = sum(clustPoints(1:(i - 1)));
     end;
+
     % Create points for this cluster
-    for j=1:clustPoints(i)
+    for j = 1:clustPoints(i)
         % Determine where in the line the next point will be projected
         position = lengths(i) * rand - lengths(i) / 2;
         % Determine x coordinate of point projection
@@ -145,8 +148,10 @@ for i=1:numClusts
         % Get point distance from line in y coordinate
         delta_y = delta_y + lateralStd * randn;
         % Determine the actual point
-        data(sumClustPoints + j, :) = [(xCenters(i) + delta_x) (yCenters(i) + delta_y)];
+        data(sumClustPoints + j, :) = ...
+            [(xCenters(i) + delta_x) (yCenters(i) + delta_y)];
     end;
+
     % Update idx
     idx(sumClustPoints + 1 : sumClustPoints + clustPoints(i)) = i;
 end;
