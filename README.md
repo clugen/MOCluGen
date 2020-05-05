@@ -14,22 +14,22 @@ depending on the selected input parameters.
 ```MATLAB
 [data, clustPoints, idx, centers, slopes, lengths] = ...
     generateData(slope, slopeStd, numClusts, xClustAvgSep, yClustAvgSep, ...
-                 lengthAvg, lengthStd, lateralStd, totalPoints)
+                 lengthMean, lengthStd, lateralStd, totalPoints)
 ```
 
 ## Input parameters
 
   Parameter      | Description
   -------------- | ------------------------------------------------------------------------------------------------------
-  `slope`        | Base slope of the lines on which clusters are based.
-  `slopeStd`     | Standard deviation of the slope. Used to obtain a random slope variation from the normal distribution, which is added to `slope` in order to obtain the final slope of each cluster.
+  `slopeMean`    | Mean slope of the lines on which clusters are based. Line slopes are drawn from the normal distribution.
+  `slopeStd`     | Standard deviation of line slopes.
   `numClusts`    | Number of clusters (and therefore of lines) to generate.
   `xClustAvgSep` | Average separation of line centers along the X axis.
   `yClustAvgSep` | Average separation of line centers along the Y axis.
-  `lengthAvg`    | The base length of lines on which clusters are based.
-  `lengthStd`    | Standard deviation of line length. Used to obtain a random length variation from the normal distribution, which is added to `lengthAvg` in order to obtain the final length of each line.
-  `lateralStd`   | Cluster "fatness", i.e., the standard deviation of the distance from each point to the respective line, in both *x* and *y* directions. This distance is obtained from the normal distribution.
-  `totalPoints`  | Total points in generated data (will be randomly divided among clusters).
+  `lengthMean`   | Mean length of the lines on which clusters are based. Line lengths are drawn from the folded normal distribution.
+  `lengthStd`    | Standard deviation of line lengths.
+  `lateralStd`   | Cluster "fatness", i.e., the standard deviation of the distance from each point to the respective line, in both *x* and *y* directions. This distance is obtained from the normal distribution with zero mean.
+  `totalPoints`  | Total points in generated data. These will be randomly divided between clusters using the half-normal distribution with unit standard deviation.
 
 ## Return values
 
@@ -39,7 +39,7 @@ depending on the selected input parameters.
   `clustPoints` | Vector (`numClusts` x *1*) containing number of points in each cluster.
   `idx`         | Vector (`totalPoints` x *1*) containing the cluster indices of each point.
   `centers`     | Matrix (`numClusts` x *2*) containing line centers from where clusters were generated.
-  `slopes`      | Vector (`numClusts` x *1*) containing the effective slopes of the linses used to generate clusters.
+  `slopes`      | Vector (`numClusts` x *1*) containing the effective slopes of the lines used to generate clusters.
   `lengths`     | Vector (`numClusts` x *1*) containing the effective lengths of the lines used to generate clusters.
 
 ## Usage example
@@ -49,8 +49,8 @@ depending on the selected input parameters.
 ```
 
 The previous command creates 5 clusters with a total of 200 points, with
-a base slope of 1 (*std*=0.5), separated in average by 15 units in both
-*x* and *y* directions, with average length of 5 units (*std*=1) and a
+a mean slope of 1 (*std*=0.5), separated in average by 15 units in both
+*x* and *y* directions, with mean length of 5 units (*std*=1) and a
 "fatness" or spread of 2 units.
 
 The following command plots the generated clusters:

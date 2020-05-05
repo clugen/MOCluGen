@@ -1,68 +1,67 @@
 function [data, clustPoints, idx, centers, slopes, lengths] = ...
     generateData( ...
-        slope, ...
+        slopeMean, ...
         slopeStd, ...
         numClusts, ...
         xClustAvgSep, ...
         yClustAvgSep, ...
-        lengthAvg, ...
+        lengthMean, ...
         lengthStd, ...
         lateralStd, ...
         totalPoints ...
     )
-% GENERATEDATA Generates 2D data for clustering; data is created along 
-%              straight lines, which can be more or less parallel depending
-%              on slopeStd argument.
+% GENERATEDATA Generates 2D data for clustering. Data is created along 
+%              straight lines, which can be more or less parallel
+%              depending on the slopeStd parameter.
 %
 % [data clustPoints idx centers slopes lengths] = 
-%    GENERATEDATA(slope, slopeStd, numClusts, xClustAvgSep, yClustAvgSep, ...
-%                 lengthAvg, lengthStd, lateralStd, totalPoints)
+%    GENERATEDATA(slopeMean, slopeStd, numClusts, xClustAvgSep, ...
+%                 yClustAvgSep, lengthMean, lengthStd, lateralStd, ...
+%                 totalPoints)
 %
 % Inputs:
-%        slope - Base direction of the lines on which clusters are based.
-%     slopeStd - Standard deviation of the slope; used to obtain a random
-%                slope variation from the normal distribution, which is
-%                added to the base slope in order to obtain the final slope
-%                of each cluster.
+%    slopeMean - Mean slope of the lines on which clusters are based.
+%                Line slopes are drawn from the normal distribution.
+%     slopeStd - Standard deviation of line slopes.
 %    numClusts - Number of clusters (and therefore of lines) to generate.
 % xClustAvgSep - Average separation of line centers along the X axis.
 % yClustAvgSep - Average separation of line centers along the Y axis.
-%    lengthAvg - The base length of lines on which clusters are based.
-%    lengthStd - Standard deviation of line length; used to obtain a random
-%                length variation from the normal distribution, which is
-%                added to the base length in order to obtain the final
-%                length of each line.
+%   lengthMean - Mean length of the lines on which clusters are based.
+%                Line lengths are drawn from the folded normal
+%                distribution.
+%    lengthStd - Standard deviation of line lengths.
 %   lateralStd - "Cluster fatness", i.e., the standard deviation of the 
-%                distance from each point to the respective line, in both x 
-%                and y directions; this distance is obtained from the 
-%                normal distribution.
-%  totalPoints - Total points in generated data (will be 
-%                randomly divided among clusters).
+%                distance from each point to the respective line, in both
+%                x and y directions. This distance is obtained from the 
+%                normal distribution with zero mean.
+%  totalPoints - Total points in generated data. These will be randomly
+%                divided between clusters using the half-normal
+%                distribution with unit standard deviation.
 %
 % Outputs:
-%         data - Matrix (totalPoints x 2) with the generated data
-%  clustPoints - Vector (numClusts x 1) containing number of points in each 
-%                cluster
-%          idx - Vector (totalPoints x 1) containing the cluster indices of 
-%                each point
+%         data - Matrix (totalPoints x 2) with the generated data.
+%  clustPoints - Vector (numClusts x 1) containing number of points in
+%                each cluster.
+%          idx - Vector (totalPoints x 1) containing the cluster indices
+%                of each point.
 %      centers - Matrix (numClusts x 2) containing centers from where
-%                clusters were generated
+%                clusters were generated.
 %       slopes - Vector (numClusts x 1) containing the effective slopes 
-%                used to generate clusters
+%                of the lines used to generate clusters.
 %      lengths - Vector (numClusts x 1) containing the effective lengths 
-%                used to generate clusters
+%                of the lines used to generate clusters.
 %
 % ----------------------------------------------------------
 % Usage example:
 %
 %   [data cp idx] = GENERATEDATA(1, 0.5, 5, 15, 15, 5, 1, 2, 200);
 %
-% This creates 5 clusters with a total of 200 points, with a base slope 
+% This creates 5 clusters with a total of 200 points, with a mean slope 
 % of 1 (std=0.5), separated in average by 15 units in both x and y 
-% directions, with average length of 5 units (std=1) and a "fatness" or
+% directions, with mean length of 5 units (std=1) and a "fatness" or
 % spread of 2 units.
 %
-% To take a quick look at the clusters just do:
+% The following command plots the generated clusters:
 %
 %   scatter(data(:,1), data(:,2), 8, idx);
 
@@ -75,7 +74,8 @@ if totalPoints < numClusts
     error('Number of points must be equal or larger than the number of clusters.');
 end;
 
-% Determine number of points in each cluster
+% Determine number of points in each cluster using the half-normal
+% distribution (with std=1)
 clustPoints = abs(randn(numClusts, 1));
 clustPoints = clustPoints / sum(clustPoints);
 clustPoints = round(clustPoints * totalPoints);
@@ -121,13 +121,14 @@ yCenters = yClustAvgSep * numClusts * (rand(numClusts, 1) - 0.5);
 centers = [xCenters yCenters];
 
 % Determine cluster slopes
-slopes = slope + slopeStd * randn(numClusts, 1);
+slopes = slopeMean + slopeStd * randn(numClusts, 1);
 
 % Create clusters
 for i = 1:numClusts
 
     % Determine length of line where this cluster will be based
-    lengths(i) = abs(lengthAvg + lengthStd * randn);
+    % Line lengths are drawn from the folded normal distribution
+    lengths(i) = abs(lengthMean + lengthStd * randn);
 
     % Determine how many points have been assigned to previous clusters
     sumClustPoints = 0;
@@ -138,6 +139,8 @@ for i = 1:numClusts
     % Create points for this cluster
     for j = 1:clustPoints(i)
         % Determine where in the line the next point will be projected
+        % using the uniform distribution (i.e. points will be uniformly
+        % projected along the line)
         position = lengths(i) * rand - lengths(i) / 2;
         % Determine x coordinate of point projection
         delta_x = cos(atan(slopes(i))) * position;
