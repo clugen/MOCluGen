@@ -8,7 +8,8 @@ function [data, clustPoints, idx, centers, slopes, lengths] = ...
         lengthMean, ...
         lengthStd, ...
         lateralStd, ...
-        totalPoints ...
+        totalPoints, ...
+        linePtsDist ...
     )
 % GENERATEDATA Generates 2D data for clustering. Data is created along 
 %              straight lines, which can be more or less parallel
@@ -37,6 +38,16 @@ function [data, clustPoints, idx, centers, slopes, lengths] = ...
 %  totalPoints - Total points in generated data. These will be randomly
 %                divided between clusters using the half-normal
 %                distribution with unit standard deviation.
+%  linePtsDist - Optional parameter which specifies the distribution of
+%                points along lines. Possible values are 'unif' (default)
+%                and 'norm'. The former will distribute points uniformly
+%                along lines, while the latter will use a normal
+%                distribution (mean equal to the line center, standard
+%                deviation equal to one sixth of the line length). In the
+%                latter case, the line includes three standard deviations
+%                of the normal distribution, meaning that there is a small
+%                chance that some points are projected outside line
+%                limits.
 %
 % Outputs:
 %         data - Matrix (totalPoints x 2) with the generated data.
@@ -72,6 +83,18 @@ function [data, clustPoints, idx, centers, slopes, lengths] = ...
 % Make sure totalPoints >= numClusts
 if totalPoints < numClusts
     error('Number of points must be equal or larger than the number of clusters.');
+end;
+
+% Check if linePtsDist was specified
+if (~exist('linePtsDist', 'var'))
+    linePtsDist = 'unif';
+end;
+if strcmp(linePtsDist, 'unif')
+    distfun = @(len) len * rand - len / 2;
+elseif strcmp(linePtsDist, 'norm')
+    distfun = @(len) len * randn / 6;
+else
+    error(['Unknown distribution "' linePtsDist '"']);
 end;
 
 % Determine number of points in each cluster using the half-normal
@@ -139,9 +162,9 @@ for i = 1:numClusts
     % Create points for this cluster
     for j = 1:clustPoints(i)
         % Determine where in the line the next point will be projected
-        % using the uniform distribution (i.e. points will be uniformly
-        % projected along the line)
-        position = lengths(i) * rand - lengths(i) / 2;
+        % using the specified distribution (i.e. points will be projected
+        % along the line using either the uniform or normal distribution)
+        position = distfun(lengths(i));
         % Determine x coordinate of point projection
         delta_x = cos(atan(slopes(i))) * position;
         % Determine y coordinate of point projection

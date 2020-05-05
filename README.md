@@ -30,6 +30,7 @@ depending on the selected input parameters.
   `lengthStd`    | Standard deviation of line lengths.
   `lateralStd`   | Cluster "fatness", i.e., the standard deviation of the distance from each point to the respective line, in both *x* and *y* directions. This distance is obtained from the normal distribution with zero mean.
   `totalPoints`  | Total points in generated data. These will be randomly divided between clusters using the half-normal distribution with unit standard deviation.
+  `linePtsDist`  | Optional parameter which specifies the distribution of points along lines. Possible values are `'unif'` (default) and `'norm'`. The former will distribute points uniformly along lines, while the latter will use a normal distribution (mean equal to the line center, standard deviation equal to one sixth of the line length). In the latter case, the line includes three standard deviations of the normal distribution, meaning that there is a small chance that some points are projected outside line limits.
 
 ## Return values
 
