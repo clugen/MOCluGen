@@ -1,7 +1,7 @@
-function [data, clustPoints, idx, centers, slopes, lengths] = ...
+function [data, clustPoints, idx, centers, angles, lengths] = ...
     generateData( ...
-        slopeMean, ...
-        slopeStd, ...
+        angleMean, ...
+        angleStd, ...
         numClusts, ...
         xClustAvgSep, ...
         yClustAvgSep, ...
@@ -13,17 +13,17 @@ function [data, clustPoints, idx, centers, slopes, lengths] = ...
     )
 % GENERATEDATA Generates 2D data for clustering. Data is created along 
 %              straight lines, which can be more or less parallel
-%              depending on the slopeStd parameter.
+%              depending on the angleStd parameter.
 %
-% [data clustPoints idx centers slopes lengths] = 
-%    GENERATEDATA(slopeMean, slopeStd, numClusts, xClustAvgSep, ...
+% [data clustPoints idx centers angles lengths] = 
+%    GENERATEDATA(angleMean, angleStd, numClusts, xClustAvgSep, ...
 %                 yClustAvgSep, lengthMean, lengthStd, lateralStd, ...
 %                 totalPoints, ...)
 %
 % Required input parameters:
-%    slopeMean - Mean slope of the lines on which clusters are based.
-%                Line slopes are drawn from the normal distribution.
-%     slopeStd - Standard deviation of line slopes.
+%    angleMean - Mean angle in radians of the lines on which clusters are
+%                based. Angles are drawn from the normal distribution.
+%     angleStd - Standard deviation of line angles.
 %    numClusts - Number of clusters (and therefore of lines) to generate.
 % xClustAvgSep - Average separation of line centers along the X axis.
 % yClustAvgSep - Average separation of line centers along the Y axis.
@@ -64,7 +64,7 @@ function [data, clustPoints, idx, centers, slopes, lengths] = ...
 %                of each point.
 %      centers - Matrix (numClusts x 2) containing centers from where
 %                clusters were generated.
-%       slopes - Vector (numClusts x 1) containing the effective slopes 
+%       angles - Vector (numClusts x 1) containing the effective angles 
 %                of the lines used to generate clusters.
 %      lengths - Vector (numClusts x 1) containing the effective lengths 
 %                of the lines used to generate clusters.
@@ -72,16 +72,16 @@ function [data, clustPoints, idx, centers, slopes, lengths] = ...
 % ----------------------------------------------------------
 % Usage example:
 %
-%   [data cp idx] = GENERATEDATA(1, 0.5, 5, 15, 15, 5, 1, 2, 200);
+%   [data cp idx] = GENERATEDATA(pi / 2, pi / 8, 5, 15, 15, 5, 1, 2, 200);
 %
-% This creates 5 clusters with a total of 200 points, with a mean slope 
-% of 1 (std=0.5), separated in average by 15 units in both x and y 
+% This creates 5 clusters with a total of 200 points, with a mean angle 
+% of pi/2 (std=pi/8), separated in average by 15 units in both x and y 
 % directions, with mean length of 5 units (std=1) and a "fatness" or
 % spread of 2 units.
 %
 % The following command plots the generated clusters:
 %
-%   scatter(data(:,1), data(:,2), 8, idx);
+%   scatter(data(:, 1), data(:, 2), 8, idx);
 
 % Copyright (c) 2012-2020 Nuno Fachada
 % Distributed under the MIT License (See accompanying file LICENSE or copy 
@@ -93,9 +93,9 @@ pointOffsets = {'1D', '2D'};
 
 % Perform input validation
 p = inputParser;
-addRequired(p, 'slopeMean', ...
+addRequired(p, 'angleMean', ...
     @(x) isnumeric(x) && isscalar(x));
-addRequired(p, 'slopeStd', ...
+addRequired(p, 'angleStd', ...
     @(x) isnumeric(x) && isscalar(x) && (x >= 0));
 addRequired(p, 'numClusts', ...
     @(x) isnumeric(x) && isscalar(x) && (x > 0) && (mod(x, 1) == 0));
@@ -118,7 +118,7 @@ addParameter(p, 'pointDist', ...
 addParameter(p, 'pointOffset', ...
     pointOffsets{2}, @(x) any(validatestring(x, pointOffsets)));
 
-parse(p, slopeMean, slopeStd, numClusts, xClustAvgSep, yClustAvgSep, ...
+parse(p, angleMean, angleStd, numClusts, xClustAvgSep, yClustAvgSep, ...
     lengthMean, lengthStd, lateralStd, totalPoints, varargin{:});
 
 % Check what pointDist was specified
@@ -197,8 +197,8 @@ xCenters = xClustAvgSep * numClusts * (rand(numClusts, 1) - 0.5);
 yCenters = yClustAvgSep * numClusts * (rand(numClusts, 1) - 0.5);
 centers = [xCenters yCenters];
 
-% Determine cluster slopes
-slopes = slopeMean + slopeStd * randn(numClusts, 1);
+% Determine cluster angles
+angles = angleMean + angleStd * randn(numClusts, 1);
 
 % Determine length of lines where clusters will be formed around
 % Line lengths are drawn from the folded normal distribution
@@ -213,18 +213,19 @@ for i = 1:numClusts
     positions = distfun(lengths(i), clustPoints(i));
 
     % Determine (x, y) coordinates of point projections on the line
-    points_x = cos(atan(slopes(i))) * positions;
-    points_y = points_x * slopes(i);
+    points_x = cos(angles(i)) * positions;
+    points_y = sin(angles(i)) * positions;
 
     if strcmp(p.Results.pointOffset, '1D')
 
         % Get distances from points to their projections on the line
         points_dist = lateralStd * randn(clustPoints(i), 1);
 
-        % Get perpendicular vectors to the current line for each point
-        perpVecs = [-sign(points_dist) * slopes(i) sign(points_dist)];
-        % Normalize vectors
-        perpVecs = perpVecs / norm([slopes(i) 1]);
+        % Get normalized vectors, perpendicular to the current line, for
+        % each point
+        perpAngles = angles(i) + sign(points_dist) * pi / 2;
+        perpVecs = [cos(perpAngles) sin(perpAngles)];
+        
         % Set vector magnitudes
         perpVecs = abs(points_dist) .* perpVecs;
 

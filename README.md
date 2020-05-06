@@ -12,8 +12,8 @@ depending on the selected input parameters.
 ## Synopsis
 
 ```MATLAB
-[data, clustPoints, idx, centers, slopes, lengths] = ...
-    generateData(slope, slopeStd, numClusts, xClustAvgSep, yClustAvgSep, ...
+[data, clustPoints, idx, centers, angles, lengths] = ...
+    generateData(angleMean, angleStd, numClusts, xClustAvgSep, yClustAvgSep, ...
                  lengthMean, lengthStd, lateralStd, totalPoints, ...)
 ```
 
@@ -23,8 +23,8 @@ depending on the selected input parameters.
 
 Parameter      | Description
 -------------- | -----------
-`slopeMean`    | Mean slope of the lines on which clusters are based. Line slopes are drawn from the normal distribution.
-`slopeStd`     | Standard deviation of line slopes.
+`angleMean`    | Mean angle in radians of the lines on which clusters are based. Angles are drawn from the normal distribution.
+`angleStd`     | Standard deviation of line angles.
 `numClusts`    | Number of clusters (and therefore of lines) to generate.
 `xClustAvgSep` | Average separation of line centers along the X axis.
 `yClustAvgSep` | Average separation of line centers along the Y axis.
@@ -49,7 +49,7 @@ Parameter name | Parameter values   | Default value | Description
   `clustPoints` | Vector (`numClusts` x *1*) containing number of points in each cluster.
   `idx`         | Vector (`totalPoints` x *1*) containing the cluster indices of each point.
   `centers`     | Matrix (`numClusts` x *2*) containing line centers from where clusters were generated.
-  `slopes`      | Vector (`numClusts` x *1*) containing the effective slopes of the lines used to generate clusters.
+  `angles`      | Vector (`numClusts` x *1*) containing the effective angles of the lines used to generate clusters.
   `lengths`     | Vector (`numClusts` x *1*) containing the effective lengths of the lines used to generate clusters.
 
 ## Usage examples
@@ -57,11 +57,11 @@ Parameter name | Parameter values   | Default value | Description
 ### Basic usage
 
 ```MATLAB
-[data cp idx] = generateData(1, 0.5, 5, 15, 15, 5, 1, 2, 200);
+[data cp idx] = generateData(pi / 2, pi / 8, 5, 15, 15, 5, 1, 2, 200);
 ```
 
 The previous command creates 5 clusters with a total of 200 points, with
-a mean slope of 1 (*std*=0.5), separated in average by 15 units in both
+a mean angle of π/2 (*std*=π/8), separated in average by 15 units in both
 *x* and *y* directions, with mean length of 5 units (*std*=1) and a
 "fatness" or spread of 2 units.
 
@@ -77,7 +77,7 @@ The following command generates 7 clusters with a total of 100 000 points.
 Optional parameters are used to override the defaults.
 
 ```MATLAB
-[data cp idx] = generateData(0, 0.1, 7, 25, 25, 25, 5, 1, 100000, ...
+[data cp idx] = generateData(0, pi / 16, 7, 25, 25, 25, 5, 1, 100000, ...
   'pointDist', 'norm', 'pointOffset', '1D', 'allowEmpty', true);
 ```
 
