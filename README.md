@@ -14,23 +14,32 @@ depending on the selected input parameters.
 ```MATLAB
 [data, clustPoints, idx, centers, slopes, lengths] = ...
     generateData(slope, slopeStd, numClusts, xClustAvgSep, yClustAvgSep, ...
-                 lengthMean, lengthStd, lateralStd, totalPoints)
+                 lengthMean, lengthStd, lateralStd, totalPoints, ...)
 ```
 
 ## Input parameters
 
-  Parameter      | Description
-  -------------- | ------------------------------------------------------------------------------------------------------
-  `slopeMean`    | Mean slope of the lines on which clusters are based. Line slopes are drawn from the normal distribution.
-  `slopeStd`     | Standard deviation of line slopes.
-  `numClusts`    | Number of clusters (and therefore of lines) to generate.
-  `xClustAvgSep` | Average separation of line centers along the X axis.
-  `yClustAvgSep` | Average separation of line centers along the Y axis.
-  `lengthMean`   | Mean length of the lines on which clusters are based. Line lengths are drawn from the folded normal distribution.
-  `lengthStd`    | Standard deviation of line lengths.
-  `lateralStd`   | Cluster "fatness", i.e., the standard deviation of the distance from each point to the respective line, in both *x* and *y* directions. This distance is obtained from the normal distribution with zero mean.
-  `totalPoints`  | Total points in generated data. These will be randomly divided between clusters using the half-normal distribution with unit standard deviation.
-  `linePtsDist`  | Optional parameter which specifies the distribution of points along lines. Possible values are `'unif'` (default) and `'norm'`. The former will distribute points uniformly along lines, while the latter will use a normal distribution (mean equal to the line center, standard deviation equal to one sixth of the line length). In the latter case, the line includes three standard deviations of the normal distribution, meaning that there is a small chance that some points are projected outside line limits.
+### Required parameters
+
+Parameter      | Description
+-------------- | -----------
+`slopeMean`    | Mean slope of the lines on which clusters are based. Line slopes are drawn from the normal distribution.
+`slopeStd`     | Standard deviation of line slopes.
+`numClusts`    | Number of clusters (and therefore of lines) to generate.
+`xClustAvgSep` | Average separation of line centers along the X axis.
+`yClustAvgSep` | Average separation of line centers along the Y axis.
+`lengthMean`   | Mean length of the lines on which clusters are based. Line lengths are drawn from the folded normal distribution.
+`lengthStd`    | Standard deviation of line lengths.
+`lateralStd`   | Cluster "fatness", i.e., the standard deviation of the distance from each point to its projection on the line. The way this distance is obtained is controlled by the optional `'pointOffset'` parameter.
+`totalPoints`  | Total points in generated data. These will be randomly divided between clusters using the half-normal distribution with unit standard deviation.
+
+### Optional named parameters
+
+Parameter name | Parameter values   | Default value | Description
+-------------- | ---------------------------------- | ------------- | -----------
+`allowEmpty`   | `true`, `false`    | `false`       | Allow empty clusters?
+`pointDist`    | `'unif'`, `'norm'` | `unif`        | Specifies the distribution of points along lines, with two possible values: 1) `'unif'` distributes points uniformly along lines; or, 2) `'norm'` distribute points along lines using a normal distribution (line center is the mean and the line length is equal to 3 standard deviations).
+`pointOffset`  | `1D`, `2D`         | `2D`          | Controls how points are created from their projections on the lines, with two possible values: 1) `'1D'` places points on a second line perpendicular to the cluster line using a normal distribution centered at their intersection; or, 2) `'2D'` places point using a bivariate normal distribution centered at the point projection.
 
 ## Return values
 
@@ -43,7 +52,9 @@ depending on the selected input parameters.
   `slopes`      | Vector (`numClusts` x *1*) containing the effective slopes of the lines used to generate clusters.
   `lengths`     | Vector (`numClusts` x *1*) containing the effective lengths of the lines used to generate clusters.
 
-## Usage example
+## Usage examples
+
+### Basic usage
 
 ```MATLAB
 [data cp idx] = generateData(1, 0.5, 5, 15, 15, 5, 1, 2, 200);
@@ -59,6 +70,21 @@ The following command plots the generated clusters:
 ```MATLAB
 scatter(data(:, 1), data(:, 2), 8, idx);
 ```
+
+### Using optional parameters
+
+The following command generates 7 clusters with a total of 100 000 points.
+Optional parameters are used to override the defaults.
+
+```MATLAB
+[data cp idx] = generateData(0, 0.1, 7, 25, 25, 25, 5, 1, 100000, ...
+  'pointDist', 'norm', 'pointOffset', '1D', 'allowEmpty', true);
+```
+
+The generated clusters can be visualized with the same `scatter` command used
+in the previous example.
+
+### Reproducible cluster generation
 
 To make cluster generation reproducible, set the random number generator seed
 to a specific value (e.g. 123) before generating the data:

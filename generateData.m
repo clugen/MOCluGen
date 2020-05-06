@@ -31,27 +31,30 @@ function [data, clustPoints, idx, centers, slopes, lengths] = ...
 %                Line lengths are drawn from the folded normal
 %                distribution.
 %    lengthStd - Standard deviation of line lengths.
-%   lateralStd - "Cluster fatness", i.e., the standard deviation of the 
-%                distance from each point to the respective line, in both
-%                x and y directions. This distance is obtained from the 
-%                normal distribution with zero mean.
+%   lateralStd - Cluster "fatness", i.e., the standard deviation of the 
+%                distance from each point to its projection on the
+%                line. The way this distance is obtained is controlled by
+%                the optional 'pointOffset' parameter.
 %  totalPoints - Total points in generated data. These will be randomly
 %                divided between clusters using the half-normal
 %                distribution with unit standard deviation.
 %
 % Optional named input parameters:
 %   allowEmpty - Allow empty clusters? This value is false by default.
-%    pointDist - Specifies the distribution of points along lines.
-%                Possible values are 'unif' (default) and 'norm'.
-%                The former will distribute points uniformly
-%                along lines, while the latter will use a normal
-%                distribution (mean equal to the line center, standard
-%                deviation equal to 1/6 of the line length). In the
-%                latter case, the line includes three standard deviations
-%                of the normal distribution, meaning that there is a small
-%                chance that some points are projected outside line
-%                limits.
-%  pointOffset - 1D or 2D.
+%    pointDist - Specifies the distribution of points along lines, with
+%                two possible values:
+%                - 'unif' (default) distributes points uniformly along
+%                  lines.
+%                - 'norm' distribute points along lines using a normal
+%                  distribution (line center is the mean and the line
+%                  length is equal to 3 standard deviations).
+%  pointOffset - Controls how points are created from their projections
+%                on the lines, with two possible values:
+%                - '1D' places points on a second line perpendicular to
+%                  the cluster line using a normal distribution centered
+%                  at their intersection.
+%                - '2D' (default) places point using a bivariate normal
+%                  distribution centered at the point projection.
 %
 % Outputs:
 %         data - Matrix (totalPoints x 2) with the generated data.
