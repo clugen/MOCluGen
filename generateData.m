@@ -9,7 +9,7 @@ function [data, clustPoints, idx, centers, slopes, lengths] = ...
         lengthStd, ...
         lateralStd, ...
         totalPoints, ...
-        linePtsDist ...
+        varargin ...
     )
 % GENERATEDATA Generates 2D data for clustering. Data is created along 
 %              straight lines, which can be more or less parallel
@@ -80,21 +80,40 @@ function [data, clustPoints, idx, centers, slopes, lengths] = ...
 % Distributed under the MIT License (See accompanying file LICENSE or copy 
 % at http://opensource.org/licenses/MIT)
 
-% Make sure totalPoints >= numClusts
-if totalPoints < numClusts
-    error('Number of points must be equal or larger than the number of clusters.');
-end;
+% Known distributions for sampling points along lines
+knownDists = {'unif', 'norm'};
 
-% Check if linePtsDist was specified
-if (~exist('linePtsDist', 'var'))
-    linePtsDist = 'unif';
-end;
-if strcmp(linePtsDist, 'unif')
+% Perform input validation
+p = inputParser;
+addRequired(p, 'slopeMean', ...
+    @(x) isnumeric(x) && isscalar(x));
+addRequired(p, 'slopeStd', ...
+    @(x) isnumeric(x) && isscalar(x) && (x >= 0));
+addRequired(p, 'numClusts', ...
+    @(x) isnumeric(x) && isscalar(x) && (x > 0) && (mod(x, 1) == 0));
+addRequired(p, 'xClustAvgSep', ...
+    @(x) isnumeric(x) && isscalar(x) && (x >= 0));
+addRequired(p, 'yClustAvgSep', ...
+    @(x) isnumeric(x) && isscalar(x) && (x >= 0));
+addRequired(p, 'lengthMean', ...
+    @(x) isnumeric(x) && isscalar(x) && (x >= 0));
+addRequired(p, 'lengthStd', ...
+    @(x) isnumeric(x) && isscalar(x) && (x >= 0));
+addRequired(p, 'lateralStd', ...
+    @(x) isnumeric(x) && isscalar(x) && (x >= 0));
+addRequired(p, 'totalPoints', ...
+    @(x) isnumeric(x) && isscalar(x) && (x > numClusts));
+addOptional(p, 'linePtsDist', ...
+    knownDists{1}, @(x) any(validatestring(x, knownDists)));
+
+parse(p, slopeMean, slopeStd, numClusts, xClustAvgSep, yClustAvgSep, ...
+    lengthMean, lengthStd, lateralStd, totalPoints, varargin{:});
+
+% Check what linePtsDist was specified
+if strcmp(p.Results.linePtsDist, 'unif')
     distfun = @(len, n) len * rand(n, 1) - len / 2;
-elseif strcmp(linePtsDist, 'norm')
+elseif strcmp(p.Results.linePtsDist, 'norm')
     distfun = @(len, n) len * randn(n, 1) / 6;
-else
-    error(['Unknown distribution "' linePtsDist '"']);
 end;
 
 % Determine number of points in each cluster using the half-normal
