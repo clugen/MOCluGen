@@ -135,9 +135,6 @@ data = zeros(sum(clustPoints), 2);
 % Initialize idx (vector containing the cluster indices of each point)
 idx = zeros(totalPoints, 1);
 
-% Initialize lengths vector
-lengths = zeros(numClusts, 1);
-
 % Determine cluster centers
 xCenters = xClustAvgSep * numClusts * (rand(numClusts, 1) - 0.5);
 yCenters = yClustAvgSep * numClusts * (rand(numClusts, 1) - 0.5);
@@ -146,12 +143,12 @@ centers = [xCenters yCenters];
 % Determine cluster slopes
 slopes = slopeMean + slopeStd * randn(numClusts, 1);
 
+% Determine length of lines where clusters will be formed around
+% Line lengths are drawn from the folded normal distribution
+lengths = abs(lengthMean + lengthStd * randn(numClusts, 1));
+
 % Create clusters
 for i = 1:numClusts
-
-    % Determine length of line where this cluster will be based
-    % Line lengths are drawn from the folded normal distribution
-    lengths(i) = abs(lengthMean + lengthStd * randn);
 
     % Determine how many points have been assigned to previous clusters
     sumClustPoints = 0;
