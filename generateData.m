@@ -40,17 +40,18 @@ function [data, clustPoints, idx, centers, slopes, lengths] = ...
 %                distribution with unit standard deviation.
 %
 % Optional named input parameters:
-%      ptsDist - Specifies the distribution of points along lines.
+%   allowEmpty - Allow empty clusters? This value is false by default.
+%    pointDist - Specifies the distribution of points along lines.
 %                Possible values are 'unif' (default) and 'norm'.
 %                The former will distribute points uniformly
 %                along lines, while the latter will use a normal
 %                distribution (mean equal to the line center, standard
-%                deviation equal to one sixth of the line length). In the
+%                deviation equal to 1/6 of the line length). In the
 %                latter case, the line includes three standard deviations
 %                of the normal distribution, meaning that there is a small
 %                chance that some points are projected outside line
 %                limits.
-%   allowEmpty - Allow empty clusters? This value is false by default.
+%  pointOffset - 1D or 2D.
 %
 % Outputs:
 %         data - Matrix (totalPoints x 2) with the generated data.
@@ -84,7 +85,8 @@ function [data, clustPoints, idx, centers, slopes, lengths] = ...
 % at http://opensource.org/licenses/MIT)
 
 % Known distributions for sampling points along lines
-knownDists = {'unif', 'norm'};
+pointDists = {'unif', 'norm'};
+pointOffsets = {'1D', '2D'};
 
 % Perform input validation
 p = inputParser;
@@ -106,19 +108,27 @@ addRequired(p, 'lateralStd', ...
     @(x) isnumeric(x) && isscalar(x) && (x >= 0));
 addRequired(p, 'totalPoints', ...
     @(x) isnumeric(x) && isscalar(x) && (x >= 1));
-addParameter(p, 'ptsDist', ...
-    knownDists{1}, @(x) any(validatestring(x, knownDists)));
 addParameter(p, 'allowEmpty', ...
     false, @(x) isscalar(x) && isa(x, 'logical'));
+addParameter(p, 'pointDist', ...
+    pointDists{1}, @(x) any(validatestring(x, pointDists)));
+addParameter(p, 'pointOffset', ...
+    pointOffsets{2}, @(x) any(validatestring(x, pointOffsets)));
 
 parse(p, slopeMean, slopeStd, numClusts, xClustAvgSep, yClustAvgSep, ...
     lengthMean, lengthStd, lateralStd, totalPoints, varargin{:});
 
-% Check what ptsDist was specified
-if strcmp(p.Results.ptsDist, 'unif')
+% Check what pointDist was specified
+if strcmp(p.Results.pointDist, 'unif')
+    % Use uniform distribution of points along lines
     distfun = @(len, n) len * rand(n, 1) - len / 2;
-elseif strcmp(p.Results.ptsDist, 'norm')
+elseif strcmp(p.Results.pointDist, 'norm')
+    % Use normal distribution of points along lines, mean equal to line
+    % center, standard deviation equal to 1/6 of line length
     distfun = @(len, n) len * randn(n, 1) / 6;
+else
+    % We should never get here
+    error('Invalid program state');
 end;
 
 % Determine number of points in each cluster using the half-normal
@@ -200,20 +210,27 @@ for i = 1:numClusts
     positions = distfun(lengths(i), clustPoints(i));
 
     % Determine x coordinates of point projections
-    deltas_x = cos(atan(slopes(i))) * positions;
+    points_x = cos(atan(slopes(i))) * positions;
 
     % Determine y coordinates of point projections
-    deltas_y = deltas_x * slopes(i);
+    points_y = points_x * slopes(i);
 
-    % Get point distances from line in x coordinate
-    deltas_x = deltas_x + lateralStd * randn(clustPoints(i), 1);
+    if strcmp(p.Results.pointOffset, '1D')
+        error('Not implemented');
+    elseif strcmp(p.Results.pointOffset, '2D')
+        % Get point distances from line in x coordinate
+        points_x = points_x + lateralStd * randn(clustPoints(i), 1);
 
-    % Get point distances from line in y coordinate
-    deltas_y = deltas_y + lateralStd * randn(clustPoints(i), 1);
+        % Get point distances from line in y coordinate
+        points_y = points_y + lateralStd * randn(clustPoints(i), 1);
 
-    % Determine the actual points
-    data(cumSumPoints(i) + 1 : cumSumPoints(i + 1), :) = ...
-        [(xCenters(i) + deltas_x) (yCenters(i) + deltas_y)];
+        % Determine the actual points
+        data(cumSumPoints(i) + 1 : cumSumPoints(i + 1), :) = ...
+            [(xCenters(i) + points_x) (yCenters(i) + points_y)];
+    else
+        % We should never get here
+        error('Invalid program state');
+    end;
 
     % Update idx
     idx(cumSumPoints(i) + 1 : cumSumPoints(i + 1)) = i;
