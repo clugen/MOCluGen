@@ -129,6 +129,9 @@ if ~isempty(emptyClusts)
     end;
 end;
 
+% Obtain the cumulative sum vector of point counts in each cluster
+cumSumPoints = [0; cumsum(clustPoints)];
+
 % Initialize data matrix
 data = zeros(sum(clustPoints), 2);
 
@@ -150,12 +153,6 @@ lengths = abs(lengthMean + lengthStd * randn(numClusts, 1));
 % Create clusters
 for i = 1:numClusts
 
-    % Determine how many points have been assigned to previous clusters
-    sumClustPoints = 0;
-    if i > 1
-        sumClustPoints = sum(clustPoints(1:(i - 1)));
-    end;
-
     % Create points for this cluster
     for j = 1:clustPoints(i)
         % Determine where in the line the next point will be projected
@@ -171,10 +168,10 @@ for i = 1:numClusts
         % Get point distance from line in y coordinate
         delta_y = delta_y + lateralStd * randn;
         % Determine the actual point
-        data(sumClustPoints + j, :) = ...
+        data(cumSumPoints(i) + j, :) = ...
             [(xCenters(i) + delta_x) (yCenters(i) + delta_y)];
     end;
 
     % Update idx
-    idx(sumClustPoints + 1 : sumClustPoints + clustPoints(i)) = i;
+    idx(cumSumPoints(i) + 1 : cumSumPoints(i + 1)) = i;
 end;
