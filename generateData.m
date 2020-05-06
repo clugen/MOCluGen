@@ -209,28 +209,43 @@ for i = 1:numClusts
     % along the line using either the uniform or normal distribution)
     positions = distfun(lengths(i), clustPoints(i));
 
-    % Determine x coordinates of point projections
+    % Determine (x, y) coordinates of point projections on the line
     points_x = cos(atan(slopes(i))) * positions;
-
-    % Determine y coordinates of point projections
     points_y = points_x * slopes(i);
 
     if strcmp(p.Results.pointOffset, '1D')
-        error('Not implemented');
+
+        % Get distances from points to their projections on the line
+        points_dist = lateralStd * randn(clustPoints(i), 1);
+
+        % Get perpendicular vectors to the current line for each point
+        perpVecs = [-sign(points_dist) * slopes(i) sign(points_dist)];
+        % Normalize vectors
+        perpVecs = perpVecs / norm([slopes(i) 1]);
+        % Set vector magnitudes
+        perpVecs = abs(points_dist) .* perpVecs;
+
+        % Add perpendicular vectors to point projections on the line,
+        % yielding point (x,y) coordinates
+        points_x = points_x + perpVecs(:, 1);
+        points_y = points_y + perpVecs(:, 2);
+
     elseif strcmp(p.Results.pointOffset, '2D')
+
         % Get point distances from line in x coordinate
         points_x = points_x + lateralStd * randn(clustPoints(i), 1);
 
         % Get point distances from line in y coordinate
         points_y = points_y + lateralStd * randn(clustPoints(i), 1);
 
-        % Determine the actual points
-        data(cumSumPoints(i) + 1 : cumSumPoints(i + 1), :) = ...
-            [(xCenters(i) + points_x) (yCenters(i) + points_y)];
     else
         % We should never get here
         error('Invalid program state');
     end;
+
+    % Determine the actual points
+    data(cumSumPoints(i) + 1 : cumSumPoints(i + 1), :) = ...
+        [(xCenters(i) + points_x) (yCenters(i) + points_y)];
 
     % Update idx
     idx(cumSumPoints(i) + 1 : cumSumPoints(i + 1)) = i;
