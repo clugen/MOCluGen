@@ -18,9 +18,9 @@ function [data, clustPoints, idx, centers, slopes, lengths] = ...
 % [data clustPoints idx centers slopes lengths] = 
 %    GENERATEDATA(slopeMean, slopeStd, numClusts, xClustAvgSep, ...
 %                 yClustAvgSep, lengthMean, lengthStd, lateralStd, ...
-%                 totalPoints)
+%                 totalPoints, ...)
 %
-% Inputs:
+% Required input parameters:
 %    slopeMean - Mean slope of the lines on which clusters are based.
 %                Line slopes are drawn from the normal distribution.
 %     slopeStd - Standard deviation of line slopes.
@@ -38,9 +38,11 @@ function [data, clustPoints, idx, centers, slopes, lengths] = ...
 %  totalPoints - Total points in generated data. These will be randomly
 %                divided between clusters using the half-normal
 %                distribution with unit standard deviation.
-%  linePtsDist - Optional parameter which specifies the distribution of
-%                points along lines. Possible values are 'unif' (default)
-%                and 'norm'. The former will distribute points uniformly
+%
+% Optional named input parameters:
+%      ptsDist - Specifies the distribution of points along lines.
+%                Possible values are 'unif' (default) and 'norm'.
+%                The former will distribute points uniformly
 %                along lines, while the latter will use a normal
 %                distribution (mean equal to the line center, standard
 %                deviation equal to one sixth of the line length). In the
@@ -48,6 +50,7 @@ function [data, clustPoints, idx, centers, slopes, lengths] = ...
 %                of the normal distribution, meaning that there is a small
 %                chance that some points are projected outside line
 %                limits.
+%   allowEmpty - Allow empty clusters? This value is false by default.
 %
 % Outputs:
 %         data - Matrix (totalPoints x 2) with the generated data.
@@ -102,17 +105,19 @@ addRequired(p, 'lengthStd', ...
 addRequired(p, 'lateralStd', ...
     @(x) isnumeric(x) && isscalar(x) && (x >= 0));
 addRequired(p, 'totalPoints', ...
-    @(x) isnumeric(x) && isscalar(x) && (x > numClusts));
-addOptional(p, 'linePtsDist', ...
+    @(x) isnumeric(x) && isscalar(x) && (x >= 1));
+addParameter(p, 'ptsDist', ...
     knownDists{1}, @(x) any(validatestring(x, knownDists)));
+addParameter(p, 'allowEmpty', ...
+    false, @(x) isscalar(x) && isa(x, 'logical'));
 
 parse(p, slopeMean, slopeStd, numClusts, xClustAvgSep, yClustAvgSep, ...
     lengthMean, lengthStd, lateralStd, totalPoints, varargin{:});
 
-% Check what linePtsDist was specified
-if strcmp(p.Results.linePtsDist, 'unif')
+% Check what ptsDist was specified
+if strcmp(p.Results.ptsDist, 'unif')
     distfun = @(len, n) len * rand(n, 1) - len / 2;
-elseif strcmp(p.Results.linePtsDist, 'norm')
+elseif strcmp(p.Results.ptsDist, 'norm')
     distfun = @(len, n) len * randn(n, 1) / 6;
 end;
 
@@ -134,17 +139,34 @@ while sum(clustPoints) > totalPoints
     clustPoints(I(1)) = C - 1;
 end;
 
-% Make sure there are no empty clusters
-emptyClusts = find(clustPoints == 0);
-if ~isempty(emptyClusts)
+% If allowEmpty is false make sure there are no empty clusters
+if ~p.Results.allowEmpty
+
+    % First, make sure there are enough points to distribute by the
+    % clusters
+    if totalPoints < numClusts
+        error(['Number of points must be equal or larger than the ' ...
+            'number of clusters. Set ''allowEmpty'' to true to allow ' ...
+            'for empty clusters.']);
+    end;
+
+    % Find empty clusters
+    emptyClusts = find(clustPoints == 0);
+
     % If there are empty clusters...
-    numEmptyClusts = size(emptyClusts, 1);
-    for i = 1:numEmptyClusts
-        % ...get a point from the largest cluster and assign it to the
-        % empty cluster
-        [C, I] = max(clustPoints);
-        clustPoints(I(1)) = C - 1;
-        clustPoints(emptyClusts(i)) = 1;
+    if ~isempty(emptyClusts)
+
+        % How many empty clusters do we have?
+        numEmptyClusts = size(emptyClusts, 1);
+
+        % Go through the empty clusters...
+        for i = 1:numEmptyClusts
+            % ...get a point from the largest cluster and assign it to the
+            % current empty cluster
+            [C, I] = max(clustPoints);
+            clustPoints(I(1)) = C - 1;
+            clustPoints(emptyClusts(i)) = 1;
+        end;
     end;
 end;
 
