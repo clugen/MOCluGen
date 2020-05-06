@@ -90,9 +90,9 @@ if (~exist('linePtsDist', 'var'))
     linePtsDist = 'unif';
 end;
 if strcmp(linePtsDist, 'unif')
-    distfun = @(len) len * rand - len / 2;
+    distfun = @(len, n) len * rand(n, 1) - len / 2;
 elseif strcmp(linePtsDist, 'norm')
-    distfun = @(len) len * randn / 6;
+    distfun = @(len, n) len * randn(n, 1) / 6;
 else
     error(['Unknown distribution "' linePtsDist '"']);
 end;
@@ -153,24 +153,26 @@ lengths = abs(lengthMean + lengthStd * randn(numClusts, 1));
 % Create clusters
 for i = 1:numClusts
 
-    % Create points for this cluster
-    for j = 1:clustPoints(i)
-        % Determine where in the line the next point will be projected
-        % using the specified distribution (i.e. points will be projected
-        % along the line using either the uniform or normal distribution)
-        position = distfun(lengths(i));
-        % Determine x coordinate of point projection
-        delta_x = cos(atan(slopes(i))) * position;
-        % Determine y coordinate of point projection
-        delta_y = delta_x * slopes(i);
-        % Get point distance from line in x coordinate
-        delta_x = delta_x + lateralStd * randn;
-        % Get point distance from line in y coordinate
-        delta_y = delta_y + lateralStd * randn;
-        % Determine the actual point
-        data(cumSumPoints(i) + j, :) = ...
-            [(xCenters(i) + delta_x) (yCenters(i) + delta_y)];
-    end;
+    % Determine where in the line this cluster's points will be projected
+    % using the specified distribution (i.e. points will be projected
+    % along the line using either the uniform or normal distribution)
+    positions = distfun(lengths(i), clustPoints(i));
+
+    % Determine x coordinates of point projections
+    deltas_x = cos(atan(slopes(i))) * positions;
+
+    % Determine y coordinates of point projections
+    deltas_y = deltas_x * slopes(i);
+
+    % Get point distances from line in x coordinate
+    deltas_x = deltas_x + lateralStd * randn(clustPoints(i), 1);
+
+    % Get point distances from line in y coordinate
+    deltas_y = deltas_y + lateralStd * randn(clustPoints(i), 1);
+
+    % Determine the actual points
+    data(cumSumPoints(i) + 1 : cumSumPoints(i + 1), :) = ...
+        [(xCenters(i) + deltas_x) (yCenters(i) + deltas_y)];
 
     % Update idx
     idx(cumSumPoints(i) + 1 : cumSumPoints(i + 1)) = i;
