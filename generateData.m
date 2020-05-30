@@ -11,11 +11,11 @@ function [data, clustPoints, idx, centers, angles, lengths] = ...
         totalPoints, ...
         varargin ...
     )
-% GENERATEDATA Generates 2D data for clustering. Data is created along 
+% GENERATEDATA Generates 2D data for clustering. Data is created along
 %              straight lines, which can be more or less parallel
 %              depending on the angleStd parameter.
 %
-% [data clustPoints idx centers angles lengths] = 
+% [data clustPoints idx centers angles lengths] =
 %    GENERATEDATA(angleMean, angleStd, numClusts, xClustAvgSep, ...
 %                 yClustAvgSep, lengthMean, lengthStd, lateralStd, ...
 %                 totalPoints, ...)
@@ -31,7 +31,7 @@ function [data, clustPoints, idx, centers, angles, lengths] = ...
 %                Line lengths are drawn from the folded normal
 %                distribution.
 %    lengthStd - Standard deviation of line lengths.
-%   lateralStd - Cluster "fatness", i.e., the standard deviation of the 
+%   lateralStd - Cluster "fatness", i.e., the standard deviation of the
 %                distance from each point to its projection on the
 %                line. The way this distance is obtained is controlled by
 %                the optional 'pointOffset' parameter.
@@ -64,9 +64,9 @@ function [data, clustPoints, idx, centers, angles, lengths] = ...
 %                of each point.
 %      centers - Matrix (numClusts x 2) containing centers from where
 %                clusters were generated.
-%       angles - Vector (numClusts x 1) containing the effective angles 
+%       angles - Vector (numClusts x 1) containing the effective angles
 %                of the lines used to generate clusters.
-%      lengths - Vector (numClusts x 1) containing the effective lengths 
+%      lengths - Vector (numClusts x 1) containing the effective lengths
 %                of the lines used to generate clusters.
 %
 % ----------------------------------------------------------
@@ -74,8 +74,8 @@ function [data, clustPoints, idx, centers, angles, lengths] = ...
 %
 %   [data cp idx] = GENERATEDATA(pi / 2, pi / 8, 5, 15, 15, 5, 1, 2, 200);
 %
-% This creates 5 clusters with a total of 200 points, with a mean angle 
-% of pi/2 (std=pi/8), separated in average by 15 units in both x and y 
+% This creates 5 clusters with a total of 200 points, with a mean angle
+% of pi/2 (std=pi/8), separated in average by 15 units in both x and y
 % directions, with mean length of 5 units (std=1) and a "fatness" or
 % spread of 2 units.
 %
@@ -84,8 +84,12 @@ function [data, clustPoints, idx, centers, angles, lengths] = ...
 %   scatter(data(:, 1), data(:, 2), 8, idx);
 
 % Copyright (c) 2012-2020 Nuno Fachada
-% Distributed under the MIT License (See accompanying file LICENSE or copy 
+% Distributed under the MIT License (See accompanying file LICENSE or copy
 % at http://opensource.org/licenses/MIT)
+%
+% Reference:
+% Fachada, N., & Rosa, A. C. (2020). generateData—A 2D data generator.
+% Software Impacts, 4:100017. doi: 10.1016/j.simpa.2020.100017
 
 % Known distributions for sampling points along lines
 pointDists = {'unif', 'norm'};
@@ -225,7 +229,7 @@ for i = 1:numClusts
         % each point
         perpAngles = angles(i) + sign(points_dist) * pi / 2;
         perpVecs = [cos(perpAngles) sin(perpAngles)];
-        
+
         % Set vector magnitudes
         perpVecs = abs(points_dist) .* perpVecs;
 

@@ -1,5 +1,6 @@
 [![Latest release](https://img.shields.io/github/release/fakenmc/generateData.svg)](https://github.com/fakenmc/generateData/releases)
 [![MIT Licence](https://img.shields.io/badge/license-MIT-yellowgreen.svg)](https://opensource.org/licenses/MIT/)
+[![View Generate Data for Clustering on File Exchange](https://www.mathworks.com/matlabcentral/images/matlab-file-exchange.svg)](https://www.mathworks.com/matlabcentral/fileexchange/37435-generate-data-for-clustering)
 
 # generateData
 
@@ -100,14 +101,28 @@ rand("state", 123);
 randn("state", 123);
 ```
 
+## Previous behaviors and reproducibility of results
+
+Before [v2.0.0](https://github.com/fakenmc/generateData/tree/v2.0.0), lines
+supporting clusters were parameterized with slopes instead of angles. We found
+this caused difficulties when choosing line orientation, thus the change to
+angles, which are much easier to work with.
+Version [v1.3.0](https://github.com/fakenmc/generateData/tree/v1.3.0) still
+uses slopes, for those who prefer this behavior.
+
+For reproducing results in studies published before May 2020, use version
+[v1.2.0](https://github.com/fakenmc/generateData/tree/v1.2.0) instead.
+Subsequent versions were optimized in a way that changed the order in which
+the required random values are generated, thus producing slightly different
+results.
+
 ## Reference
 
 If you use this function in your work, please cite the following reference:
 
-- Fachada, N., Figueiredo, M.A.T., Lopes, V.V., Martins, R.C., Rosa,
-A.C., [Spectrometric differentiation of yeast strains using minimum volume
-increase and minimum direction change clustering criteria](http://www.sciencedirect.com/science/article/pii/S0167865514000889),
-Pattern Recognition Letters, vol. 45, pp. 55-61 (2014), doi: http://dx.doi.org/10.1016/j.patrec.2014.03.008
+- Fachada, N., & Rosa, A. C. (2020).
+[generateData—A 2D data generator](https://doi.org/10.1016/j.simpa.2020.100017).
+Software Impacts, 4:100017. doi: [10.1016/j.simpa.2020.100017](https://doi.org/10.1016/j.simpa.2020.100017)
 
 ## License
 
