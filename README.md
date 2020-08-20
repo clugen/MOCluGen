@@ -1,14 +1,16 @@
-[![Latest release](https://img.shields.io/github/release/fakenmc/generateData.svg)](https://github.com/fakenmc/generateData/releases)
+<!--[![Latest release](https://img.shields.io/github/release/fakenmc/generateData.svg)](https://github.com/fakenmc/generateData/releases)
 [![MIT Licence](https://img.shields.io/badge/license-MIT-yellowgreen.svg)](https://opensource.org/licenses/MIT/)
-[![View Generate Data for Clustering on File Exchange](https://www.mathworks.com/matlabcentral/images/matlab-file-exchange.svg)](https://www.mathworks.com/matlabcentral/fileexchange/37435-generate-data-for-clustering)
+[![View Generate Data for Clustering on File Exchange](https://www.mathworks.com/matlabcentral/images/matlab-file-exchange.svg)](https://www.mathworks.com/matlabcentral/fileexchange/37435-generate-data-for-clustering)-->
 
-# generateData
+# mndCluGen
 
 ## Summary
 
-A MATLAB/Octave function which generates 2D data clusters. Data is
-created along straight lines, which can be more or less parallel
-depending on the selected input parameters.
+A MATLAB/Octave function which generates _n_-dimensional data clusters. Data is
+created along straight lines, which can be more or less parallel depending on
+the selected input parameters.
+
+**This is a work in progress**
 
 ## Synopsis
 
