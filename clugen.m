@@ -1,4 +1,4 @@
-function [data, clustPoints, idx, centers, angles, lengths] = ...
+function [data, clustNumPoints, idx, centers, angles, lengths] = ...
     clugen( ...
         ndim, ...
         numClusts, ...
@@ -74,7 +74,7 @@ function [data, clustPoints, idx, centers, angles, lengths] = ...
 % ----------------------------------------------------------
 % Usage example:
 %
-%   [data cp idx] = GENERATEDATA(pi / 2, pi / 8, 5, 15, 15, 5, 1, 2, 200);
+%   [data cp idx] = CLUGEN(pi / 2, pi / 8, 5, 15, 15, 5, 1, 2, 200);
 %
 % This creates 5 clusters with a total of 200 points, with a mean angle
 % of pi/2 (std=pi/8), separated in average by 15 units in both x and y
@@ -105,20 +105,24 @@ addRequired(p, 'numClusts', ...
     @(x) isnumeric(x) && isscalar(x) && (x > 0) && (mod(x, 1) == 0));
 addRequired(p, 'totalPoints', ...
     @(x) isnumeric(x) && isscalar(x) && (x > 0) && (mod(x, 1) == 0));
-addRequired(p, 'dirMain', @isnumeric);
-addRequired(p, 'angleStd', @(x) isnumeric(x) && isscalar(x));
-addRequired(p, 'clustSepMean', @isnumeric);
+addRequired(p, 'dirMain', ...
+    @(x) isnumeric(x) && all(size(x) == [1 ndim]));
+addRequired(p, 'angleStd', ...
+    @(x) isnumeric(x) && isscalar(x));
+addRequired(p, 'clustSepMean', ...
+    @(x) isnumeric(x) && all(size(x) == [1 ndim]));
 addRequired(p, 'lengthMean', ...
     @(x) isnumeric(x) && isscalar(x) && (x >= 0));
 addRequired(p, 'lengthStd', ...
     @(x) isnumeric(x) && isscalar(x) && (x >= 0));
 addRequired(p, 'lateralStd', ...
     @(x) isnumeric(x) && isscalar(x) && (x >= 0));
-addParameter(p, 'clustOffset', 0, @isnumeric);
-addParameter(p, 'allowEmpty', ...
-    false, @(x) isscalar(x) && isa(x, 'logical'));
-addParameter(p, 'pointDist', ...
-    pointDists{1}, @(x) any(validatestring(x, pointDists)));
+addParameter(p, 'clustOffset', zeros(1, ndim), ...
+    @(x) isnumeric(x) && all(size(x) == [1 ndim]));
+addParameter(p, 'allowEmpty', false, ...
+    @(x) isscalar(x) && isa(x, 'logical'));
+addParameter(p, 'pointDist', pointDists{1}, ...
+    @(x) any(validatestring(x, pointDists)));
 addParameter(p, 'pointOffset', ...
     pointOffsets{2}, @(x) any(validatestring(x, pointOffsets)));
 
@@ -138,22 +142,25 @@ else
     error('Invalid program state');
 end;
 
+% Normalize dirMain
+dirMain = dirMain / norm(dirMain);
+
 % Determine number of points in each cluster using the half-normal
 % distribution (with std=1)
-clustPoints = abs(randn(numClusts, 1));
-clustPoints = clustPoints / sum(clustPoints);
-clustPoints = round(clustPoints * totalPoints);
+clustNumPoints = abs(randn(numClusts, 1));
+clustNumPoints = clustNumPoints / sum(clustNumPoints);
+clustNumPoints = round(clustNumPoints * totalPoints);
 
 % Make sure totalPoints is respected
-while sum(clustPoints) < totalPoints
+while sum(clustNumPoints) < totalPoints
     % If one point is missing add it to the smaller cluster
-    [C, I] = min(clustPoints);
-    clustPoints(I(1)) = C + 1;
+    [C, I] = min(clustNumPoints);
+    clustNumPoints(I(1)) = C + 1;
 end;
-while sum(clustPoints) > totalPoints
+while sum(clustNumPoints) > totalPoints
     % If there is one extra point, remove it from larger cluster
-    [C, I] = max(clustPoints);
-    clustPoints(I(1)) = C - 1;
+    [C, I] = max(clustNumPoints);
+    clustNumPoints(I(1)) = C - 1;
 end;
 
 % If allowEmpty is false make sure there are no empty clusters
@@ -168,7 +175,7 @@ if ~p.Results.allowEmpty
     end;
 
     % Find empty clusters
-    emptyClusts = find(clustPoints == 0);
+    emptyClusts = find(clustNumPoints == 0);
 
     % If there are empty clusters...
     if ~isempty(emptyClusts)
@@ -180,29 +187,27 @@ if ~p.Results.allowEmpty
         for i = 1:numEmptyClusts
             % ...get a point from the largest cluster and assign it to the
             % current empty cluster
-            [C, I] = max(clustPoints);
-            clustPoints(I(1)) = C - 1;
-            clustPoints(emptyClusts(i)) = 1;
+            [C, I] = max(clustNumPoints);
+            clustNumPoints(I(1)) = C - 1;
+            clustNumPoints(emptyClusts(i)) = 1;
         end;
     end;
 end;
 
 % Obtain the cumulative sum vector of point counts in each cluster
-cumSumPoints = [0; cumsum(clustPoints)];
+cumSumPoints = [0; cumsum(clustNumPoints)];
 
 % Initialize data matrix
-data = zeros(sum(clustPoints), ndim);
+data = zeros(sum(clustNumPoints), ndim);
 
 % Initialize idx (vector containing the cluster indices of each point)
 idx = zeros(totalPoints, 1);
 
 % Determine cluster centers
-xCenters = xClustAvgSep * numClusts * (rand(numClusts, 1) - 0.5);
-yCenters = yClustAvgSep * numClusts * (rand(numClusts, 1) - 0.5);
-centers = [xCenters yCenters];
+centers = clustSepMean .* (rand(numClusts, ndim) - 0.5);
 
-% Determine cluster angles
-angles = angleMean + angleStd * randn(numClusts, 1);
+% TODO Determine cluster angles
+% angles = dirMean + angleStd * randn(numClusts, 1);
 
 % Determine length of lines where clusters will be formed around
 % Line lengths are drawn from the folded normal distribution
@@ -214,17 +219,20 @@ for i = 1:numClusts
     % Determine where in the line this cluster's points will be projected
     % using the specified distribution (i.e. points will be projected
     % along the line using either the uniform or normal distribution)
-    positions = distfun(lengths(i), clustPoints(i));
+    
+    % Determine distance of points projections from the center of the line
+    ptProjDistFromCent = distfun(lengths(i), clustNumPoints(i));
 
-    % Determine (x, y) coordinates of point projections on the line
-    points_x = cos(angles(i)) * positions;
-    points_y = sin(angles(i)) * positions;
+    % Determine coordinates of point projections on the line
+    ptProj = centers(i) + ptProjDistFromCent * dirMain;
 
     if strcmp(p.Results.pointOffset, '1D')
 
         % Get distances from points to their projections on the line
-        points_dist = lateralStd * randn(clustPoints(i), 1);
+        points_dist = lateralStd * randn(clustNumPoints(i), 1);
 
+        % TODO From here on
+        
         % Get normalized vectors, perpendicular to the current line, for
         % each point
         perpAngles = angles(i) + sign(points_dist) * pi / 2;
@@ -241,10 +249,10 @@ for i = 1:numClusts
     elseif strcmp(p.Results.pointOffset, '2D')
 
         % Get point distances from line in x coordinate
-        points_x = points_x + lateralStd * randn(clustPoints(i), 1);
+        points_x = points_x + lateralStd * randn(clustNumPoints(i), 1);
 
         % Get point distances from line in y coordinate
-        points_y = points_y + lateralStd * randn(clustPoints(i), 1);
+        points_y = points_y + lateralStd * randn(clustNumPoints(i), 1);
 
     else
         % We should never get here
