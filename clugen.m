@@ -129,6 +129,14 @@ addParameter(p, 'pointOffset', ...
 parse(p, ndim, numClusts, totalPoints, dirMain, angleStd, clustSepMean, ...
     lengthMean, lengthStd, lateralStd, varargin{:});
 
+% If allowEmpty is false, make sure there are enough points to distribute
+% by the clusters
+if ~p.Results.allowEmpty && totalPoints < numClusts
+    error(['Number of points must be equal or larger than the ' ...
+        'number of clusters. Set ''allowEmpty'' to true to allow ' ...
+        'for empty clusters.']);
+end;
+
 % Check what pointDist was specified
 if strcmp(p.Results.pointDist, 'unif')
     % Use uniform distribution of points along lines
@@ -165,14 +173,6 @@ end;
 
 % If allowEmpty is false make sure there are no empty clusters
 if ~p.Results.allowEmpty
-
-    % First, make sure there are enough points to distribute by the
-    % clusters
-    if totalPoints < numClusts
-        error(['Number of points must be equal or larger than the ' ...
-            'number of clusters. Set ''allowEmpty'' to true to allow ' ...
-            'for empty clusters.']);
-    end;
 
     % Find empty clusters
     emptyClusts = find(clustNumPoints == 0);
