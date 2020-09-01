@@ -240,7 +240,7 @@ for i = 1:numClusts
 
     % Determine coordinates of point projections on the line using
     % the parametric line equation (this works since dirClust is normalized)
-    ptProj = centers(i) + ptProjDistFromCent * dirClust;
+    ptProj = centers(i, :) + ptProjDistFromCent * dirClust;
 
     if strcmp(p.Results.pointOffset, 'nd-1')
 
