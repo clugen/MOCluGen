@@ -123,8 +123,8 @@ addParameter(p, 'allowEmpty', false, ...
     @(x) isscalar(x) && isa(x, 'logical'));
 addParameter(p, 'pointDist', pointDists{1}, ...
     @(x) any(validatestring(x, pointDists)));
-addParameter(p, 'pointOffset', ...
-    pointOffsets{2}, @(x) any(validatestring(x, pointOffsets)));
+addParameter(p, 'pointOffset', pointOffsets{2}, ...
+    @(x) any(validatestring(x, pointOffsets)));
 
 parse(p, ndim, numClusts, totalPoints, dirMain, angleStd, clustSepMean, ...
     lengthMean, lengthStd, lateralStd, varargin{:});
@@ -206,31 +206,26 @@ idx = zeros(totalPoints, 1);
 % Determine cluster centers
 centers = clustSepMean .* (rand(numClusts, ndim) - 0.5);
 
-% Obtain angles between main direction and cluster supporting directions
-angles = angleStd * randn(numClusts, 1);
-
-% Obtain matrix of random directions
-vrnd = rand(numClusts, nDim) - 0.5; % TODO Check they are not orthogonal to mainDir
-
-% Determine matrix of directions orthogonal to main direction (Gram–Schmidt)
-dirMainOrtho = vrnd - vrnd * mainDir' * mainDir;
-
-% Normalize it
-dirMainOrtho = dirMainOrtho ./ sqrt(sum(dirMainOrtho.^2, 2));
-
 % Determine length of lines where clusters will be formed around
 % Line lengths are drawn from the folded normal distribution
 lengths = abs(lengthMean + lengthStd * randn(numClusts, 1));
 
+% Obtain angles between main direction and cluster supporting directions
+angles = angleStd * randn(numClusts, 1);
+
 % Create clusters
 for i = 1:numClusts
     
-    % Determine cluster direction
+    % Get a random normalized vector orthogonal to main direction
+    dirMainOrtho = getRandOrthoVec(dirMain);
+    
+    % Determine normalized cluster direction
     if abs(angles(i)) >= pi/2
-        dirClust = dirMainOrtho(i, :) * angles(i);
+        dirClust = dirMain + dirMainOrtho * tan(angles(i));
     else
         dirClust = rand(1, ndim) - 0.5;
     end;
+    dirClust = dirClust / norm(dirClust);
 
     % Determine where in the line this cluster's points will be projected
     % using the specified distribution (i.e. points will be projected
@@ -239,30 +234,33 @@ for i = 1:numClusts
     % Determine distance of points projections from the center of the line
     ptProjDistFromCent = distfun(lengths(i), clustNumPoints(i));
 
-    % Determine coordinates of point projections on the line
-    ptProj = centers(i) + ptProjDistFromCent * dirMain;
+    % Determine coordinates of point projections on the line using
+    % the parametric line equation (this works since dirClust is normalized)
+    ptProj = centers(i) + ptProjDistFromCent * dirClust;
 
-    if strcmp(p.Results.pointOffset, '1D')
+    if strcmp(p.Results.pointOffset, 'nd-1')
 
         % Get distances from points to their projections on the line
         points_dist = lateralStd * randn(clustNumPoints(i), 1);
 
-        % TODO From here on
-        
-        % Get normalized vectors, perpendicular to the current line, for
-        % each point
-        perpAngles = angles(i) + sign(points_dist) * pi / 2;
-        perpVecs = [cos(perpAngles) sin(perpAngles)];
+        % Get normalized vectors, orthogonal to the current line, for
+        % each point 
+        % TODO: Vectorize this loop (but is it worth it since it needs access to global(locked?) PRNG?)
+        orthVecs = zeros(clustNumPoints(i), ndim);
+        for j = 1:clustNumPoints(i)
+            orthVecs(j, :) = getRandOrthoVec(dirClust);
+        end;
 
         % Set vector magnitudes
-        perpVecs = abs(points_dist) .* perpVecs;
+        orthVecs = abs(points_dist) .* orthVecs;
 
         % Add perpendicular vectors to point projections on the line,
-        % yielding point (x,y) coordinates
-        points_x = points_x + perpVecs(:, 1);
-        points_y = points_y + perpVecs(:, 2);
+        % yielding final cluster points
+        points = ptProj + orthVecs;
 
-    elseif strcmp(p.Results.pointOffset, '2D')
+    elseif strcmp(p.Results.pointOffset, 'nd')
+        
+        % TODO The 'nd' option
 
         % Get point distances from line in x coordinate
         points_x = points_x + lateralStd * randn(clustNumPoints(i), 1);
@@ -276,9 +274,30 @@ for i = 1:numClusts
     end;
 
     % Determine the actual points
-    data(cumSumPoints(i) + 1 : cumSumPoints(i + 1), :) = ...
-        [(xCenters(i) + points_x) (yCenters(i) + points_y)];
+    data(cumSumPoints(i) + 1 : cumSumPoints(i + 1), :) = points;
 
     % Update idx
     idx(cumSumPoints(i) + 1 : cumSumPoints(i + 1)) = i;
 end;
+
+% 
+% Function which returns a random normalized vector orthogonal to u
+%
+function v = getRandOrthoVec(u)
+
+% Find a random, non-parallel vector to u
+while 1
+    % Find random vector
+    v = rand(1, numel(u)) - 0.5;
+    % Is it not parallel to u?
+    if abs(dot(v, u)) < (1 - eps)
+        % Then we like it, break the cycle
+        break;
+    end;
+end;
+
+% Get vector orthogonal to u using 1st iteration of Gram-Schmidt process
+v = v - dot(v, u) / dot(u, u) * u;
+
+% Normalize it
+v = v / norm(v);
