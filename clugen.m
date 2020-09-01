@@ -221,7 +221,7 @@ for i = 1:numClusts
     
     % Get a random normalized vector orthogonal to main direction
     dirMainOrtho = getRandOrthoVec(dirMain);
-    
+    % TODO The 'nd' option
     % Determine normalized cluster direction
     if abs(angles(i)) < pi/2
         dirClust = dirMain + dirMainOrtho * tan(angles(i));
@@ -264,13 +264,11 @@ for i = 1:numClusts
 
     elseif strcmp(p.Results.pointOffset, 'nd')
         
-        % TODO The 'nd' option
+        % Get random displacement vectors for each point projection
+        displ = lateralStd * randn(clustNumPoints(i), ndim);
 
-        % Get point distances from line in x coordinate
-        points_x = points_x + lateralStd * randn(clustNumPoints(i), 1);
-
-        % Get point distances from line in y coordinate
-        points_y = points_y + lateralStd * randn(clustNumPoints(i), 1);
+        % Add displacement vectors to each point projection
+        points = ptProj + displ;
 
     else
         % We should never get here
