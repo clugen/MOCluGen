@@ -223,7 +223,7 @@ for i = 1:numClusts
     dirMainOrtho = getRandOrthoVec(dirMain);
     
     % Determine normalized cluster direction
-    if abs(angles(i)) >= pi/2
+    if abs(angles(i)) < pi/2
         dirClust = dirMain + dirMainOrtho * tan(angles(i));
     else
         dirClust = rand(1, ndim) - 0.5;
