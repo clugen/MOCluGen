@@ -206,8 +206,17 @@ idx = zeros(totalPoints, 1);
 % Determine cluster centers
 centers = clustSepMean .* (rand(numClusts, ndim) - 0.5);
 
-% TODO Determine cluster angles
-% angles = dirMean + angleStd * randn(numClusts, 1);
+% Obtain angles between main direction and cluster supporting directions
+angles = angleStd * randn(numClusts, 1);
+
+% Obtain matrix of random directions
+vrnd = rand(numClusts, nDim) - 0.5; % TODO Check they are not orthogonal to mainDir
+
+% Determine matrix of directions orthogonal to main direction (Gram–Schmidt)
+dirMainOrtho = vrnd - vrnd * mainDir' * mainDir;
+
+% Normalize it
+dirMainOrtho = dirMainOrtho ./ sqrt(sum(dirMainOrtho.^2, 2));
 
 % Determine length of lines where clusters will be formed around
 % Line lengths are drawn from the folded normal distribution
@@ -215,6 +224,13 @@ lengths = abs(lengthMean + lengthStd * randn(numClusts, 1));
 
 % Create clusters
 for i = 1:numClusts
+    
+    % Determine cluster direction
+    if abs(angles(i)) >= pi/2
+        dirClust = dirMainOrtho(i, :) * angles(i);
+    else
+        dirClust = rand(1, ndim) - 0.5;
+    end;
 
     % Determine where in the line this cluster's points will be projected
     % using the specified distribution (i.e. points will be projected
