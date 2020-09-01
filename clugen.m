@@ -1,4 +1,4 @@
-function [data, clustNumPoints, idx, centers, angles, lengths] = ...
+function [data, clustNumPoints, idx, centers, dirClusts, lengths] = ...
     clugen( ...
         ndim, ...
         numClusts, ...
@@ -203,6 +203,9 @@ data = zeros(sum(clustNumPoints), ndim);
 % Initialize idx (vector containing the cluster indices of each point)
 idx = zeros(totalPoints, 1);
 
+% Initialize dirClusts (matrix containing the direction of each cluster)
+dirClusts = zeros(numClusts, ndim);
+
 % Determine cluster centers
 centers = clustSepMean .* (rand(numClusts, ndim) - 0.5);
 
@@ -226,6 +229,7 @@ for i = 1:numClusts
         dirClust = rand(1, ndim) - 0.5;
     end;
     dirClust = dirClust / norm(dirClust);
+    dirClusts(i, :) = dirClust;
 
     % Determine where in the line this cluster's points will be projected
     % using the specified distribution (i.e. points will be projected
