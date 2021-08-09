@@ -15,31 +15,23 @@ function [data, clustNumPoints, idx, centers, dirClusts, lengths] = ...
 %        along straight lines, which can be more or less parallel
 %        depending on the dirStd parameter.
 %
-% === Documentation below is deprecated, to be updated ===
-%
-% [data clustPoints idx centers angles lengths] =
-%    CLUGEN(angleMean, angleStd, numClusts, xClustAvgSep, ...
-%           yClustAvgSep, lengthMean, lengthStd, lateralStd, ...
-%           totalPoints, ...)
+% [data, clustNumPoints, idx, centers, dirClusts, lengths] =
+%    CLUGEN(ndim, numClusts, totalPoints, dirMain, angleStd, ...
+%           clustSepMean,  lengthMean, lengthStd, lateralStd, ...)
 %
 % Required input parameters:
-%    angleMean - Mean angle in radians of the lines on which clusters are
-%                based. Angles are drawn from the normal distribution.
-%     angleStd - Standard deviation of line angles.
-%    numClusts - Number of clusters (and therefore of lines) to generate.
-% xClustAvgSep - Average separation of line centers along the X axis.
-% yClustAvgSep - Average separation of line centers along the Y axis.
-%   lengthMean - Mean length of the lines on which clusters are based.
-%                Line lengths are drawn from the folded normal
-%                distribution.
-%    lengthStd - Standard deviation of line lengths.
-%   lateralStd - Cluster "fatness", i.e., the standard deviation of the
-%                distance from each point to its projection on the
-%                line. The way this distance is obtained is controlled by
-%                the optional 'pointOffset' parameter.
+%         ndim - Number of dimensions.
+%    numClusts - Number of clusters to generate.
 %  totalPoints - Total points in generated data. These will be randomly
 %                divided between clusters using the half-normal
 %                distribution with unit standard deviation.
+%      dirMain - Main direction of clusters (1 x ndim vector).
+%     angleStd - Standard deviation of cluster-supporting line angles.
+% clustSepMean - Mean cluster separation (1 x ndim vector).
+%   lengthMean - Mean length of cluster-supporting lines.
+%    lengthStd - Standard deviation of the length of cluster-supporting 
+%                lines.
+%   lateralStd - Point dispersion from line (i.e. "cluster fatness").
 %
 % Optional named input parameters:
 %   allowEmpty - Allow empty clusters? This value is false by default.
@@ -57,39 +49,42 @@ function [data, clustNumPoints, idx, centers, dirClusts, lengths] = ...
 %                  at their intersection.
 %                - 'nd' (default) places point using a bivariate normal
 %                  distribution centered at the point projection.
+%    clustOffset - Offset to add to all cluster centers. By default equal
+%                  to zeros(1, ndim).
 %
 % Outputs:
-%         data - Matrix (totalPoints x 2) with the generated data.
-%  clustPoints - Vector (numClusts x 1) containing number of points in
-%                each cluster.
-%          idx - Vector (totalPoints x 1) containing the cluster indices
-%                of each point.
-%      centers - Matrix (numClusts x 2) containing centers from where
-%                clusters were generated.
-%       angles - Vector (numClusts x 1) containing the effective angles
-%                of the lines used to generate clusters.
-%      lengths - Vector (numClusts x 1) containing the effective lengths
-%                of the lines used to generate clusters.
+%          data - Matrix (totalPoints x ndim) with the generated data.
+%clustNumPoints - Vector (numClusts x 1) containing number of points in
+%                 each cluster.
+%           idx - Vector (totalPoints x 1) containing the cluster indices
+%                 of each point.
+%       centers - Matrix (numClusts x 2) containing cluster centers, or
+%                 more specifically, the centers of the cluster-supporting
+%                 lines.
+%     dirClusts - Vector (numClusts x ndims) containing the vectors which
+%                 define the angle cluster-supporting lines.
+%       lengths - Vector (numClusts x 1) containing the lengths of the
+%                 cluster-supporting lines.
 %
 % ----------------------------------------------------------
 % Usage example:
 %
-%   [data cp idx] = CLUGEN(pi / 2, pi / 8, 5, 15, 15, 5, 1, 2, 200);
+%   [data, np, idx] = clugen(3, 4, 1000, [1 0 0], 0.1, [20 15 35], 12, 4, 0.5);
 %
-% This creates 5 clusters with a total of 200 points, with a mean angle
-% of pi/2 (std=pi/8), separated in average by 15 units in both x and y
-% directions, with mean length of 5 units (std=1) and a "fatness" or
-% spread of 2 units.
+% This creates 4 clusters in 3D space with a total of 1000 points, with a
+% main direction of [1 0 0] (along the x-axis), with an angle standard
+% deviation of 0.1, average cluster separation of [20 15 35], mean length
+% of cluster-supporting lines of 12 (std of 4), and lateralStd of 0.5.
 %
 % The following command plots the generated clusters:
 %
-%   scatter(data(:, 1), data(:, 2), 8, idx);
+%   scatter(data(:, 1), data(:, 2), data(:,3), 8, idx);
 
-% Copyright (c) 2012-2020 Nuno Fachada
+% Copyright (c) 2012-2021 Nuno Fachada
 % Distributed under the MIT License (See accompanying file LICENSE or copy
 % at http://opensource.org/licenses/MIT)
 %
-% Reference:
+% Reference (TODO Update with new paper):
 % Fachada, N., & Rosa, A. C. (2020). generateData—A 2D data generator.
 % Software Impacts, 4:100017. doi: 10.1016/j.simpa.2020.100017
 
@@ -207,7 +202,7 @@ idx = zeros(totalPoints, 1);
 dirClusts = zeros(numClusts, ndim);
 
 % Determine cluster centers
-centers = clustSepMean .* (rand(numClusts, ndim) - 0.5);
+centers = clustSepMean .* (rand(numClusts, ndim) - 0.5) + p.Results.clustOffset;
 
 % Determine length of lines where clusters will be formed around
 % Line lengths are drawn from the folded normal distribution
