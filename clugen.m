@@ -37,16 +37,15 @@ function [data, clustNumPoints, idx, centers, dirClusts, lengths] = ...
 %   allowEmpty - Allow empty clusters? This value is false by default.
 %    pointDist - Specifies the distribution of points along lines, with
 %                two possible values:
-%                - 'unif' (default) distributes points uniformly along
-%                  lines.
-%                - 'norm' distribute points along lines using a normal
-%                  distribution (line center is the mean and the line
-%                  length is equal to 3 standard deviations).
+%                - 'norm' (default) distribute points along lines using a
+%                  normal distribution (line center is the mean and the
+%                  line length is equal to 3 standard deviations).
+%                - 'unif' distributes points uniformly along lines.
 %  pointOffset - Controls how points are created from their projections
 %                on the lines, with two possible values:
-%                - 'nd-1' places points on a second line perpendicular to
-%                  the cluster line using a normal distribution centered
-%                  at their intersection.
+%                - 'nd-1' (default) places points on a second line
+%                  perpendicular to the cluster line using a normal
+%                  distribution centered at their intersection.
 %                - 'nd' (default) places point using a bivariate normal
 %                  distribution centered at the point projection.
 %    clustOffset - Offset to add to all cluster centers. By default equal
@@ -116,7 +115,7 @@ addParameter(p, 'clustOffset', zeros(1, ndim), ...
     @(x) isnumeric(x) && all(size(x) == [1 ndim]));
 addParameter(p, 'allowEmpty', false, ...
     @(x) isscalar(x) && isa(x, 'logical'));
-addParameter(p, 'pointDist', pointDists{1}, ...
+addParameter(p, 'pointDist', pointDists{2}, ...
     @(x) any(validatestring(x, pointDists)));
 addParameter(p, 'pointOffset', pointOffsets{2}, ...
     @(x) any(validatestring(x, pointOffsets)));
