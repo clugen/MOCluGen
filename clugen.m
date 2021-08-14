@@ -3,7 +3,7 @@ function [data, clustNumPoints, idx, centers, dirClusts, lengths] = ...
         ndim, ...
         numClusts, ...
         totalPoints, ...
-        dirMain, ...
+        base_direction, ...
         angleStd, ...
         clustSepMean, ...
         lengthMean, ...
@@ -16,57 +16,78 @@ function [data, clustNumPoints, idx, centers, dirClusts, lengths] = ...
 %        depending on the dirStd parameter.
 %
 % [data, clustNumPoints, idx, centers, dirClusts, lengths] =
-%    CLUGEN(ndim, numClusts, totalPoints, dirMain, angleStd, ...
+%    CLUGEN(ndim, numClusts, totalPoints, base_direction, angleStd, ...
 %           clustSepMean,  lengthMean, lengthStd, lateralStd, ...)
 %
-% Required input parameters:
-%         ndim - Number of dimensions.
-%    numClusts - Number of clusters to generate.
-%  totalPoints - Total points in generated data. These will be randomly
-%                divided between clusters using the half-normal
-%                distribution with unit standard deviation.
-%      dirMain - Main direction of clusters (1 x ndim vector).
-%     angleStd - Standard deviation of cluster-supporting line angles.
-% clustSepMean - Mean cluster separation (1 x ndim vector).
-%   lengthMean - Mean length of cluster-supporting lines.
-%    lengthStd - Standard deviation of the length of cluster-supporting 
-%                lines.
-%   lateralStd - Point dispersion from line (i.e. "cluster fatness").
+% Required input parameters
+% -------------------------
 %
-% Optional named input parameters:
-%   allowEmpty - Allow empty clusters? This value is false by default.
-%    pointDist - Specifies the distribution of points along lines, with
-%                two possible values:
-%                - 'norm' (default) distribute points along lines using a
-%                  normal distribution (line center is the mean and the
-%                  line length is equal to 3 standard deviations).
-%                - 'unif' distributes points uniformly along lines.
-%  pointOffset - Controls how points are created from their projections
-%                on the lines, with two possible values:
-%                - 'nd-1' (default) places points on a second line
-%                  perpendicular to the cluster line using a normal
-%                  distribution centered at their intersection.
-%                - 'nd' (default) places point using a bivariate normal
-%                  distribution centered at the point projection.
-%    clustOffset - Offset to add to all cluster centers. By default equal
-%                  to zeros(1, ndim).
+% ndim
+%     Number of dimensions (integer).
+% numClusts
+%     Number of clusters to generate (integer).
+% totalPoints
+%     Total points in generated data (integer). These will be randomly
+%     divided between clusters using the half-normal distribution with unit
+%     standard deviation.
+% base_direction
+%     Main direction of clusters (1 x ndim vector).
+% angleStd
+%     Standard deviation of cluster-supporting line angles (float).
+% clustSepMean
+%     Mean cluster separation (1 x ndim vector).
+% lengthMean
+%     Mean length of cluster-supporting lines (integer).
+% lengthStd
+%     Standard deviation of the length of cluster-supporting lines (float).
+% lateralStd
+%     Point dispersion from line, i.e. "cluster fatness" (integer).
 %
-% Outputs:
-%          data - Matrix (totalPoints x ndim) with the generated data.
-%clustNumPoints - Vector (numClusts x 1) containing number of points in
-%                 each cluster.
-%           idx - Vector (totalPoints x 1) containing the cluster indices
-%                 of each point.
-%       centers - Matrix (numClusts x 2) containing cluster centers, or
-%                 more specifically, the centers of the cluster-supporting
-%                 lines.
-%     dirClusts - Vector (numClusts x ndims) containing the vectors which
-%                 define the angle cluster-supporting lines.
-%       lengths - Vector (numClusts x 1) containing the lengths of the
-%                 cluster-supporting lines.
+% Optional named input parameters
+% -------------------------------
 %
-% ----------------------------------------------------------
-% Usage example:
+% allowEmpty
+%    Allow empty clusters? This value is false by default (bool).
+% pointDist
+%    Specifies the distribution of points along lines, with two possible
+%    values:
+%    - 'norm' (default) distribute points along lines using a normal
+%      distribution (line center is the mean and the line length is equal
+%      to 3 standard deviations).
+%    - 'unif' distributes points uniformly along lines.
+% pointOffset
+%    Controls how points are created from their projections on the lines,
+%    with two possible values:
+%    - 'nd-1' (default) places points on a second line perpendicular to the
+%      cluster line using a normal distribution centered at their
+%      intersection.
+%    - 'nd' (default) places point using a bivariate normal distribution
+%      centered at the point projection.
+% clustOffset
+%    Offset to add to all cluster centers. By default equal to
+%    zeros(1, ndim).
+%
+% Outputs
+% -------
+%
+% data
+%     Matrix (totalPoints x ndim) with the generated data.
+% clustNumPoints
+%     Vector (numClusts x 1) containing number of points in each cluster.
+% idx
+%     Vector (totalPoints x 1) containing the cluster indices of each
+%     point.
+% centers
+%     Matrix (numClusts x 2) containing cluster centers, or more
+%     specifically, the centers of the cluster-supporting lines.
+% dirClusts
+%     Vector (numClusts x ndims) containing the vectors which define the
+%     angle cluster-supporting lines.
+% lengths - Vector (numClusts x 1) containing the lengths of the
+%     cluster-supporting lines.
+%
+% Usage example
+% -------------
 %
 %   [data, np, idx] = clugen(3, 4, 1000, [1 0 0], 0.1, [20 15 35], 12, 4, 0.5);
 %
@@ -77,7 +98,7 @@ function [data, clustNumPoints, idx, centers, dirClusts, lengths] = ...
 %
 % The following command plots the generated clusters:
 %
-%   scatter(data(:, 1), data(:, 2), data(:,3), 8, idx);
+%   scatter3(data(:, 1), data(:, 2), data(:,3), 8, idx);
 
 % Copyright (c) 2012-2021 Nuno Fachada
 % Distributed under the MIT License (See accompanying file LICENSE or copy
@@ -99,7 +120,7 @@ addRequired(p, 'numClusts', ...
     @(x) isnumeric(x) && isscalar(x) && (x > 0) && (mod(x, 1) == 0));
 addRequired(p, 'totalPoints', ...
     @(x) isnumeric(x) && isscalar(x) && (x > 0) && (mod(x, 1) == 0));
-addRequired(p, 'dirMain', ...
+addRequired(p, 'base_direction', ...
     @(x) isnumeric(x) && all(size(x) == [1 ndim]));
 addRequired(p, 'angleStd', ...
     @(x) isnumeric(x) && isscalar(x));
@@ -120,7 +141,7 @@ addParameter(p, 'pointDist', pointDists{2}, ...
 addParameter(p, 'pointOffset', pointOffsets{2}, ...
     @(x) any(validatestring(x, pointOffsets)));
 
-parse(p, ndim, numClusts, totalPoints, dirMain, angleStd, clustSepMean, ...
+parse(p, ndim, numClusts, totalPoints, base_direction, angleStd, clustSepMean, ...
     lengthMean, lengthStd, lateralStd, varargin{:});
 
 % If allowEmpty is false, make sure there are enough points to distribute
@@ -144,8 +165,8 @@ else
     error('Invalid program state');
 end;
 
-% Normalize dirMain
-dirMain = dirMain / norm(dirMain);
+% Normalize base_direction
+base_direction = base_direction / norm(base_direction);
 
 % Determine number of points in each cluster using the half-normal
 % distribution (with std=1)
@@ -214,11 +235,11 @@ angles = angleStd * randn(numClusts, 1);
 for i = 1:numClusts
     
     % Get a random normalized vector orthogonal to main direction
-    dirMainOrtho = getRandOrthoVec(dirMain);
+    base_directionOrtho = getRandOrthoVec(base_direction);
     % TODO The 'nd' option
     % Determine normalized cluster direction
     if abs(angles(i)) < pi/2
-        dirClust = dirMain + dirMainOrtho * tan(angles(i));
+        dirClust = base_direction + base_directionOrtho * tan(angles(i));
     else
         dirClust = rand(1, ndim) - 0.5;
     end;
