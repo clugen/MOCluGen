@@ -171,6 +171,10 @@ function [data, clustNumPoints, idx, centers, dirClusts, lengths] = ...
     % Determine cluster sizes
     clustNumPoints = cluster_sizes(numClusts, totalPoints, p.Results.allowEmpty);
 
+    % Determine cluster centers
+    centers = numClusts * (rand(numClusts, ndim) - 0.5) * diag(clustSepMean) ...
+        .+ p.Results.clustOffset;
+
     % Obtain the cumulative sum vector of point counts in each cluster
     cumSumPoints = [0; cumsum(clustNumPoints)];
 
@@ -183,9 +187,6 @@ function [data, clustNumPoints, idx, centers, dirClusts, lengths] = ...
     % Initialize dirClusts (matrix containing the direction of each cluster)
     dirClusts = zeros(numClusts, ndim);
 
-    % Determine cluster centers
-    centers = clustSepMean .* (rand(numClusts, ndim) - 0.5) + p.Results.clustOffset;
-
     % Determine length of lines where clusters will be formed around
     % Line lengths are drawn from the folded normal distribution
     lengths = abs(lengthMean + lengthStd * randn(numClusts, 1));
@@ -195,7 +196,7 @@ function [data, clustNumPoints, idx, centers, dirClusts, lengths] = ...
 
     % Create clusters
     for i = 1:numClusts
-        
+
         % Get a random normalized vector orthogonal to main direction
         base_directionOrtho = getRandOrthoVec(base_direction);
         % TODO The 'nd' option
@@ -211,7 +212,7 @@ function [data, clustNumPoints, idx, centers, dirClusts, lengths] = ...
         % Determine where in the line this cluster's points will be projected
         % using the specified distribution (i.e. points will be projected
         % along the line using either the uniform or normal distribution)
-        
+
         % Determine distance of points projections from the center of the line
         ptProjDistFromCent = distfun(lengths(i), clustNumPoints(i));
 
@@ -225,7 +226,7 @@ function [data, clustNumPoints, idx, centers, dirClusts, lengths] = ...
             points_dist = lateralStd * randn(clustNumPoints(i), 1);
 
             % Get normalized vectors, orthogonal to the current line, for
-            % each point 
+            % each point
             % TODO: Vectorize this loop (but is it worth it since it needs access to global(locked?) PRNG?)
             orthVecs = zeros(clustNumPoints(i), ndim);
             for j = 1:clustNumPoints(i)
@@ -240,7 +241,7 @@ function [data, clustNumPoints, idx, centers, dirClusts, lengths] = ...
             points = ptProj + orthVecs;
 
         elseif strcmp(p.Results.pointOffset, 'nd')
-            
+
             % Get random displacement vectors for each point projection
             displ = lateralStd * randn(clustNumPoints(i), ndim);
 
@@ -260,8 +261,8 @@ function [data, clustNumPoints, idx, centers, dirClusts, lengths] = ...
     end;
 
 end % function
-    
-% 
+
+%
 % Function which returns a random normalized vector orthogonal to u
 %
 function v = getRandOrthoVec(u)
@@ -330,5 +331,5 @@ function clust_num_points = cluster_sizes(num_clusters, total_points, allow_empt
             end;
         end;
     end;
-    
+
 end %function
