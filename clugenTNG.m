@@ -169,11 +169,12 @@ function [data, clustNumPoints, idx, centers, dirClusts, lengths] = ...
     base_direction = base_direction / norm(base_direction);
 
     % Determine cluster sizes
-    clustNumPoints = cluster_sizes(numClusts, totalPoints, p.Results.allowEmpty);
+    clustNumPoints = clusizes(numClusts, totalPoints, p.Results.allowEmpty);
 
     % Determine cluster centers
-    centers = numClusts * (rand(numClusts, ndim) - 0.5) * diag(clustSepMean) ...
-        .+ p.Results.clustOffset';
+    centers = clucenters(...
+        numClusts, clustSepMean, p.Results.clustOffset, ...
+        @() rand(numClusts, ndim) - 0.5);
 
     % Obtain the cumulative sum vector of point counts in each cluster
     cumSumPoints = [0; cumsum(clustNumPoints)];
@@ -287,9 +288,9 @@ function v = getRandOrthoVec(u)
 end % function
 
 %
-% Function which determines cluster sizes
+% Determine cluster sizes
 %
-function clust_num_points = cluster_sizes(num_clusters, total_points, allow_empty)
+function clust_num_points = clusizes(num_clusters, total_points, allow_empty)
 
     % Determine number of points in each cluster using the half-normal
     % distribution (with std=1)
@@ -333,3 +334,12 @@ function clust_num_points = cluster_sizes(num_clusters, total_points, allow_empt
     end;
 
 end %function
+
+%
+% Determine cluster centers.
+%
+function clust_centers = clucenters(num_clusters, cluster_sep, offset, distfun)
+
+    clust_centers = num_clusters * distfun() * diag(cluster_sep) .+ offset';
+
+end % function
