@@ -168,13 +168,19 @@ function [data, clustNumPoints, idx, centers, dirClusts, lengths] = ...
     % Normalize base_direction
     base_direction = base_direction / norm(base_direction);
 
-    % Determine cluster sizes
-    clustNumPoints = clusizes(numClusts, totalPoints, p.Results.allowEmpty);
+    % Determine cluster sizes using the half-normal distribution (with std=1)
+    clustNumPoints = clusizes(...
+        totalPoints, p.Results.allowEmpty, ...
+        @() abs(randn(numClusts, 1)));
 
-    % Determine cluster centers
+    % Determine cluster centers using the uniform distribution between -0.5 and 0.5
     centers = clucenters(...
         numClusts, clustSepMean, p.Results.clustOffset, ...
         @() rand(numClusts, ndim) - 0.5);
+
+    % Determine length of lines supporting clusters
+    % Line lengths are drawn from the folded normal distribution
+    lengths = abs(lengthMean + lengthStd * randn(numClusts, 1));
 
     % Obtain the cumulative sum vector of point counts in each cluster
     cumSumPoints = [0; cumsum(clustNumPoints)];
@@ -187,10 +193,6 @@ function [data, clustNumPoints, idx, centers, dirClusts, lengths] = ...
 
     % Initialize dirClusts (matrix containing the direction of each cluster)
     dirClusts = zeros(numClusts, ndim);
-
-    % Determine length of lines where clusters will be formed around
-    % Line lengths are drawn from the folded normal distribution
-    lengths = abs(lengthMean + lengthStd * randn(numClusts, 1));
 
     % Obtain angles between main direction and cluster supporting directions
     angles = angleStd * randn(numClusts, 1);
@@ -290,11 +292,12 @@ end % function
 %
 % Determine cluster sizes
 %
-function clust_num_points = clusizes(num_clusters, total_points, allow_empty)
+% Note that dist_fun should return a n x 1 array of non-negative numbers where
+% n is the desired number of clusters.
+function clust_num_points = clusizes(total_points, allow_empty, dist_fun)
 
-    % Determine number of points in each cluster using the half-normal
-    % distribution (with std=1)
-    clust_num_points = abs(randn(num_clusters, 1));
+    % Determine number of points in each cluster
+    clust_num_points = dist_fun();
     clust_num_points = clust_num_points / sum(clust_num_points);
     clust_num_points = round(clust_num_points * total_points);
 
@@ -338,6 +341,7 @@ end %function
 %
 % Determine cluster centers.
 %
+% Note that dist_fun should return a num_clusters * num_dims matrix.
 function clust_centers = clucenters(num_clusters, cluster_sep, offset, distfun)
 
     clust_centers = num_clusters * distfun() * diag(cluster_sep) .+ offset';
