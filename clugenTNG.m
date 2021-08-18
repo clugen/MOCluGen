@@ -269,12 +269,16 @@ end % function
 %
 % Function which returns a random normalized vector orthogonal to u
 %
+% u is expected to be a unit vector
 function v = getRandOrthoVec(u)
 
     % Find a random, non-parallel vector to u
     while 1
-        % Find random vector
+
+        % Find normalized random vector
         v = rand(1, numel(u)) - 0.5;
+        v = v / norm(v);
+
         % Is it not parallel to u?
         if abs(dot(v, u)) < (1 - eps)
             % Then we like it, break the cycle
@@ -283,7 +287,7 @@ function v = getRandOrthoVec(u)
     end;
 
     % Get vector orthogonal to u using 1st iteration of Gram-Schmidt process
-    v = v - dot(v, u) / dot(u, u) * u;
+    v = v - dot(u, v) / dot(u, u) * u;
 
     % Normalize it
     v = v / norm(v);
