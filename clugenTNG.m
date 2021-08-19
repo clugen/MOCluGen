@@ -137,7 +137,7 @@ function [data, clust_num_points, idx, centers, clust_dirs, lengths] = ...
     addParameter(p, 'allow_empty', false, ...
         @(x) isscalar(x) && isa(x, 'logical'));
     addParameter(p, 'point_dist', point_dists{2}, ...
-        @(x) any(validatestring(x, point_dists)));
+        @(x) isa(x, 'function_handle') || any(validatestring(x, point_dists)));
     addParameter(p, 'point_offset', point_offsets{2}, ...
         @(x) any(validatestring(x, point_offsets)));
 
@@ -152,13 +152,16 @@ function [data, clust_num_points, idx, centers, clust_dirs, lengths] = ...
             'for empty clusters.']);
     end;
 
-    % Check what point_dist was specified
-    if strcmp(p.Results.point_dist, 'unif')
-        % Use uniform distribution of points along lines
+    % What distribution to use for point projections along cluster-supporting lines?
+    if isa(p.Results.point_dist, 'function_handle')
+        % Use user-defined distribution; assume function returns num_dims x 1 vectors
+        distfun = p.Results.point_dist;
+    elseif strcmp(p.Results.point_dist, 'unif')
+        % Point projections will be uniformly placed along cluster-supporting lines
         distfun = @(len, n) len * rand(n, 1) - len / 2;
     elseif strcmp(p.Results.point_dist, 'norm')
-        % Use normal distribution of points along lines, mean equal to line
-        % center, standard deviation equal to 1/6 of line length
+        % Use normal distribution for placing point projections along cluster-supporting
+        % lines, mean equal to line center, standard deviation equal to 1/6 of line length
         distfun = @(len, n) len * randn(n, 1) / 6;
     else
         % We should never get here
