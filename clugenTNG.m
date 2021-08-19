@@ -1,4 +1,4 @@
-function [data, clustNumPoints, idx, centers, dirClusts, lengths] = ...
+function [data, clustNumPoints, idx, centers, clust_dirs, lengths] = ...
     clugenTNG( ...
         ndim, ...
         num_clusters, ...
@@ -15,7 +15,7 @@ function [data, clustNumPoints, idx, centers, dirClusts, lengths] = ...
 %        along straight lines, which can be more or less parallel
 %        depending on the dirStd parameter.
 %
-% [data, clustNumPoints, idx, centers, dirClusts, lengths] =
+% [data, clustNumPoints, idx, centers, clust_dirs, lengths] =
 %    CLUGEN(ndim, num_clusters, total_points, base_direction, angle_std, ...
 %           clust_sep,  lengthMean, lengthStd, lateralStd, ...)
 %
@@ -80,7 +80,7 @@ function [data, clustNumPoints, idx, centers, dirClusts, lengths] = ...
 % centers
 %     Matrix (num_clusters x 2) containing cluster centers, or more
 %     specifically, the centers of the cluster-supporting lines.
-% dirClusts
+% clust_dirs
 %     Vector (num_clusters x ndims) containing the vectors which define the
 %     angle cluster-supporting lines.
 % lengths - Vector (num_clusters x 1) containing the lengths of the
@@ -195,15 +195,15 @@ function [data, clustNumPoints, idx, centers, dirClusts, lengths] = ...
     % Initialize idx (vector containing the cluster indices of each point)
     idx = zeros(total_points, 1);
 
-    % Initialize dirClusts (matrix containing the direction of each cluster)
-    dirClusts = zeros(num_clusters, ndim);
+    % Initialize clust_dirs (matrix containing the direction of each cluster)
+    clust_dirs = zeros(num_clusters, ndim);
 
     % Create clusters
     for i = 1:num_clusters
 
         % Determine normalized cluster direction
         dirClust = rand_vector_at_angle(base_direction, angles(i));
-        dirClusts(i, :) = dirClust';
+        clust_dirs(i, :) = dirClust';
 
         % Determine where in the line this cluster's points will be projected
         % using the specified distribution (i.e. points will be projected
@@ -361,7 +361,7 @@ end % function
 % `angle` should be in radians
 function v = rand_vector_at_angle(u, angle)
 
-    if -pi/2 < angle < pi/2
+    if -pi/2 < angle < pi/2 && numel(u) > 1
         v = u + rand_ortho_vector(u) * tan(angle);
     else
         v = rand_unit_vector(numel(u))
