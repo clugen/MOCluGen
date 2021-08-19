@@ -1,28 +1,28 @@
-function [data, clustNumPoints, idx, centers, clust_dirs, lengths] = ...
+function [data, clust_num_points, idx, centers, clust_dirs, lengths] = ...
     clugenTNG( ...
-        ndim, ...
+        num_dims, ...
         num_clusters, ...
         total_points, ...
-        base_direction, ...
+        direction, ...
         angle_std, ...
         clust_sep, ...
-        lengthMean, ...
-        lengthStd, ...
-        lateralStd, ...
+        line_length, ...
+        line_length_std, ...
+        lateral_std, ...
         varargin ...
     )
 % CLUGEN Generates multidimensional data for clustering. Data is created
 %        along straight lines, which can be more or less parallel
 %        depending on the dirStd parameter.
 %
-% [data, clustNumPoints, idx, centers, clust_dirs, lengths] =
-%    CLUGEN(ndim, num_clusters, total_points, base_direction, angle_std, ...
-%           clust_sep,  lengthMean, lengthStd, lateralStd, ...)
+% [data, clust_num_points, idx, centers, clust_dirs, lengths] =
+%    CLUGEN(num_dims, num_clusters, total_points, direction, angle_std, ...
+%           clust_sep,  line_length, line_length_std, lateral_std, ...)
 %
 % Required input parameters
 % -------------------------
 %
-% ndim
+% num_dims
 %     Number of dimensions (integer).
 % num_clusters
 %     Number of clusters to generate (integer).
@@ -30,49 +30,49 @@ function [data, clustNumPoints, idx, centers, clust_dirs, lengths] = ...
 %     Total points in generated data (integer). These will be randomly
 %     divided between clusters using the half-normal distribution with unit
 %     standard deviation.
-% base_direction
-%     Main direction of clusters (ndim x 1 vector).
+% direction
+%     Main direction of clusters (num_dims x 1 vector).
 % angle_std
 %     Standard deviation of cluster-supporting line angles (float).
 % clust_sep
-%     Mean cluster separation (ndim x 1 vector).
-% lengthMean
+%     Mean cluster separation (num_dims x 1 vector).
+% line_length
 %     Mean length of cluster-supporting lines (integer).
-% lengthStd
+% line_length_std
 %     Standard deviation of the length of cluster-supporting lines (float).
-% lateralStd
+% lateral_std
 %     Point dispersion from line, i.e. "cluster fatness" (integer).
 %
 % Optional named input parameters
 % -------------------------------
 %
-% allowEmpty
+% allow_empty
 %    Allow empty clusters? This value is false by default (bool).
-% pointDist
+% point_dist
 %    Specifies the distribution of points along lines, with two possible
 %    values:
 %    - 'norm' (default) distribute points along lines using a normal
 %      distribution (line center is the mean and the line length is equal
 %      to 3 standard deviations).
 %    - 'unif' distributes points uniformly along lines.
-% pointOffset
+% point_offset
 %    Controls how points are created from their projections on the lines,
 %    with two possible values:
-%    - 'nd-1' (default) places points on a second line perpendicular to the
+%    - 'd-1' (default) places points on a second line perpendicular to the
 %      cluster line using a normal distribution centered at their
 %      intersection.
-%    - 'nd' (default) places point using a bivariate normal distribution
+%    - 'd' (default) places point using a bivariate normal distribution
 %      centered at the point projection.
-% clustOffset
+% cluster_offset
 %    Offset to add to all cluster centers. By default equal to
-%    zeros(ndim, 1).
+%    zeros(num_dims, 1).
 %
 % Outputs
 % -------
 %
 % data
-%     Matrix (total_points x ndim) with the generated data.
-% clustNumPoints
+%     Matrix (total_points x num_dims) with the generated data.
+% clust_num_points
 %     Vector (num_clusters x 1) containing number of points in each cluster.
 % idx
 %     Vector (total_points x 1) containing the cluster indices of each
@@ -81,7 +81,7 @@ function [data, clustNumPoints, idx, centers, clust_dirs, lengths] = ...
 %     Matrix (num_clusters x 2) containing cluster centers, or more
 %     specifically, the centers of the cluster-supporting lines.
 % clust_dirs
-%     Vector (num_clusters x ndims) containing the vectors which define the
+%     Vector (num_clusters x num_dims) containing the vectors which define the
 %     angle cluster-supporting lines.
 % lengths - Vector (num_clusters x 1) containing the lengths of the
 %     cluster-supporting lines.
@@ -94,7 +94,7 @@ function [data, clustNumPoints, idx, centers, clust_dirs, lengths] = ...
 % This creates 4 clusters in 3D space with a total of 1000 points, with a
 % main direction of [1 0 0] (along the x-axis), with an angle standard
 % deviation of 0.1, average cluster separation of [20 15 35], mean length
-% of cluster-supporting lines of 12 (std of 4), and lateralStd of 0.5.
+% of cluster-supporting lines of 12 (std of 4), and lateral_std of 0.5.
 %
 % The following command plots the generated clusters:
 %
@@ -109,54 +109,54 @@ function [data, clustNumPoints, idx, centers, clust_dirs, lengths] = ...
 % Software Impacts, 4:100017. doi: 10.1016/j.simpa.2020.100017
 
     % Known distributions for sampling points along lines
-    pointDists = {'unif', 'norm'};
-    pointOffsets = {'nd', 'nd-1'};
+    point_dists = {'unif', 'norm'};
+    point_offsets = {'d', 'd-1'};
 
     % Perform input validation
     p = inputParser;
-    addRequired(p, 'ndim', ...
+    addRequired(p, 'num_dims', ...
         @(x) isnumeric(x) && isscalar(x) && (x > 0) && (mod(x, 1) == 0));
     addRequired(p, 'num_clusters', ...
         @(x) isnumeric(x) && isscalar(x) && (x > 0) && (mod(x, 1) == 0));
     addRequired(p, 'total_points', ...
         @(x) isnumeric(x) && isscalar(x) && (x > 0) && (mod(x, 1) == 0));
-    addRequired(p, 'base_direction', ...
-        @(x) isnumeric(x) && all(size(x) == [ndim 1]));
+    addRequired(p, 'direction', ...
+        @(x) isnumeric(x) && all(size(x) == [num_dims 1]));
     addRequired(p, 'angle_std', ...
         @(x) isnumeric(x) && isscalar(x));
     addRequired(p, 'clust_sep', ...
-        @(x) isnumeric(x) && all(size(x) == [ndim 1]));
-    addRequired(p, 'lengthMean', ...
+        @(x) isnumeric(x) && all(size(x) == [num_dims 1]));
+    addRequired(p, 'line_length', ...
         @(x) isnumeric(x) && isscalar(x) && (x >= 0));
-    addRequired(p, 'lengthStd', ...
+    addRequired(p, 'line_length_std', ...
         @(x) isnumeric(x) && isscalar(x) && (x >= 0));
-    addRequired(p, 'lateralStd', ...
+    addRequired(p, 'lateral_std', ...
         @(x) isnumeric(x) && isscalar(x) && (x >= 0));
-    addParameter(p, 'clustOffset', zeros(ndim, 1), ...
-        @(x) isnumeric(x) && all(size(x) == [ndim 1]));
-    addParameter(p, 'allowEmpty', false, ...
+    addParameter(p, 'cluster_offset', zeros(num_dims, 1), ...
+        @(x) isnumeric(x) && all(size(x) == [num_dims 1]));
+    addParameter(p, 'allow_empty', false, ...
         @(x) isscalar(x) && isa(x, 'logical'));
-    addParameter(p, 'pointDist', pointDists{2}, ...
-        @(x) any(validatestring(x, pointDists)));
-    addParameter(p, 'pointOffset', pointOffsets{2}, ...
-        @(x) any(validatestring(x, pointOffsets)));
+    addParameter(p, 'point_dist', point_dists{2}, ...
+        @(x) any(validatestring(x, point_dists)));
+    addParameter(p, 'point_offset', point_offsets{2}, ...
+        @(x) any(validatestring(x, point_offsets)));
 
-    parse(p, ndim, num_clusters, total_points, base_direction, angle_std, ...
-        clust_sep, lengthMean, lengthStd, lateralStd, varargin{:});
+    parse(p, num_dims, num_clusters, total_points, direction, angle_std, ...
+        clust_sep, line_length, line_length_std, lateral_std, varargin{:});
 
-    % If allowEmpty is false, make sure there are enough points to distribute
+    % If allow_empty is false, make sure there are enough points to distribute
     % by the clusters
-    if ~p.Results.allowEmpty && total_points < num_clusters
+    if ~p.Results.allow_empty && total_points < num_clusters
         error(['Number of points must be equal or larger than the ' ...
-            'number of clusters. Set ''allowEmpty'' to true to allow ' ...
+            'number of clusters. Set ''allow_empty'' to true to allow ' ...
             'for empty clusters.']);
     end;
 
-    % Check what pointDist was specified
-    if strcmp(p.Results.pointDist, 'unif')
+    % Check what point_dist was specified
+    if strcmp(p.Results.point_dist, 'unif')
         % Use uniform distribution of points along lines
         distfun = @(len, n) len * rand(n, 1) - len / 2;
-    elseif strcmp(p.Results.pointDist, 'norm')
+    elseif strcmp(p.Results.point_dist, 'norm')
         % Use normal distribution of points along lines, mean equal to line
         % center, standard deviation equal to 1/6 of line length
         distfun = @(len, n) len * randn(n, 1) / 6;
@@ -165,84 +165,84 @@ function [data, clustNumPoints, idx, centers, clust_dirs, lengths] = ...
         error('Invalid program state');
     end;
 
-    % Normalize base_direction
-    base_direction = base_direction / norm(base_direction);
+    % Normalize direction
+    direction = direction / norm(direction);
 
     % Determine cluster sizes using the half-normal distribution (with std=1)
-    clustNumPoints = clusizes(...
-        total_points, p.Results.allowEmpty, ...
+    clust_num_points = clusizes(...
+        total_points, p.Results.allow_empty, ...
         @() abs(randn(num_clusters, 1)));
 
     % Determine cluster centers using the uniform distribution between -0.5 and 0.5
     centers = clucenters(...
-        num_clusters, clust_sep, p.Results.clustOffset, ...
-        @() rand(num_clusters, ndim) - 0.5);
+        num_clusters, clust_sep, p.Results.cluster_offset, ...
+        @() rand(num_clusters, num_dims) - 0.5);
 
     % Determine length of lines supporting clusters
     % Line lengths are drawn from the folded normal distribution
-    lengths = abs(lengthMean + lengthStd * randn(num_clusters, 1));
+    lengths = abs(line_length + line_length_std * randn(num_clusters, 1));
 
     % Obtain angles between main direction and cluster-supporting lines
     % using the normal distribution (mean=0, std=angle_std)
     angles = angle_std * randn(num_clusters, 1);
 
     % Obtain the cumulative sum vector of point counts in each cluster
-    cumSumPoints = [0; cumsum(clustNumPoints)];
+    cumsum_points = [0; cumsum(clust_num_points)];
 
     % Initialize data matrix
-    data = zeros(sum(clustNumPoints), ndim);
+    data = zeros(sum(clust_num_points), num_dims);
 
     % Initialize idx (vector containing the cluster indices of each point)
     idx = zeros(total_points, 1);
 
     % Initialize clust_dirs (matrix containing the direction of each cluster)
-    clust_dirs = zeros(num_clusters, ndim);
+    clust_dirs = zeros(num_clusters, num_dims);
 
     % Create clusters
     for i = 1:num_clusters
 
         % Determine normalized cluster direction
-        dirClust = rand_vector_at_angle(base_direction, angles(i));
-        clust_dirs(i, :) = dirClust';
+        clust_dirs(i, :) = rand_vector_at_angle(direction, angles(i))';
 
         % Determine where in the line this cluster's points will be projected
         % using the specified distribution (i.e. points will be projected
         % along the line using either the uniform or normal distribution)
 
         % Determine distance of points projections from the center of the line
-        ptProjDistFromCent = distfun(lengths(i), clustNumPoints(i));
+        ptproj_dist_center = distfun(lengths(i), clust_num_points(i));
 
         % Determine coordinates of point projections on the line using
-        % the parametric line equation (this works since dirClust is normalized)
-        ptProj = centers(i, :) + ptProjDistFromCent * dirClust';
+        % the parametric line equation (this works since cluster direction is
+        % normalized)
+        ptproj = centers(i, :) + ptproj_dist_center * clust_dirs(i, :);
 
-        if strcmp(p.Results.pointOffset, 'nd-1')
+        if strcmp(p.Results.point_offset, 'd-1')
 
             % Get distances from points to their projections on the line
-            points_dist = lateralStd * randn(clustNumPoints(i), 1);
+            points_dist = lateral_std * randn(clust_num_points(i), 1);
 
             % Get normalized vectors, orthogonal to the current line, for
             % each point
             % TODO: Vectorize this loop (but is it worth it since it needs access to global(locked?) PRNG?)
-            orthVecs = zeros(clustNumPoints(i), ndim);
-            for j = 1:clustNumPoints(i)
-                orthVecs(j, :) = rand_ortho_vector(dirClust)';
+            orth_vecs = zeros(clust_num_points(i), num_dims);
+            for j = 1:clust_num_points(i)
+                orth_vecs(j, :) = rand_ortho_vector(clust_dirs(i, :)')';
             end;
 
             % Set vector magnitudes
-            orthVecs = abs(points_dist) .* orthVecs;
+            orth_vecs = abs(points_dist) .* orth_vecs;
 
             % Add perpendicular vectors to point projections on the line,
             % yielding final cluster points
-            points = ptProj + orthVecs;
+            points = ptproj + orth_vecs;
 
-        elseif strcmp(p.Results.pointOffset, 'nd')
+        elseif strcmp(p.Results.point_offset, 'd')
 
             % Get random displacement vectors for each point projection
-            displ = lateralStd * randn(clustNumPoints(i), ndim);
+            displ = lateral_std * randn(clust_num_points(i), num_dims);
 
             % Add displacement vectors to each point projection
-            points = ptProj + displ;
+            points = ptproj + displ;
 
         else
             % We should never get here
@@ -250,10 +250,10 @@ function [data, clustNumPoints, idx, centers, clust_dirs, lengths] = ...
         end;
 
         % Determine the actual points
-        data(cumSumPoints(i) + 1 : cumSumPoints(i + 1), :) = points;
+        data(cumsum_points(i) + 1 : cumsum_points(i + 1), :) = points;
 
         % Update idx
-        idx(cumSumPoints(i) + 1 : cumSumPoints(i + 1)) = i;
+        idx(cumsum_points(i) + 1 : cumsum_points(i + 1)) = i;
     end;
 
 end % function
@@ -282,7 +282,7 @@ function clust_num_points = clusizes(total_points, allow_empty, dist_fun)
         clust_num_points(I(1)) = C - 1;
     end;
 
-    % If allowEmpty is false make sure there are no empty clusters
+    % If allow_empty is false make sure there are no empty clusters
     if ~allow_empty
 
         % Find empty clusters
