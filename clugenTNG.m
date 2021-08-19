@@ -155,14 +155,14 @@ function [data, clust_num_points, idx, centers, clust_dirs, lengths] = ...
     % What distribution to use for point projections along cluster-supporting lines?
     if isa(p.Results.point_dist, 'function_handle')
         % Use user-defined distribution; assume function returns num_dims x 1 vectors
-        distfun = p.Results.point_dist;
+        pointproj_fun = p.Results.point_dist;
     elseif strcmp(p.Results.point_dist, 'unif')
         % Point projections will be uniformly placed along cluster-supporting lines
-        distfun = @(len, n) len * rand(n, 1) - len / 2;
+        pointproj_fun = @(len, n) len * rand(n, 1) - len / 2;
     elseif strcmp(p.Results.point_dist, 'norm')
         % Use normal distribution for placing point projections along cluster-supporting
         % lines, mean equal to line center, standard deviation equal to 1/6 of line length
-        distfun = @(len, n) len * randn(n, 1) / 6;
+        pointproj_fun = @(len, n) len * randn(n, 1) / 6;
     else
         % We should never get here
         error('Invalid program state');
@@ -205,16 +205,15 @@ function [data, clust_num_points, idx, centers, clust_dirs, lengths] = ...
     for i = 1:num_clusters
 
         % Determine normalized cluster direction
-        clust_dirs(i, :) = rand_vector_at_angle(direction, angles(i))';
+        clust_dirs(i, :) = rand_vector_at_angle(direction, angles(i));
 
-        % Determine where in the line this cluster's points will be projected
-        % using the specified distribution (i.e. points will be projected
-        % along the line using either the uniform or normal distribution)
+        % Determine where in the cluster-supporting line will points be
+        % projected using the distribution specified in point_dist
 
-        % Determine distance of points projections from the center of the line
-        ptproj_dist_center = distfun(lengths(i), clust_num_points(i));
+        % 1) Determine distance of points projections from the center of the line
+        ptproj_dist_center = pointproj_fun(lengths(i), clust_num_points(i));
 
-        % Determine coordinates of point projections on the line using
+        % 2) Determine coordinates of point projections on the line using
         % the parametric line equation (this works since cluster direction is
         % normalized)
         ptproj = centers(i, :) + ptproj_dist_center * clust_dirs(i, :);
@@ -229,7 +228,7 @@ function [data, clust_num_points, idx, centers, clust_dirs, lengths] = ...
             % TODO: Vectorize this loop (but is it worth it since it needs access to global(locked?) PRNG?)
             orth_vecs = zeros(clust_num_points(i), num_dims);
             for j = 1:clust_num_points(i)
-                orth_vecs(j, :) = rand_ortho_vector(clust_dirs(i, :)')';
+                orth_vecs(j, :) = rand_ortho_vector(clust_dirs(i, :)');
             end;
 
             % Set vector magnitudes
