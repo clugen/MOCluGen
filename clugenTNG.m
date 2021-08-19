@@ -201,17 +201,9 @@ function [data, clustNumPoints, idx, centers, dirClusts, lengths] = ...
     % Create clusters
     for i = 1:num_clusters
 
-        % Get a random normalized vector orthogonal to main direction
-        base_directionOrtho = getRandOrthoVec(base_direction');
-        % TODO The 'nd' option
         % Determine normalized cluster direction
-        if abs(angles(i)) < pi/2
-            dirClust = base_direction' + base_directionOrtho * tan(angles(i));
-        else
-            dirClust = rand(1, ndim) - 0.5;
-        end;
-        dirClust = dirClust / norm(dirClust);
-        dirClusts(i, :) = dirClust;
+        dirClust = rand_vector_at_angle(base_direction, angles(i));
+        dirClusts(i, :) = dirClust';
 
         % Determine where in the line this cluster's points will be projected
         % using the specified distribution (i.e. points will be projected
@@ -222,7 +214,7 @@ function [data, clustNumPoints, idx, centers, dirClusts, lengths] = ...
 
         % Determine coordinates of point projections on the line using
         % the parametric line equation (this works since dirClust is normalized)
-        ptProj = centers(i, :) + ptProjDistFromCent * dirClust;
+        ptProj = centers(i, :) + ptProjDistFromCent * dirClust';
 
         if strcmp(p.Results.pointOffset, 'nd-1')
 
@@ -234,7 +226,7 @@ function [data, clustNumPoints, idx, centers, dirClusts, lengths] = ...
             % TODO: Vectorize this loop (but is it worth it since it needs access to global(locked?) PRNG?)
             orthVecs = zeros(clustNumPoints(i), ndim);
             for j = 1:clustNumPoints(i)
-                orthVecs(j, :) = getRandOrthoVec(dirClust);
+                orthVecs(j, :) = rand_ortho_vector(dirClust)';
             end;
 
             % Set vector magnitudes
@@ -263,34 +255,6 @@ function [data, clustNumPoints, idx, centers, dirClusts, lengths] = ...
         % Update idx
         idx(cumSumPoints(i) + 1 : cumSumPoints(i + 1)) = i;
     end;
-
-end % function
-
-%
-% Function which returns a random normalized vector orthogonal to u
-%
-% u is expected to be a unit vector
-function v = getRandOrthoVec(u)
-
-    % Find a random, non-parallel vector to u
-    while 1
-
-        % Find normalized random vector
-        v = rand(1, numel(u)) - 0.5;
-        v = v / norm(v);
-
-        % Is it not parallel to u?
-        if abs(dot(v, u)) < (1 - eps)
-            % Then we like it, break the cycle
-            break;
-        end;
-    end;
-
-    % Get vector orthogonal to u using 1st iteration of Gram-Schmidt process
-    v = v - dot(u, v) / dot(u, u) * u;
-
-    % Normalize it
-    v = v / norm(v);
 
 end % function
 
@@ -352,3 +316,56 @@ function clust_centers = clucenters(num_clusters, cluster_sep, offset, distfun)
     clust_centers = num_clusters * distfun() * diag(cluster_sep) .+ offset';
 
 end % function
+
+%
+% Function which returns a random unit vector with `num_dims` dimensions.
+%
+function r = rand_unit_vector(num_dims)
+
+    r = rand(num_dims, 1) - 0.5;
+    r = r / norm(r);
+
+end % function
+
+%
+% Function which returns a random normalized vector orthogonal to u
+%
+% u is expected to be a unit vector
+function v = rand_ortho_vector(u)
+
+    % Find a random, non-parallel vector to u
+    while 1
+
+        % Find normalized random vector
+        r = rand_unit_vector(numel(u));
+
+        % If not parallel to u we can keep it and break the loop
+        if abs(dot(u, r)) < (1 - eps)
+            break;
+        end;
+    end;
+
+    % Get vector orthogonal to u using 1st iteration of Gram-Schmidt process
+    v = r - dot(u, r) / dot(u, u) * u;
+
+    % Normalize it
+    v = v / norm(v);
+
+end % function
+
+
+% Function which returns a random vector that is at an angle of `angle` radians
+% from vector `u`.
+%
+% `u` is expected to be a unit vector
+% `angle` should be in radians
+function v = rand_vector_at_angle(u, angle)
+
+    if -pi/2 < angle < pi/2
+        v = u + rand_ortho_vector(u) * tan(angle);
+    else
+        v = rand_unit_vector(numel(u))
+    end;
+
+    v = v / norm(v);
+end
