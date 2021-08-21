@@ -55,16 +55,20 @@ function [points, clust_num_points, clu_pts_idx, centers, clust_dirs, lengths, p
 %      distribution (line center is the mean and the line length is equal
 %      to 3 standard deviations).
 %    - 'unif' distributes points uniformly along lines.
-%    - Used-defined function.... TODO
+%    - User-defined function which accepts length of line and number of points,
+%      and returns a num_dims x 1 vector.
 % point_offset
 %    Controls how points are created from their projections on the lines,
 %    with two possible values:
 %    - 'd-1' (default) places points on a second line perpendicular to the
 %      cluster line using a normal distribution centered at their
 %      intersection.
-%    - 'd' (default) places point using a bivariate normal distribution
+%    - 'd' (default) places point using a multivariate normal distribution
 %      centered at the point projection.
-%    - Used-defined function.... TODO
+%    - Used-defined function which accepts point projections on the line
+%      (num_points x num_dims), lateral_std, cluster direction (num_dims x 1)
+%      and cluster center (num_dims x 1), and returns a matrix containing the
+%      final points for the current cluster (num_points x num_dims).
 % cluster_offset
 %    Offset to add to all cluster centers. By default equal to
 %    zeros(num_dims, 1).
@@ -182,7 +186,8 @@ function [points, clust_num_points, clu_pts_idx, centers, clust_dirs, lengths, p
 
     % What distribution to use for point projections along cluster-supporting lines?
     if isa(p.Results.point_dist, 'function_handle')
-        % Use user-defined distribution; assume function returns num_dims x 1 vectors
+        % Use user-defined distribution; assume function accepts length of line
+        % and number of points, and returns a num_dims x 1 vector
         pointproj_fun = p.Results.point_dist;
     elseif strcmp(p.Results.point_dist, 'unif')
         % Point projections will be uniformly placed along cluster-supporting lines
@@ -198,17 +203,22 @@ function [points, clust_num_points, clu_pts_idx, centers, clust_dirs, lengths, p
 
     % What distribution to use for placing points from their projections?
     if num_dims == 1
-        %
+        % If 1D was specified, point projections are the points themselves
         pt_from_proj_fun = @(projs, lat_std, clu_dir, clu_ctr) projs;
     elseif isa(p.Results.point_offset, 'function_handle')
-        %
+        % Use user-defined distribution; assume function accepts point projections
+        % on the line, lateral std., cluster direction and cluster center, and
+        % returns a num_points x num_dims matrix containing the final points
+        % for the current cluster
         pt_from_proj_fun = p.Results.point_offset;
     elseif strcmp(p.Results.point_offset, 'd-1')
-        %
-        pt_from_proj_fun = @cluster_points_ND_1;
+        % Points will be placed on a second line perpendicular to the cluster
+        % line using a normal distribution centered at their intersection
+        pt_from_proj_fun = @clupoints_d_1;
     elseif strcmp(p.Results.point_offset, 'd')
-        %
-        pt_from_proj_fun = @cluster_points_ND;
+        % Points will be placed using a multivariate normal distribution
+        % centered at the point projection
+        pt_from_proj_fun = @clupoints_d;
     else
         % We should never get here
         error('Invalid program state');
@@ -402,8 +412,8 @@ end % function
 % `projs` are the point projections.
 % `lat_std` is the lateral standard deviation or cluster "fatness".
 % `clu_dir` is the cluster direction.
-% `clu_ctr` is the cluster-supporting line center position.
-function points = cluster_points_ND_1(projs, lat_std, clu_dir, clu_ctr)
+% `clu_ctr` is the cluster-supporting line center position (ignored).
+function points = clupoints_d_1(projs, lat_std, clu_dir, clu_ctr)
 
     % Number of dimensions
     num_dims = numel(clu_dir);
@@ -437,8 +447,8 @@ end % function
 % `projs` are the point projections.
 % `lat_std` is the lateral standard deviation or cluster "fatness".
 % `clu_dir` is the cluster direction.
-% `clu_ctr` is the cluster-supporting line center position.
-function points = cluster_points_ND(projs, lat_std, clu_dir, clu_ctr)
+% `clu_ctr` is the cluster-supporting line center position (ignored).
+function points = clupoints_d(projs, lat_std, clu_dir, clu_ctr)
 
     % Number of dimensions
     num_dims = numel(clu_dir);
