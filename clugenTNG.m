@@ -1,4 +1,4 @@
-function [data, clust_num_points, idx, centers, clust_dirs, lengths] = ...
+function [points, clust_num_points, clu_pts_idx, centers, clust_dirs, lengths, points_proj] = ...
     clugenTNG( ...
         num_dims, ...
         num_clusters, ...
@@ -15,7 +15,7 @@ function [data, clust_num_points, idx, centers, clust_dirs, lengths] = ...
 %        along straight lines, which can be more or less parallel
 %        depending on the dirStd parameter.
 %
-% [data, clust_num_points, idx, centers, clust_dirs, lengths] =
+% [points, clust_num_points, clu_pts_idx, centers, clust_dirs, lengths] =
 %    CLUGEN(num_dims, num_clusters, total_points, direction, angle_std, ...
 %           clust_sep,  line_length, line_length_std, lateral_std, ...)
 %
@@ -70,11 +70,11 @@ function [data, clust_num_points, idx, centers, clust_dirs, lengths] = ...
 % Outputs
 % -------
 %
-% data
+% points
 %     Matrix (total_points x num_dims) with the generated data.
 % clust_num_points
 %     Vector (num_clusters x 1) containing number of points in each cluster.
-% idx
+% clu_pts_idx
 %     Vector (total_points x 1) containing the cluster indices of each
 %     point.
 % centers
@@ -83,13 +83,16 @@ function [data, clust_num_points, idx, centers, clust_dirs, lengths] = ...
 % clust_dirs
 %     Vector (num_clusters x num_dims) containing the vectors which define the
 %     angle cluster-supporting lines.
-% lengths - Vector (num_clusters x 1) containing the lengths of the
-%     cluster-supporting lines.
+% lengths
+%     Vector (num_clusters x 1) containing the lengths of the cluster-supporting
+%     lines.
+% points_proj
+%     Coordinates of point projections on the cluster-supporting lines
 %
 % Usage example
 % -------------
 %
-%   [data, np, idx] = clugen(3, 4, 1000, [1 0 0], 0.1, [20 15 35], 12, 4, 0.5);
+%   [points, np, clu_pts_idx] = clugen(3, 4, 1000, [1 0 0], 0.1, [20 15 35], 12, 4, 0.5);
 %
 % This creates 4 clusters in 3D space with a total of 1000 points, with a
 % main direction of [1 0 0] (along the x-axis), with an angle standard
@@ -98,7 +101,7 @@ function [data, clust_num_points, idx, centers, clust_dirs, lengths] = ...
 %
 % The following command plots the generated clusters:
 %
-%   scatter3(data(:, 1), data(:, 2), data(:,3), 8, idx);
+%   scatter3(points(:, 1), points(:, 2), points(:,3), 8, clu_pts_idx);
 
 % Copyright (c) 2012-2021 Nuno Fachada
 % Distributed under the MIT License (See accompanying file LICENSE or copy
@@ -168,6 +171,10 @@ function [data, clust_num_points, idx, centers, clust_dirs, lengths] = ...
         error('Invalid program state');
     end;
 
+    % %%%%%%%%%%%%%%%%%%%%%%%%%%%% %
+    % Determine cluster properties %
+    % %%%%%%%%%%%%%%%%%%%%%%%%%%%% %
+
     % Normalize direction
     direction = direction / norm(direction);
 
@@ -189,34 +196,40 @@ function [data, clust_num_points, idx, centers, clust_dirs, lengths] = ...
     % using the normal distribution (mean=0, std=angle_std)
     angles = angle_std * randn(num_clusters, 1);
 
-    % Obtain the cumulative sum vector of point counts in each cluster
+    % Determine normalized cluster direction
+    clust_dirs = zeros(num_clusters, num_dims);
+    for i = 1:num_clusters
+        clust_dirs(i, :) = rand_vector_at_angle(direction, angles(i));
+    end;
+
+    % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% %
+    % Determine points for each cluster %
+    % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% %
+
+    % Aux. vector with cumulative sum of number of points in each cluster
     cumsum_points = [0; cumsum(clust_num_points)];
 
-    % Initialize data matrix
-    data = zeros(sum(clust_num_points), num_dims);
+    % Pre-allocate data structures for holding cluster info and points
+    clu_pts_idx = zeros(total_points, 1);        % Cluster indices of each point
+    points_proj = zeros(total_points, num_dims); % Point projections on cluster-supporting lines
+    points = zeros(total_points, num_dims);      % Final points to be generated
 
-    % Initialize idx (vector containing the cluster indices of each point)
-    idx = zeros(total_points, 1);
-
-    % Initialize clust_dirs (matrix containing the direction of each cluster)
-    clust_dirs = zeros(num_clusters, num_dims);
-
-    % Create clusters
+    % Loop through cluster and create points for each one
     for i = 1:num_clusters
 
-        % Determine normalized cluster direction
-        clust_dirs(i, :) = rand_vector_at_angle(direction, angles(i));
+        % Start and end indexes for points in current cluster
+        idx_start = cumsum_points(i) + 1;
+        idx_end = cumsum_points(i + 1);
 
-        % Determine where in the cluster-supporting line will points be
-        % projected using the distribution specified in point_dist
+        % Update cluster indices of each point
+        clu_pts_idx(idx_start:idx_end) = i;
 
-        % 1) Determine distance of points projections from the center of the line
+        % Determine distance of point projections from the center of the line
         ptproj_dist_center = pointproj_fun(lengths(i), clust_num_points(i));
 
-        % 2) Determine coordinates of point projections on the line using
-        % the parametric line equation (this works since cluster direction is
-        % normalized)
-        ptproj = centers(i, :) + ptproj_dist_center * clust_dirs(i, :);
+        % Determine coordinates of point projections on the line using the
+        % parametric line equation (this works since cluster direction is normalized)
+        points_proj(idx_start:idx_end, :) = centers(i, :) + ptproj_dist_center * clust_dirs(i, :);
 
         if strcmp(p.Results.point_offset, 'd-1')
 
@@ -236,7 +249,7 @@ function [data, clust_num_points, idx, centers, clust_dirs, lengths] = ...
 
             % Add perpendicular vectors to point projections on the line,
             % yielding final cluster points
-            points = ptproj + orth_vecs;
+            pts_clu = points_proj(idx_start:idx_end, :) + orth_vecs;
 
         elseif strcmp(p.Results.point_offset, 'd')
 
@@ -244,7 +257,7 @@ function [data, clust_num_points, idx, centers, clust_dirs, lengths] = ...
             displ = lateral_std * randn(clust_num_points(i), num_dims);
 
             % Add displacement vectors to each point projection
-            points = ptproj + displ;
+            pts_clu = points_proj(idx_start:idx_end, :) + displ;
 
         else
             % We should never get here
@@ -252,10 +265,8 @@ function [data, clust_num_points, idx, centers, clust_dirs, lengths] = ...
         end;
 
         % Determine the actual points
-        data(cumsum_points(i) + 1 : cumsum_points(i + 1), :) = points;
+        points(cumsum_points(i) + 1 : cumsum_points(i + 1), :) = pts_clu;
 
-        % Update idx
-        idx(cumsum_points(i) + 1 : cumsum_points(i + 1)) = i;
     end;
 
 end % function
