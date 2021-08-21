@@ -1,4 +1,4 @@
-function [points, clust_num_points, clu_pts_idx, centers, clust_dirs, lengths, points_proj] = ...
+function [points, clu_num_points, clu_pts_idx, clu_centers, clu_dirs, lengths, points_proj] = ...
     clugenTNG( ...
         num_dims, ...
         num_clusters, ...
@@ -15,7 +15,7 @@ function [points, clust_num_points, clu_pts_idx, centers, clust_dirs, lengths, p
 %        along straight lines, which can be more or less parallel
 %        depending on the dirStd parameter.
 %
-% [points, clust_num_points, clu_pts_idx, centers, clust_dirs, lengths] =
+% [points, clu_num_points, clu_pts_idx, clu_centers, clu_dirs, lengths] =
 %    CLUGEN(num_dims, num_clusters, total_points, direction, angle_std, ...
 %           cluster_sep,  line_length, line_length_std, lateral_std, ...)
 %
@@ -78,15 +78,15 @@ function [points, clust_num_points, clu_pts_idx, centers, clust_dirs, lengths, p
 %
 % points
 %     Matrix (total_points x num_dims) with the generated data.
-% clust_num_points
+% clu_num_points
 %     Vector (num_clusters x 1) containing number of points in each cluster.
 % clu_pts_idx
 %     Vector (total_points x 1) containing the cluster indices of each
 %     point.
-% centers
+% clu_centers
 %     Matrix (num_clusters x 2) containing cluster centers, or more
 %     specifically, the centers of the cluster-supporting lines.
-% clust_dirs
+% clu_dirs
 %     Vector (num_clusters x num_dims) containing the vectors which define the
 %     angle cluster-supporting lines.
 % lengths
@@ -232,12 +232,12 @@ function [points, clust_num_points, clu_pts_idx, centers, clust_dirs, lengths, p
     direction = direction / norm(direction);
 
     % Determine cluster sizes using the half-normal distribution (with std=1)
-    clust_num_points = clusizes(...
+    clu_num_points = clusizes(...
         total_points, p.Results.allow_empty, ...
         @() abs(randn(num_clusters, 1)));
 
     % Determine cluster centers using the uniform distribution between -0.5 and 0.5
-    centers = clucenters(...
+    clu_centers = clucenters(...
         num_clusters, cluster_sep, p.Results.cluster_offset, ...
         @() rand(num_clusters, num_dims) - 0.5);
 
@@ -250,9 +250,9 @@ function [points, clust_num_points, clu_pts_idx, centers, clust_dirs, lengths, p
     angles = angle_std * randn(num_clusters, 1);
 
     % Determine normalized cluster direction
-    clust_dirs = zeros(num_clusters, num_dims);
+    clu_dirs = zeros(num_clusters, num_dims);
     for i = 1:num_clusters
-        clust_dirs(i, :) = rand_vector_at_angle(direction, angles(i));
+        clu_dirs(i, :) = rand_vector_at_angle(direction, angles(i));
     end;
 
     % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% %
@@ -260,7 +260,7 @@ function [points, clust_num_points, clu_pts_idx, centers, clust_dirs, lengths, p
     % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% %
 
     % Aux. vector with cumulative sum of number of points in each cluster
-    cumsum_points = [0; cumsum(clust_num_points)];
+    cumsum_points = [0; cumsum(clu_num_points)];
 
     % Pre-allocate data structures for holding cluster info and points
     clu_pts_idx = zeros(total_points, 1);        % Cluster indices of each point
@@ -278,16 +278,16 @@ function [points, clust_num_points, clu_pts_idx, centers, clust_dirs, lengths, p
         clu_pts_idx(idx_start:idx_end) = i;
 
         % Determine distance of point projections from the center of the line
-        ptproj_dist_center = pointproj_fun(lengths(i), clust_num_points(i));
+        ptproj_dist_center = pointproj_fun(lengths(i), clu_num_points(i));
 
         % Determine coordinates of point projections on the line using the
         % parametric line equation (this works since cluster direction is normalized)
         points_proj(idx_start:idx_end, :) = ...
-            centers(i, :) + ptproj_dist_center * clust_dirs(i, :);
+            clu_centers(i, :) + ptproj_dist_center * clu_dirs(i, :);
 
         % Determine points from their projections on the line
         points(idx_start:idx_end, :) = pt_from_proj_fun( ...
-            points_proj(idx_start:idx_end, :), lateral_std, clust_dirs(i, :)', centers(i, :)');
+            points_proj(idx_start:idx_end, :), lateral_std, clu_dirs(i, :)', clu_centers(i, :)');
 
     end;
 
@@ -298,30 +298,30 @@ end % function
 %
 % Note that dist_fun should return a n x 1 array of non-negative numbers where
 % n is the desired number of clusters.
-function clust_num_points = clusizes(total_points, allow_empty, dist_fun)
+function clu_num_points = clusizes(total_points, allow_empty, dist_fun)
 
     % Determine number of points in each cluster
-    clust_num_points = dist_fun();
-    clust_num_points = clust_num_points / sum(clust_num_points);
-    clust_num_points = round(clust_num_points * total_points);
+    clu_num_points = dist_fun();
+    clu_num_points = clu_num_points / sum(clu_num_points);
+    clu_num_points = round(clu_num_points * total_points);
 
     % Make sure total_points is respected
-    while sum(clust_num_points) < total_points
+    while sum(clu_num_points) < total_points
         % If one point is missing add it to the smaller cluster
-        [C, I] = min(clust_num_points);
-        clust_num_points(I(1)) = C + 1;
+        [C, I] = min(clu_num_points);
+        clu_num_points(I(1)) = C + 1;
     end;
-    while sum(clust_num_points) > total_points
+    while sum(clu_num_points) > total_points
         % If there is one extra point, remove it from larger cluster
-        [C, I] = max(clust_num_points);
-        clust_num_points(I(1)) = C - 1;
+        [C, I] = max(clu_num_points);
+        clu_num_points(I(1)) = C - 1;
     end;
 
     % If allow_empty is false make sure there are no empty clusters
     if ~allow_empty
 
         % Find empty clusters
-        empty_clusts = find(clust_num_points == 0);
+        empty_clusts = find(clu_num_points == 0);
 
         % If there are empty clusters...
         if ~isempty(empty_clusts)
@@ -333,9 +333,9 @@ function clust_num_points = clusizes(total_points, allow_empty, dist_fun)
             for i = 1:n_empty_clusts
                 % ...get a point from the largest cluster and assign it to the
                 % current empty cluster
-                [C, I] = max(clust_num_points);
-                clust_num_points(I(1)) = C - 1;
-                clust_num_points(empty_clusts(i)) = 1;
+                [C, I] = max(clu_num_points);
+                clu_num_points(I(1)) = C - 1;
+                clu_num_points(empty_clusts(i)) = 1;
             end;
         end;
     end;
@@ -346,9 +346,9 @@ end % function
 % Determine cluster centers.
 %
 % Note that dist_fun should return a num_clusters * num_dims matrix.
-function clust_centers = clucenters(num_clusters, cluster_sep, offset, distfun)
+function clu_centers = clucenters(num_clusters, cluster_sep, offset, distfun)
 
-    clust_centers = num_clusters * distfun() * diag(cluster_sep) + offset';
+    clu_centers = num_clusters * distfun() * diag(cluster_sep) + offset';
 
 end % function
 
@@ -419,15 +419,15 @@ function points = clupoints_d_1(projs, lat_std, clu_dir, clu_ctr)
     num_dims = numel(clu_dir);
 
     % Number of points in this cluster
-    clust_num_points = size(projs, 1);
+    clu_num_points = size(projs, 1);
 
     % Get distances from points to their projections on the line
-    points_dist = lat_std * randn(clust_num_points, 1);
+    points_dist = lat_std * randn(clu_num_points, 1);
 
     % Get normalized vectors, orthogonal to the current line, for
     % each point
-    orth_vecs = zeros(clust_num_points, num_dims);
-    for j = 1:clust_num_points
+    orth_vecs = zeros(clu_num_points, num_dims);
+    for j = 1:clu_num_points
         orth_vecs(j, :) = rand_ortho_vector(clu_dir);
     end;
 
@@ -454,10 +454,10 @@ function points = clupoints_d(projs, lat_std, clu_dir, clu_ctr)
     num_dims = numel(clu_dir);
 
     % Number of points in this cluster
-    clust_num_points = size(projs, 1);
+    clu_num_points = size(projs, 1);
 
     % Get random displacement vectors for each point projection
-    displ = lat_std * randn(clust_num_points, num_dims);
+    displ = lat_std * randn(clu_num_points, num_dims);
 
     % Add displacement vectors to each point projection
     points = projs + displ;
