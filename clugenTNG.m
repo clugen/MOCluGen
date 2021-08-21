@@ -5,7 +5,7 @@ function [points, clust_num_points, clu_pts_idx, centers, clust_dirs, lengths, p
         total_points, ...
         direction, ...
         angle_std, ...
-        clust_sep, ...
+        cluster_sep, ...
         line_length, ...
         line_length_std, ...
         lateral_std, ...
@@ -17,7 +17,7 @@ function [points, clust_num_points, clu_pts_idx, centers, clust_dirs, lengths, p
 %
 % [points, clust_num_points, clu_pts_idx, centers, clust_dirs, lengths] =
 %    CLUGEN(num_dims, num_clusters, total_points, direction, angle_std, ...
-%           clust_sep,  line_length, line_length_std, lateral_std, ...)
+%           cluster_sep,  line_length, line_length_std, lateral_std, ...)
 %
 % Required input parameters
 % -------------------------
@@ -34,7 +34,7 @@ function [points, clust_num_points, clu_pts_idx, centers, clust_dirs, lengths, p
 %     Main direction of clusters (num_dims x 1 vector).
 % angle_std
 %     Standard deviation of cluster-supporting line angles (float).
-% clust_sep
+% cluster_sep
 %     Mean cluster separation (num_dims x 1 vector).
 % line_length
 %     Mean length of cluster-supporting lines (integer).
@@ -111,41 +111,62 @@ function [points, clust_num_points, clu_pts_idx, centers, clust_dirs, lengths, p
 % Fachada, N., & Rosa, A. C. (2020). generateData—A 2D data generator.
 % Software Impacts, 4:100017. doi: 10.1016/j.simpa.2020.100017
 
-    % Known distributions for sampling points along lines
-    point_dists = {'unif', 'norm'};
-    point_offsets = {'d', 'd-1'};
+    % %%%%%%%%%%%%%%% %
+    % Validate inputs %
+    % %%%%%%%%%%%%%%% %
 
-    % Perform input validation
+    % Known distributions for sampling points along lines
+    point_dists = {'norm', 'unif'};
+    point_offsets = {'d-1', 'd'};
+
+    % Setup input validation
     p = inputParser;
+    % Check that number of dimensions is more than zero
     addRequired(p, 'num_dims', ...
         @(x) isnumeric(x) && isscalar(x) && (x > 0) && (mod(x, 1) == 0));
+    % Check that number of clusters is more than zero
     addRequired(p, 'num_clusters', ...
         @(x) isnumeric(x) && isscalar(x) && (x > 0) && (mod(x, 1) == 0));
+    % Check that total_points is more than zero
     addRequired(p, 'total_points', ...
         @(x) isnumeric(x) && isscalar(x) && (x > 0) && (mod(x, 1) == 0));
+    % Check that direction has num_dims dimensions and magnitude > 0
     addRequired(p, 'direction', ...
-        @(x) isnumeric(x) && all(size(x) == [num_dims 1]));
+        @(x) isnumeric(x) && all(size(x) == [num_dims 1]) && norm(x) > eps);
+    % Check that angle_std is a scalar
     addRequired(p, 'angle_std', ...
         @(x) isnumeric(x) && isscalar(x));
-    addRequired(p, 'clust_sep', ...
+    % Check that cluster_sep has num_dims dimensions
+    addRequired(p, 'cluster_sep', ...
         @(x) isnumeric(x) && all(size(x) == [num_dims 1]));
+    % Check that line_length is a scalar
     addRequired(p, 'line_length', ...
         @(x) isnumeric(x) && isscalar(x) && (x >= 0));
+    % Check that line_length_std is a scalar
     addRequired(p, 'line_length_std', ...
         @(x) isnumeric(x) && isscalar(x) && (x >= 0));
+    % Check that lateral_std is a scalar
     addRequired(p, 'lateral_std', ...
         @(x) isnumeric(x) && isscalar(x) && (x >= 0));
+    % If given, cluster_offset must have the correct number of dimensions,
+    % if not given then it will be a num_dims x 1 vector of zeros
     addParameter(p, 'cluster_offset', zeros(num_dims, 1), ...
         @(x) isnumeric(x) && all(size(x) == [num_dims 1]));
+    % Check that allow_empty is a boolean
     addParameter(p, 'allow_empty', false, ...
         @(x) isscalar(x) && isa(x, 'logical'));
-    addParameter(p, 'point_dist', point_dists{2}, ...
+    % Check that point_dist specifies a valid way for projecting points along
+    % cluster-supporting lines, i.e., either 'norm' (default), 'unif' or a
+    % user-defined function
+    addParameter(p, 'point_dist', point_dists{1}, ...
         @(x) isa(x, 'function_handle') || any(validatestring(x, point_dists)));
-    addParameter(p, 'point_offset', point_offsets{2}, ...
+    % Check that, if given, point_offset is either 'd-1' (default) or 'd'
+    addParameter(p, 'point_offset', point_offsets{1}, ...
         @(x) any(validatestring(x, point_offsets)));
 
+    % Perform input validation and parsing
     parse(p, num_dims, num_clusters, total_points, direction, angle_std, ...
-        clust_sep, line_length, line_length_std, lateral_std, varargin{:});
+        cluster_sep, line_length, line_length_std, lateral_std, varargin{:});
 
     % If allow_empty is false, make sure there are enough points to distribute
     % by the clusters
@@ -185,7 +206,7 @@ function [points, clust_num_points, clu_pts_idx, centers, clust_dirs, lengths, p
 
     % Determine cluster centers using the uniform distribution between -0.5 and 0.5
     centers = clucenters(...
-        num_clusters, clust_sep, p.Results.cluster_offset, ...
+        num_clusters, cluster_sep, p.Results.cluster_offset, ...
         @() rand(num_clusters, num_dims) - 0.5);
 
     % Determine length of lines supporting clusters
