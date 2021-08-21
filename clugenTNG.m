@@ -231,7 +231,13 @@ function [points, clust_num_points, clu_pts_idx, centers, clust_dirs, lengths, p
         % parametric line equation (this works since cluster direction is normalized)
         points_proj(idx_start:idx_end, :) = centers(i, :) + ptproj_dist_center * clust_dirs(i, :);
 
-        if strcmp(p.Results.point_offset, 'd-1')
+        if num_dims == 1
+
+            % If 1D was specified, we're done since point projections are the
+            % points themselves
+            points(idx_start:idx_end, :) = points_proj(idx_start:idx_end, :);
+
+        elseif strcmp(p.Results.point_offset, 'd-1')
 
             % Get distances from points to their projections on the line
             points_dist = lateral_std * randn(clust_num_points(i), 1);
@@ -249,7 +255,7 @@ function [points, clust_num_points, clu_pts_idx, centers, clust_dirs, lengths, p
 
             % Add perpendicular vectors to point projections on the line,
             % yielding final cluster points
-            pts_clu = points_proj(idx_start:idx_end, :) + orth_vecs;
+            points(idx_start:idx_end, :) = points_proj(idx_start:idx_end, :) + orth_vecs;
 
         elseif strcmp(p.Results.point_offset, 'd')
 
@@ -257,15 +263,12 @@ function [points, clust_num_points, clu_pts_idx, centers, clust_dirs, lengths, p
             displ = lateral_std * randn(clust_num_points(i), num_dims);
 
             % Add displacement vectors to each point projection
-            pts_clu = points_proj(idx_start:idx_end, :) + displ;
+            points(idx_start:idx_end, :) = points_proj(idx_start:idx_end, :) + displ;
 
         else
             % We should never get here
             error('Invalid program state');
         end;
-
-        % Determine the actual points
-        points(cumsum_points(i) + 1 : cumsum_points(i + 1), :) = pts_clu;
 
     end;
 
@@ -377,7 +380,7 @@ function v = rand_vector_at_angle(u, angle)
     if -pi/2 < angle < pi/2 && numel(u) > 1
         v = u + rand_ortho_vector(u) * tan(angle);
     else
-        v = rand_unit_vector(numel(u))
+        v = rand_unit_vector(numel(u));
     end;
 
     v = v / norm(v);
