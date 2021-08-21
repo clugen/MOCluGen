@@ -55,6 +55,7 @@ function [points, clust_num_points, clu_pts_idx, centers, clust_dirs, lengths, p
 %      distribution (line center is the mean and the line length is equal
 %      to 3 standard deviations).
 %    - 'unif' distributes points uniformly along lines.
+%    - Used-defined function.... TODO
 % point_offset
 %    Controls how points are created from their projections on the lines,
 %    with two possible values:
@@ -63,6 +64,7 @@ function [points, clust_num_points, clu_pts_idx, centers, clust_dirs, lengths, p
 %      intersection.
 %    - 'd' (default) places point using a bivariate normal distribution
 %      centered at the point projection.
+%    - Used-defined function.... TODO
 % cluster_offset
 %    Offset to add to all cluster centers. By default equal to
 %    zeros(num_dims, 1).
@@ -160,9 +162,11 @@ function [points, clust_num_points, clu_pts_idx, centers, clust_dirs, lengths, p
     % user-defined function
     addParameter(p, 'point_dist', point_dists{1}, ...
         @(x) isa(x, 'function_handle') || any(validatestring(x, point_dists)));
-    % Check that, if given, point_offset is either 'd-1' (default) or 'd'
+    % Check that point_offset specifies a valid way for generating points given
+    % their projections along cluster-supporting lines, i.e., either 'd-1'
+    % (default), 'd' or a user-defined function
     addParameter(p, 'point_offset', point_offsets{1}, ...
-        @(x) any(validatestring(x, point_offsets)));
+        @(x) isa(x, 'function_handle') || any(validatestring(x, point_offsets)));
 
     % Perform input validation and parsing
     parse(p, num_dims, num_clusters, total_points, direction, angle_std, ...
@@ -187,6 +191,24 @@ function [points, clust_num_points, clu_pts_idx, centers, clust_dirs, lengths, p
         % Use normal distribution for placing point projections along cluster-supporting
         % lines, mean equal to line center, standard deviation equal to 1/6 of line length
         pointproj_fun = @(len, n) len * randn(n, 1) / 6;
+    else
+        % We should never get here
+        error('Invalid program state');
+    end;
+
+    % What distribution to use for placing points from their projections?
+    if num_dims == 1
+        %
+        pt_from_proj_fun = @(projs, lat_std, clu_dir, clu_ctr) projs;
+    elseif isa(p.Results.point_offset, 'function_handle')
+        %
+        pt_from_proj_fun = p.Results.point_offset;
+    elseif strcmp(p.Results.point_offset, 'd-1')
+        %
+        pt_from_proj_fun = @cluster_points_ND_1;
+    elseif strcmp(p.Results.point_offset, 'd')
+        %
+        pt_from_proj_fun = @cluster_points_ND;
     else
         % We should never get here
         error('Invalid program state');
@@ -250,46 +272,12 @@ function [points, clust_num_points, clu_pts_idx, centers, clust_dirs, lengths, p
 
         % Determine coordinates of point projections on the line using the
         % parametric line equation (this works since cluster direction is normalized)
-        points_proj(idx_start:idx_end, :) = centers(i, :) + ptproj_dist_center * clust_dirs(i, :);
+        points_proj(idx_start:idx_end, :) = ...
+            centers(i, :) + ptproj_dist_center * clust_dirs(i, :);
 
-        if num_dims == 1
-
-            % If 1D was specified, we're done since point projections are the
-            % points themselves
-            points(idx_start:idx_end, :) = points_proj(idx_start:idx_end, :);
-
-        elseif strcmp(p.Results.point_offset, 'd-1')
-
-            % Get distances from points to their projections on the line
-            points_dist = lateral_std * randn(clust_num_points(i), 1);
-
-            % Get normalized vectors, orthogonal to the current line, for
-            % each point
-            % TODO: Vectorize this loop (but is it worth it since it needs access to global(locked?) PRNG?)
-            orth_vecs = zeros(clust_num_points(i), num_dims);
-            for j = 1:clust_num_points(i)
-                orth_vecs(j, :) = rand_ortho_vector(clust_dirs(i, :)');
-            end;
-
-            % Set vector magnitudes
-            orth_vecs = abs(points_dist) .* orth_vecs;
-
-            % Add perpendicular vectors to point projections on the line,
-            % yielding final cluster points
-            points(idx_start:idx_end, :) = points_proj(idx_start:idx_end, :) + orth_vecs;
-
-        elseif strcmp(p.Results.point_offset, 'd')
-
-            % Get random displacement vectors for each point projection
-            displ = lateral_std * randn(clust_num_points(i), num_dims);
-
-            % Add displacement vectors to each point projection
-            points(idx_start:idx_end, :) = points_proj(idx_start:idx_end, :) + displ;
-
-        else
-            % We should never get here
-            error('Invalid program state');
-        end;
+        % Determine points from their projections on the line
+        points(idx_start:idx_end, :) = pt_from_proj_fun( ...
+            points_proj(idx_start:idx_end, :), lateral_std, clust_dirs(i, :)', centers(i, :)');
 
     end;
 
@@ -342,7 +330,7 @@ function clust_num_points = clusizes(total_points, allow_empty, dist_fun)
         end;
     end;
 
-end %function
+end % function
 
 %
 % Determine cluster centers.
@@ -350,7 +338,7 @@ end %function
 % Note that dist_fun should return a num_clusters * num_dims matrix.
 function clust_centers = clucenters(num_clusters, cluster_sep, offset, distfun)
 
-    clust_centers = num_clusters * distfun() * diag(cluster_sep) .+ offset';
+    clust_centers = num_clusters * distfun() * diag(cluster_sep) + offset';
 
 end % function
 
@@ -390,7 +378,6 @@ function v = rand_ortho_vector(u)
 
 end % function
 
-
 % Function which returns a random vector that is at an angle of `angle` radians
 % from vector `u`.
 %
@@ -405,4 +392,64 @@ function v = rand_vector_at_angle(u, angle)
     end;
 
     v = v / norm(v);
-end
+
+end % function
+
+% Function which generates points for a cluster from their projections in n-D,
+% placing points on a second line perpendicular to the cluster-supporting line
+% using a normal distribution centered at their intersection.
+%
+% `projs` are the point projections.
+% `lat_std` is the lateral standard deviation or cluster "fatness".
+% `clu_dir` is the cluster direction.
+% `clu_ctr` is the cluster-supporting line center position.
+function points = cluster_points_ND_1(projs, lat_std, clu_dir, clu_ctr)
+
+    % Number of dimensions
+    num_dims = numel(clu_dir);
+
+    % Number of points in this cluster
+    clust_num_points = size(projs, 1);
+
+    % Get distances from points to their projections on the line
+    points_dist = lat_std * randn(clust_num_points, 1);
+
+    % Get normalized vectors, orthogonal to the current line, for
+    % each point
+    orth_vecs = zeros(clust_num_points, num_dims);
+    for j = 1:clust_num_points
+        orth_vecs(j, :) = rand_ortho_vector(clu_dir);
+    end;
+
+    % Set vector magnitudes
+    orth_vecs = abs(points_dist) .* orth_vecs;
+
+    % Add perpendicular vectors to point projections on the line,
+    % yielding final cluster points
+    points = projs + orth_vecs;
+
+end % function
+
+% Function which generates points for a cluster from their projections in n-D,
+% placing points using a multivariate normal distribution centered at the point
+% projection.
+%
+% `projs` are the point projections.
+% `lat_std` is the lateral standard deviation or cluster "fatness".
+% `clu_dir` is the cluster direction.
+% `clu_ctr` is the cluster-supporting line center position.
+function points = cluster_points_ND(projs, lat_std, clu_dir, clu_ctr)
+
+    % Number of dimensions
+    num_dims = numel(clu_dir);
+
+    % Number of points in this cluster
+    clust_num_points = size(projs, 1);
+
+    % Get random displacement vectors for each point projection
+    displ = lat_std * randn(clust_num_points, num_dims);
+
+    % Add displacement vectors to each point projection
+    points = projs + displ;
+
+end % function
