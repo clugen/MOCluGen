@@ -346,9 +346,9 @@ end % function
 % Determine cluster centers.
 %
 % Note that dist_fn should return a num_clusters * num_dims matrix.
-function clu_centers = clucenters(num_clusters, cluster_sep, offset, dist_fn)
+function clu_centers = clucenters(num_clusters, clu_sep, clu_offset, dist_fn)
 
-    clu_centers = num_clusters * dist_fn() * diag(cluster_sep) + offset';
+    clu_centers = num_clusters * dist_fn() * diag(clu_sep) + clu_offset';
 
 end % function
 
