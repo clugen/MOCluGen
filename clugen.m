@@ -188,14 +188,14 @@ function [points, clu_num_points, clu_pts_idx, clu_centers, clu_dirs, lengths, p
     if isa(p.Results.point_dist, 'function_handle')
         % Use user-defined distribution; assume function accepts length of line
         % and number of points, and returns a num_dims x 1 vector
-        pointproj_fun = p.Results.point_dist;
+        pointproj_fn = p.Results.point_dist;
     elseif strcmp(p.Results.point_dist, 'unif')
         % Point projections will be uniformly placed along cluster-supporting lines
-        pointproj_fun = @(len, n) len * rand(n, 1) - len / 2;
+        pointproj_fn = @(len, n) len * rand(n, 1) - len / 2;
     elseif strcmp(p.Results.point_dist, 'norm')
         % Use normal distribution for placing point projections along cluster-supporting
         % lines, mean equal to line center, standard deviation equal to 1/6 of line length
-        pointproj_fun = @(len, n) len * randn(n, 1) / 6;
+        pointproj_fn = @(len, n) len * randn(n, 1) / 6;
     else
         % We should never get here
         error('Invalid program state');
@@ -204,21 +204,21 @@ function [points, clu_num_points, clu_pts_idx, clu_centers, clu_dirs, lengths, p
     % What distribution to use for placing points from their projections?
     if num_dims == 1
         % If 1D was specified, point projections are the points themselves
-        pt_from_proj_fun = @(projs, lat_std, clu_dir, clu_ctr) projs;
+        pt_from_proj_fn = @(projs, lat_std, clu_dir, clu_ctr) projs;
     elseif isa(p.Results.point_offset, 'function_handle')
         % Use user-defined distribution; assume function accepts point projections
         % on the line, lateral std., cluster direction and cluster center, and
         % returns a num_points x num_dims matrix containing the final points
         % for the current cluster
-        pt_from_proj_fun = p.Results.point_offset;
+        pt_from_proj_fn = p.Results.point_offset;
     elseif strcmp(p.Results.point_offset, 'd-1')
         % Points will be placed on a second line perpendicular to the cluster
         % line using a normal distribution centered at their intersection
-        pt_from_proj_fun = @clupoints_d_1;
+        pt_from_proj_fn = @clupoints_d_1;
     elseif strcmp(p.Results.point_offset, 'd')
         % Points will be placed using a multivariate normal distribution
         % centered at the point projection
-        pt_from_proj_fun = @clupoints_d;
+        pt_from_proj_fn = @clupoints_d;
     else
         % We should never get here
         error('Invalid program state');
@@ -278,7 +278,7 @@ function [points, clu_num_points, clu_pts_idx, clu_centers, clu_dirs, lengths, p
         clu_pts_idx(idx_start:idx_end) = i;
 
         % Determine distance of point projections from the center of the line
-        ptproj_dist_center = pointproj_fun(lengths(i), clu_num_points(i));
+        ptproj_dist_center = pointproj_fn(lengths(i), clu_num_points(i));
 
         % Determine coordinates of point projections on the line using the
         % parametric line equation (this works since cluster direction is normalized)
@@ -286,7 +286,7 @@ function [points, clu_num_points, clu_pts_idx, clu_centers, clu_dirs, lengths, p
             clu_centers(i, :) + ptproj_dist_center * clu_dirs(i, :);
 
         % Determine points from their projections on the line
-        points(idx_start:idx_end, :) = pt_from_proj_fun( ...
+        points(idx_start:idx_end, :) = pt_from_proj_fn( ...
             points_proj(idx_start:idx_end, :), lateral_std, clu_dirs(i, :)', clu_centers(i, :)');
 
     end;
@@ -296,12 +296,12 @@ end % function
 %
 % Determine cluster sizes
 %
-% Note that dist_fun should return a n x 1 array of non-negative numbers where
+% Note that dist_fn should return a n x 1 array of non-negative numbers where
 % n is the desired number of clusters.
-function clu_num_points = clusizes(total_points, allow_empty, dist_fun)
+function clu_num_points = clusizes(total_points, allow_empty, dist_fn)
 
     % Determine number of points in each cluster
-    clu_num_points = dist_fun();
+    clu_num_points = dist_fn();
     clu_num_points = clu_num_points / sum(clu_num_points);
     clu_num_points = round(clu_num_points * total_points);
 
@@ -345,10 +345,10 @@ end % function
 %
 % Determine cluster centers.
 %
-% Note that dist_fun should return a num_clusters * num_dims matrix.
-function clu_centers = clucenters(num_clusters, cluster_sep, offset, distfun)
+% Note that dist_fn should return a num_clusters * num_dims matrix.
+function clu_centers = clucenters(num_clusters, cluster_sep, offset, dist_fn)
 
-    clu_centers = num_clusters * distfun() * diag(cluster_sep) + offset';
+    clu_centers = num_clusters * dist_fn() * diag(cluster_sep) + offset';
 
 end % function
 
