@@ -368,23 +368,34 @@ end % function
 % u is expected to be a unit vector
 function v = rand_ortho_vector(u)
 
-    % Find a random, non-parallel vector to u
-    while 1
+    % Is vector 1D?
+    if numel(u) == 1
+        % If so, just return a random unit vector
 
-        % Find normalized random vector
-        r = rand_unit_vector(numel(u));
+        v = rand_unit_vector(1);
 
-        % If not parallel to u we can keep it and break the loop
-        if abs(dot(u, r)) < (1 - eps)
-            break;
+    else
+        % Otherwise proceed normally
+
+        % Find a random, non-parallel vector to u
+        while 1
+
+            % Find normalized random vector
+            r = rand_unit_vector(numel(u));
+
+            % If not parallel to u we can keep it and break the loop
+            if abs(dot(u, r)) < (1 - eps)
+                break;
+            end;
         end;
-    end;
 
-    % Get vector orthogonal to u using 1st iteration of Gram-Schmidt process
-    v = r - dot(u, r) / dot(u, u) * u;
+        % Get vector orthogonal to u using 1st iteration of Gram-Schmidt process
+        v = r - dot(u, r) / dot(u, u) * u;
 
-    % Normalize it
-    v = v / norm(v);
+        % Normalize it
+        v = v / norm(v);
+
+    end; % if-else
 
 end % function
 
