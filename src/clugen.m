@@ -61,7 +61,7 @@ function [points, clu_num_points, clu_pts_idx, clu_centers, clu_dirs, lengths, p
 %    Controls how points are created from their projections on the lines,
 %    with two possible values:
 %    - 'd-1' (default) places points on a second line perpendicular to the
-%      cluster line using a normal distribution centered at their
+%      cluster-supporting line using a normal distribution centered at their
 %      intersection.
 %    - 'd' (default) places point using a multivariate normal distribution
 %      centered at the point projection.
@@ -84,7 +84,7 @@ function [points, clu_num_points, clu_pts_idx, clu_centers, clu_dirs, lengths, p
 %     Vector (total_points x 1) containing the cluster indices of each
 %     point.
 % clu_centers
-%     Matrix (num_clusters x 2) containing cluster centers, or more
+%     Matrix (num_clusters x num_dims) containing cluster centers, or more
 %     specifically, the centers of the cluster-supporting lines.
 % clu_dirs
 %     Vector (num_clusters x num_dims) containing the vectors which define the
@@ -282,7 +282,7 @@ function [points, clu_num_points, clu_pts_idx, clu_centers, clu_dirs, lengths, p
 
         % Determine coordinates of point projections on the line using the
         % parametric line equation (this works since cluster direction is normalized)
-        points_proj(idx_start:idx_end, :) =  get_points_from_line(...
+        points_proj(idx_start:idx_end, :) =  points_on_line(...
             clu_centers(i, :)', clu_dirs(i, :)', ptproj_dist_center);
 
         % Determine points from their projections on the line
@@ -471,15 +471,5 @@ function points = clupoints_d(projs, lat_std, clu_dir, clu_ctr)
 
     % Add displacement vectors to each point projection
     points = projs + displ;
-
-end % function
-
-% Determine coordinates of points on a line with `center` and `direction`, based
-% on the distances from the center given in `dist_center`.
-%
-% This works by using the parametric line equation assuming `direction` is normalized.
-function points = get_points_from_line(center, direction, dist_center)
-
-    points = center' + dist_center * direction';
 
 end % function
