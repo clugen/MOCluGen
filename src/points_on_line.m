@@ -1,3 +1,7 @@
+% Copyright (c) 2012-2021 Nuno Fachada
+% Distributed under the MIT License (See accompanying file LICENSE or copy
+% at http://opensource.org/licenses/MIT)
+
 function points = points_on_line(center, direction, dist_center)
 % POINTS_ON_LINE Determine coordinates of points on a line with `center` and
 % `direction`, based on the distances from the center given in `dist_center`.

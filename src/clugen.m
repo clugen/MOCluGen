@@ -1,3 +1,7 @@
+% Copyright (c) 2012-2021 Nuno Fachada
+% Distributed under the MIT License (See accompanying file LICENSE or copy
+% at http://opensource.org/licenses/MIT)
+
 function [points, clu_num_points, clu_pts_idx, clu_centers, clu_dirs, lengths, points_proj] = ...
     clugen( ...
         num_dims, ...
@@ -108,10 +112,6 @@ function [points, clu_num_points, clu_pts_idx, clu_centers, clu_dirs, lengths, p
 % The following command plots the generated clusters:
 %
 %   scatter3(points(:, 1), points(:, 2), points(:,3), 8, clu_pts_idx);
-
-% Copyright (c) 2012-2021 Nuno Fachada
-% Distributed under the MIT License (See accompanying file LICENSE or copy
-% at http://opensource.org/licenses/MIT)
 %
 % Reference (TODO Update with new paper):
 % Fachada, N., & Rosa, A. C. (2020). generateData—A 2D data generator.
@@ -349,16 +349,6 @@ end % function
 function clu_centers = clucenters(num_clusters, clu_sep, clu_offset, dist_fn)
 
     clu_centers = num_clusters * dist_fn() * diag(clu_sep) + clu_offset';
-
-end % function
-
-%
-% Function which returns a random unit vector with `num_dims` dimensions.
-%
-function r = rand_unit_vector(num_dims)
-
-    r = rand(num_dims, 1) - 0.5;
-    r = r / norm(r);
 
 end % function
 

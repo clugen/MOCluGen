@@ -74,7 +74,7 @@ end
 % The actual tests %
 % %%%%%%%%%%%%%%%% %
 
-% Tests for the points_on_line function
+% Tests for the points_on_line() function
 function test_points_on_line
 
     global seeds num_dims num_points llengths_mus;
@@ -121,6 +121,34 @@ function test_points_on_line
                     end;
                 end;
             end;
+        end;
+    end;
+
+end
+
+% Tests for the random_unit_vector() function
+function test_rand_unit_vector
+
+    global seeds num_dims
+
+    % Cycle through all test parameters
+    for nd = num_dims
+        for seed = seeds
+
+            % Set seed
+            set_seed(seed);
+
+            % Function should run without warnings
+            lastwarn('');
+            r = rand_unit_vector(nd);
+            assertTrue(isempty(lastwarn));
+
+            % Check that returned vector has the correct dimensions
+            assertEqual(size(r), [nd 1]);
+
+            % Check that returned vector has norm == 1
+            assertElementsAlmostEqual(norm(r), 1);
+
         end;
     end;
 
