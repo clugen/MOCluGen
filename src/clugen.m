@@ -352,43 +352,6 @@ function clu_centers = clucenters(num_clusters, clu_sep, clu_offset, dist_fn)
 
 end % function
 
-%
-% Function which returns a random normalized vector orthogonal to u
-%
-% u is expected to be a unit vector
-function v = rand_ortho_vector(u)
-
-    % Is vector 1D?
-    if numel(u) == 1
-        % If so, just return a random unit vector
-
-        v = rand_unit_vector(1);
-
-    else
-        % Otherwise proceed normally
-
-        % Find a random, non-parallel vector to u
-        while 1
-
-            % Find normalized random vector
-            r = rand_unit_vector(numel(u));
-
-            % If not parallel to u we can keep it and break the loop
-            if abs(dot(u, r)) < (1 - eps)
-                break;
-            end;
-        end;
-
-        % Get vector orthogonal to u using 1st iteration of Gram-Schmidt process
-        v = r - dot(u, r) / dot(u, u) * u;
-
-        % Normalize it
-        v = v / norm(v);
-
-    end; % if-else
-
-end % function
-
 % Function which returns a random vector that is at an angle of `angle` radians
 % from vector `u`.
 %

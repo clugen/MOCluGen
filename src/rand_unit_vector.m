@@ -3,9 +3,9 @@
 % at http://opensource.org/licenses/MIT)
 
 function r = rand_unit_vector(num_dims)
-% RANDOM_UNIT_VECTOR Get a random unit vector with `num_dims` dimensions.
+% RAND_UNIT_VECTOR Get a random unit vector with `num_dims` dimensions.
 %
-% r = RANDOM_UNIT_VECTOR(num_dims)
+% r = RAND_UNIT_VECTOR(num_dims)
 %
 % ## Arguments
 %

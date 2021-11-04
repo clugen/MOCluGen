@@ -126,7 +126,7 @@ function test_points_on_line
 
 end
 
-% Tests for the random_unit_vector() function
+% Tests for the rand_unit_vector() function
 function test_rand_unit_vector
 
     global seeds num_dims
@@ -149,6 +149,45 @@ function test_rand_unit_vector
             % Check that returned vector has norm == 1
             assertElementsAlmostEqual(norm(r), 1);
 
+        end;
+    end;
+
+end
+
+% Tests for the rand_ortho_vector() function
+function test_rand_ortho_vector
+
+    global seeds num_dims
+
+    nvec = 10;
+
+    % Cycle through all test parameters
+    for nd = num_dims
+        for seed = seeds
+            for uvecs = get_unitvecs(nvec, nd)
+
+                % Set seed
+                set_seed(seed);
+
+                % Function should run without warnings
+                lastwarn('');
+                r = rand_ortho_vector(uvecs{:});
+                assertTrue(isempty(lastwarn));
+
+                % Check that returned vector has the correct dimensions
+                assertEqual(size(r), [nd 1]);
+
+                % Check that returned vector has norm == 1
+                assertElementsAlmostEqual(norm(r), 1);
+
+                % Check that vectors are orthogonal
+                if nd > 1
+                    % The dot product of orthogonal vectors must be
+                    % (approximately) zero
+                    assertElementsAlmostEqual(dot(uvecs{:}, r), 0);
+                end;
+
+            end;
         end;
     end;
 
