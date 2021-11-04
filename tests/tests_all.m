@@ -60,6 +60,42 @@ function uvecs = get_unitvecs(n, nd)
     end
 end
 
+% Get n angles
+function angs = get_angles(n)
+    angs = 2 * pi * rand(1, n) - pi;
+end
+
+% Returns true if the value of the sign of x is negative, otherwise false.
+function s = signbit(x)
+    s = x < 0;
+end
+
+% Get angle between two vectors, useful for checking correctness of results
+% Previous version was unstable: angle(u, v) = acos(dot(u, v) / (norm(u) * norm(v)))
+% Version below is based on AngleBetweenVectors.jl by Jeffrey Sarnoff (MIT license),
+% https://github.com/JeffreySarnoff/AngleBetweenVectors.jl/blob/master/src/AngleBetweenVectors.jl
+% in turn based on these notes by Prof. W. Kahan, see page 15:
+% https://people.eecs.berkeley.edu/~wkahan/MathH110/Cross.pdf
+function a = angle_btw(v1, v2)
+
+    u1 = v1 / norm(v1);
+    u2 = v2 / norm(v2);
+
+    y = u1 - u2;
+    x = u1 + u2;
+
+    a0 = 2 * atan(norm(y) / norm(x));
+
+    if not(signbit(a0) || signbit(pi - a0))
+        a = a0;
+    elseif signbit(a0)
+        a = 0.0;
+    else
+        a = pi;
+    end;
+
+end
+
 % Reset random number generator with a given seed
 function set_seed(seed)
     if moxunit_util_platform_is_octave()
@@ -159,19 +195,20 @@ function test_rand_ortho_vector
 
     global seeds num_dims
 
+    % How many vectors to test?
     nvec = 10;
 
     % Cycle through all test parameters
     for nd = num_dims
         for seed = seeds
-            for uvecs = get_unitvecs(nvec, nd)
+            for uvec = get_unitvecs(nvec, nd)
 
                 % Set seed
                 set_seed(seed);
 
                 % Function should run without warnings
                 lastwarn('');
-                r = rand_ortho_vector(uvecs{:});
+                r = rand_ortho_vector(uvec{:});
                 assertTrue(isempty(lastwarn));
 
                 % Check that returned vector has the correct dimensions
@@ -184,9 +221,53 @@ function test_rand_ortho_vector
                 if nd > 1
                     % The dot product of orthogonal vectors must be
                     % (approximately) zero
-                    assertElementsAlmostEqual(dot(uvecs{:}, r), 0);
+                    assertElementsAlmostEqual(dot(uvec{:}, r), 0);
                 end;
 
+            end;
+        end;
+    end;
+
+end
+
+% Tests for the rand_vector_at_angle() function
+function test_rand_vector_at_angle
+
+    global seeds num_dims
+
+    % How many vectors to test?
+    nvec = 10;
+
+    % How many angles to test?
+    nang = 10;
+
+    % Cycle through all test parameters
+    for nd = num_dims
+        for seed = seeds
+            for uvec = get_unitvecs(nvec, nd)
+                for a = get_angles(nang)
+
+                    % Set seed
+                    set_seed(seed);
+
+                    % Function should run without warnings
+                    lastwarn('');
+                    r = rand_vector_at_angle(uvec{:}, a);
+                    assertTrue(isempty(lastwarn));
+
+                    % Check that returned vector has the correct dimensions
+                    assertEqual(size(r), [nd 1]);
+
+                    % Check that returned vector has norm == 1
+                    assertElementsAlmostEqual(norm(r), 1);
+
+                    % Check that vectors u and r have an angle of a between them
+                    if nd > 1 && abs(a) < pi/2
+                        % @test angle(u, r) ≈ abs(a) atol=1e-12
+                        assertElementsAlmostEqual(angle_btw(uvec{:}, r), abs(a));
+                    end
+
+                end;
             end;
         end;
     end;

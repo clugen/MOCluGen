@@ -352,23 +352,6 @@ function clu_centers = clucenters(num_clusters, clu_sep, clu_offset, dist_fn)
 
 end % function
 
-% Function which returns a random vector that is at an angle of `angle` radians
-% from vector `u`.
-%
-% `u` is expected to be a unit vector
-% `angle` should be in radians
-function v = rand_vector_at_angle(u, angle)
-
-    if -pi/2 < angle < pi/2 && numel(u) > 1
-        v = u + rand_ortho_vector(u) * tan(angle);
-    else
-        v = rand_unit_vector(numel(u));
-    end;
-
-    v = v / norm(v);
-
-end % function
-
 % Function which generates points for a cluster from their projections in n-D,
 % placing points on a second line perpendicular to the cluster-supporting line
 % using a normal distribution centered at their intersection.
