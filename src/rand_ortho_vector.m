@@ -1,11 +1,6 @@
-% Copyright (c) 2012-2021 Nuno Fachada
-% Distributed under the MIT License (See accompanying file LICENSE or copy
-% at http://opensource.org/licenses/MIT)
-
-function v = rand_ortho_vector(u)
-% RAND_ORTHO_VECTOR Get a random unit vector orthogonal to `u`.
+% Get a random unit vector orthogonal to `u`.
 %
-% v = RAND_ORTHO_VECTOR(u)
+%     v = rand_ortho_vector(u)
 %
 % ## Arguments
 %
@@ -14,7 +9,7 @@ function v = rand_ortho_vector(u)
 % ## Return values
 %
 % * `v` - A random unit vector orthogonal to `u`.
-%
+function v = rand_ortho_vector(u)
 
     % Is vector 1D?
     if numel(u) == 1
@@ -46,3 +41,7 @@ function v = rand_ortho_vector(u)
     end; % if-else
 
 end % function
+
+% Copyright (c) 2012-2021 Nuno Fachada
+% Distributed under the MIT License (See accompanying file LICENSE or copy
+% at http://opensource.org/licenses/MIT)
