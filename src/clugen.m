@@ -319,25 +319,7 @@ function clu_num_points = clusizes(total_points, allow_empty, dist_fn)
 
     % If allow_empty is false make sure there are no empty clusters
     if ~allow_empty
-
-        % Find empty clusters
-        empty_clusts = find(clu_num_points == 0);
-
-        % If there are empty clusters...
-        if ~isempty(empty_clusts)
-
-            % How many empty clusters do we have?
-            n_empty_clusts = size(empty_clusts, 1);
-
-            % Go through the empty clusters...
-            for i = 1:n_empty_clusts
-                % ...get a point from the largest cluster and assign it to the
-                % current empty cluster
-                [C, I] = max(clu_num_points);
-                clu_num_points(I(1)) = C - 1;
-                clu_num_points(empty_clusts(i)) = 1;
-            end;
-        end;
+        clu_num_points = fix_empty(clu_num_points, allow_empty);
     end;
 
 end % function

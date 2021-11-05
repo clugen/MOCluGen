@@ -263,7 +263,6 @@ function test_rand_vector_at_angle
 
                     % Check that vectors u and r have an angle of a between them
                     if nd > 1 && abs(a) < pi/2
-                        % @test angle(u, r) ≈ abs(a) atol=1e-12
                         assertElementsAlmostEqual(angle_btw(uvec{:}, r), abs(a));
                     end
 
@@ -271,5 +270,49 @@ function test_rand_vector_at_angle
             end;
         end;
     end;
+
+end
+
+% Tests for the fix_empty() function
+function test_fix_empty
+
+    % No empty clusters
+    clusts = [11; 21; 10];
+    clusts_fixed = fix_empty(clusts, false);
+    assertEqual(clusts, clusts_fixed);
+
+    % Empty clusters, no fix
+    clusts = [0; 11; 21; 10; 0; 0];
+    clusts_fixed = fix_empty(clusts, true);
+    assertEqual(clusts, clusts_fixed);
+
+    % Empty clusters, fix
+    clusts = [5; 0; 21; 10; 0; 0; 101];
+    clusts_fixed = fix_empty(clusts, false);
+    assertEqual(sum(clusts), sum(clusts_fixed));
+    assertNotEqual(clusts, clusts_fixed);
+    assertEqual(any(clusts_fixed == 0), false);
+
+    % Empty clusters, fix, several equal maximums
+    clusts = [101; 5; 0; 21; 101; 10; 0; 0; 101; 100; 99; 0; 0; 0; 100];
+    clusts_fixed = fix_empty(clusts, false);
+    assertEqual(sum(clusts), sum(clusts_fixed));
+    assertNotEqual(clusts, clusts_fixed);
+    assertEqual(any(clusts_fixed == 0), false);
+
+    % Empty clusters, no fix (flag)
+    clusts = [0; 10];
+    clusts_fixed = fix_empty(clusts, true);
+    assertEqual(clusts, clusts_fixed);
+
+    % Empty clusters, no fix (not enough points)
+    clusts = [0; 1; 1; 0; 0; 2; 0; 0];
+    clusts_fixed = fix_empty(clusts, false);
+    assertEqual(clusts, clusts_fixed);
+
+    % Works with 1D
+    clusts = 100;
+    clusts_fixed = fix_empty(clusts, true);
+    assertEqual(clusts, clusts_fixed);
 
 end
