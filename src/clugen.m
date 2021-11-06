@@ -306,16 +306,7 @@ function clu_num_points = clusizes(total_points, allow_empty, dist_fn)
     clu_num_points = round(clu_num_points * total_points);
 
     % Make sure total_points is respected
-    while sum(clu_num_points) < total_points
-        % If one point is missing add it to the smaller cluster
-        [C, I] = min(clu_num_points);
-        clu_num_points(I(1)) = C + 1;
-    end;
-    while sum(clu_num_points) > total_points
-        % If there is one extra point, remove it from larger cluster
-        [C, I] = max(clu_num_points);
-        clu_num_points(I(1)) = C - 1;
-    end;
+    clu_num_points = fix_num_points(clu_num_points, total_points);
 
     % If allow_empty is false make sure there are no empty clusters
     if ~allow_empty
