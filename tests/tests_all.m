@@ -36,8 +36,11 @@ function init_data
     seeds = [0, 123, 9999, 9876543];
     num_dims = [1, 2, 3, 4, 30];
     num_points = [1, 10, 500, 10000];
+    num_clusters = [1, 2, 5, 10, 100];
     lat_stds = [0.0, 5.0, 500];
     llengths_mus = [0, 10];
+    angles_stds = [0, pi/256, pi/32, pi/4, pi/2, pi, 2*pi];
+
 end
 
 % %%%%%%%%%%%%%%%%%%%%%%%% %
@@ -166,7 +169,7 @@ end
 % Test the rand_unit_vector() function
 function test_rand_unit_vector
 
-    global seeds num_dims
+    global seeds num_dims;
 
     % Cycle through all test parameters
     for nd = num_dims
@@ -194,7 +197,7 @@ end
 % Test the rand_ortho_vector() function
 function test_rand_ortho_vector
 
-    global seeds num_dims
+    global seeds num_dims;
 
     % How many vectors to test?
     nvec = 10;
@@ -234,7 +237,7 @@ end
 % Test the rand_vector_at_angle() function
 function test_rand_vector_at_angle
 
-    global seeds num_dims
+    global seeds num_dims;
 
     % How many vectors to test?
     nvec = 10;
@@ -428,4 +431,34 @@ function test_clupoints_n_1_template
         end;
     end;
 
+end
+
+% Test the angle_deltas function
+function test_angle_deltas
+
+    global seeds num_clusters angles_stds;
+
+    % Cycle through all test parameters
+    for seed = seeds
+        for nclu = num_clusters
+            for astd = angles_stds
+
+                % Set seed
+                set_seed(seed);
+
+                % Function should run without warnings
+                lastwarn('');
+                angles = angle_deltas(nclu, astd);
+                assertTrue(isempty(lastwarn));
+
+                % Check that return value has the correct dimensions
+                assertEqual(size(angles), [nclu 1]);
+
+                % Check that all angles are between -π/2 and π/2
+                assertTrue(all(angles <= pi/2));
+                assertTrue(all(angles >= -pi/2));
+
+            end;
+        end;
+    end;
 end

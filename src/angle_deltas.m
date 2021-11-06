@@ -30,7 +30,7 @@ function ma = minangle(a)
         ma = ma - pi;
     elseif ma < -pi/2
         ma = ma + pi;
-    end
+    end;
 end
 
 % Copyright (c) 2012-2021 Nuno Fachada
