@@ -232,18 +232,15 @@ function [points, clu_num_points, clu_pts_idx, clu_centers, clu_dirs, lengths, p
         total_points, p.Results.allow_empty, ...
         @() abs(randn(num_clusters, 1)));
 
-    % Determine cluster centers using the uniform distribution between -0.5 and 0.5
-    clu_centers = clucenters(...
-        num_clusters, cluster_sep, p.Results.cluster_offset, ...
-        @() rand(num_clusters, num_dims) - 0.5);
+    % Determine cluster centers
+    clu_centers = clucenters(num_clusters, cluster_sep, p.Results.cluster_offset);
 
     % Determine length of lines supporting clusters
     % Line lengths are drawn from the folded normal distribution
     lengths = abs(line_length + line_length_std * randn(num_clusters, 1));
 
     % Obtain angles between main direction and cluster-supporting lines
-    % using the normal distribution (mean=0, std=angle_std)
-    angles = angle_std * randn(num_clusters, 1);
+    angles = angle_deltas(num_clusters, angle_std);
 
     % Determine normalized cluster direction
     clu_dirs = zeros(num_clusters, num_dims);
