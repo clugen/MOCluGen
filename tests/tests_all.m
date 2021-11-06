@@ -546,3 +546,46 @@ function test_llengths
     end;
 end
 
+% Test the clusizes function
+function test_clusizes
+
+    global seeds num_clusters num_points;
+
+    % Cycle through all test parameters
+    for seed = seeds
+        for nclu = num_clusters
+            for tpts = num_points
+                for ae = [true, false]
+
+                    % Don't test if number of points is less than number of
+                    % clusters and we don't allow empty clusters
+                    if ~ae && tpts < nclu
+                        continue;
+                    end
+
+                    % Set seed
+                    set_seed(seed);
+
+                    % Function should run without warnings
+                    lastwarn('');
+                    clu_sizes = clusizes(nclu, tpts, ae);
+                    assertTrue(isempty(lastwarn));
+
+                    % Check that the output has the correct number of clusters
+                    assertEqual(size(clu_sizes), [nclu 1]);
+
+                    % Check that the total number of points is correct
+                    assertEqual(sum(clu_sizes), tpts);
+
+                    % If empty clusters are not allowed, check that all of them
+                    % have points
+                    if ~ae
+                        assertTrue(all(clu_sizes > 0));
+                    end;
+
+                end;
+            end;
+        end;
+    end;
+end
+
