@@ -214,11 +214,11 @@ function [points, clu_num_points, clu_pts_idx, clu_centers, clu_dirs, lengths, p
     elseif strcmp(p.Results.point_offset, 'd-1')
         % Points will be placed on a second line perpendicular to the cluster
         % line using a normal distribution centered at their intersection
-        pt_from_proj_fn = @clupoints_d_1;
+        pt_from_proj_fn = @clupoints_n_1;
     elseif strcmp(p.Results.point_offset, 'd')
         % Points will be placed using a multivariate normal distribution
         % centered at the point projection
-        pt_from_proj_fn = @clupoints_d;
+        pt_from_proj_fn = @clupoints_n;
     else
         % We should never get here
         error('Invalid program state');
@@ -333,7 +333,7 @@ end % function
 % `lat_std` is the lateral standard deviation or cluster "fatness".
 % `clu_dir` is the cluster direction.
 % `clu_ctr` is the cluster-supporting line center position (ignored).
-function points = clupoints_d_1(projs, lat_std, clu_dir, clu_ctr)
+function points = clupoints_n_1(projs, lat_std, clu_dir, clu_ctr)
 
     % Number of dimensions
     num_dims = numel(clu_dir);
@@ -367,7 +367,7 @@ end % function
 % `lat_std` is the lateral standard deviation or cluster "fatness".
 % `clu_dir` is the cluster direction.
 % `clu_ctr` is the cluster-supporting line center position (ignored).
-function points = clupoints_d(projs, lat_std, clu_dir, clu_ctr)
+function points = clupoints_n(projs, lat_std, clu_dir, clu_ctr)
 
     % Number of dimensions
     num_dims = numel(clu_dir);
