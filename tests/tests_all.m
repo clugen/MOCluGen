@@ -110,7 +110,7 @@ end
 % The actual tests %
 % %%%%%%%%%%%%%%%% %
 
-% Tests for the points_on_line() function
+% Test the points_on_line() function
 function test_points_on_line
 
     global seeds num_dims num_points llengths_mus;
@@ -162,7 +162,7 @@ function test_points_on_line
 
 end
 
-% Tests for the rand_unit_vector() function
+% Test the rand_unit_vector() function
 function test_rand_unit_vector
 
     global seeds num_dims
@@ -190,7 +190,7 @@ function test_rand_unit_vector
 
 end
 
-% Tests for the rand_ortho_vector() function
+% Test the rand_ortho_vector() function
 function test_rand_ortho_vector
 
     global seeds num_dims
@@ -230,7 +230,7 @@ function test_rand_ortho_vector
 
 end
 
-% Tests for the rand_vector_at_angle() function
+% Test the rand_vector_at_angle() function
 function test_rand_vector_at_angle
 
     global seeds num_dims
@@ -273,7 +273,7 @@ function test_rand_vector_at_angle
 
 end
 
-% Tests for the fix_empty() function
+% Test the fix_empty() function
 function test_fix_empty
 
     % No empty clusters
@@ -317,7 +317,7 @@ function test_fix_empty
 
 end
 
-% Tests for the fix_num_points() function
+% Test the fix_num_points() function
 function test_fix_num_points
 
     % No change
