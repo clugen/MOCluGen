@@ -64,6 +64,25 @@ function uvecs = get_unitvecs(n, nd)
     end
 end
 
+% Get random cluster separations
+function clu_seps = get_clu_seps(nd)
+    clu_seps = get_clu_offsets(nd);
+end
+
+% Get random cluster offsets
+function clu_offs = get_clu_offsets(nd)
+
+    global seeds;
+
+    clu_offs = zeros(2 + numel(seeds), nd);
+    clu_offs(2, :) = ones(1, nd);
+    for i = 1:numel(seeds)
+        set_seed(seeds(i));
+        clu_offs(2 + i, :) = 1000 * rand(1, nd);
+    end;
+
+end
+
 % Get n angles
 function angs = get_angles(n)
     angs = 2 * pi * rand(1, n) - pi;
@@ -458,6 +477,36 @@ function test_angle_deltas
                 assertTrue(all(angles <= pi/2));
                 assertTrue(all(angles >= -pi/2));
 
+            end;
+        end;
+    end;
+end
+
+% Test the clucenters function
+function test_clucenters
+
+    global num_dims seeds num_clusters;
+
+    % Cycle through all test parameters
+    for nd = num_dims
+        for seed = seeds
+            for nclu = num_clusters
+                for clu_sep = get_clu_seps(nd)'
+                    for clu_off = get_clu_offsets(nd)'
+
+                        % Set seed
+                        set_seed(seed);
+
+                        % Function should run without warnings
+                        lastwarn('');
+                        clu_ctrs = clucenters(nclu, clu_sep, clu_off);
+                        assertTrue(isempty(lastwarn));
+
+                        % Check that return value has the correct dimensions
+                        assertEqual(size(clu_ctrs), [nclu nd]);
+
+                    end;
+                end;
             end;
         end;
     end;
