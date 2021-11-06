@@ -204,7 +204,7 @@ function [points, clu_num_points, clu_pts_idx, clu_centers, clu_dirs, lengths, p
     % What distribution to use for placing points from their projections?
     if num_dims == 1
         % If 1D was specified, point projections are the points themselves
-        pt_from_proj_fn = @(projs, lat_std, clu_dir, clu_ctr) projs;
+        pt_from_proj_fn = @(projs, lat_disp, clu_dir, clu_ctr) projs;
     elseif isa(p.Results.point_offset, 'function_handle')
         % Use user-defined distribution; assume function accepts point projections
         % on the line, lateral std., cluster direction and cluster center, and
@@ -330,32 +330,17 @@ end % function
 % using a normal distribution centered at their intersection.
 %
 % `projs` are the point projections.
-% `lat_std` is the lateral standard deviation or cluster "fatness".
+% `lat_disp` is the lateral standard deviation or cluster "fatness".
 % `clu_dir` is the cluster direction.
 % `clu_ctr` is the cluster-supporting line center position (ignored).
-function points = clupoints_n_1(projs, lat_std, clu_dir, clu_ctr)
+function points = clupoints_n_1(projs, lat_disp, clu_dir, clu_ctr)
 
-    % Number of dimensions
-    num_dims = numel(clu_dir);
+    % Define function to get distances from points to their projections on the
+    % line (i.e., using the normal distribution)
+    dist_fn = @(clu_num_points, ldisp) ldisp * randn(clu_num_points, 1);
 
-    % Number of points in this cluster
-    clu_num_points = size(projs, 1);
-
-    % Get distances from points to their projections on the line
-    points_dist = lat_std * randn(clu_num_points, 1);
-
-    % Get normalized vectors, orthogonal to the current line, for each point
-    orth_vecs = zeros(clu_num_points, num_dims);
-    for j = 1:clu_num_points
-        orth_vecs(j, :) = rand_ortho_vector(clu_dir);
-    end;
-
-    % Set vector magnitudes
-    orth_vecs = abs(points_dist) .* orth_vecs;
-
-    % Add perpendicular vectors to point projections on the line,
-    % yielding final cluster points
-    points = projs + orth_vecs;
+    % Use clupoints_n_1_template() to do the heavy lifting
+    points = clupoints_n_1_template(projs, lat_disp, clu_dir, dist_fn);
 
 end % function
 
@@ -364,10 +349,10 @@ end % function
 % projection.
 %
 % `projs` are the point projections.
-% `lat_std` is the lateral standard deviation or cluster "fatness".
+% `lat_disp` is the lateral standard deviation or cluster "fatness".
 % `clu_dir` is the cluster direction.
 % `clu_ctr` is the cluster-supporting line center position (ignored).
-function points = clupoints_n(projs, lat_std, clu_dir, clu_ctr)
+function points = clupoints_n(projs, lat_disp, clu_dir, clu_ctr)
 
     % Number of dimensions
     num_dims = numel(clu_dir);
@@ -376,7 +361,7 @@ function points = clupoints_n(projs, lat_std, clu_dir, clu_ctr)
     clu_num_points = size(projs, 1);
 
     % Get random displacement vectors for each point projection
-    displ = lat_std * randn(clu_num_points, num_dims);
+    displ = lat_disp * randn(clu_num_points, num_dims);
 
     % Add displacement vectors to each point projection
     points = projs + displ;

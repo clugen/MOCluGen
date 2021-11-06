@@ -31,11 +31,12 @@ end
 % %%%%%%%%% %
 
 function init_data
-    global seeds num_dims num_points llengths_mus;
+    global seeds num_dims num_points lat_stds llengths_mus;
 
     seeds = [0, 123, 9999, 9876543];
     num_dims = [1, 2, 3, 4, 30];
     num_points = [1, 10, 500, 10000];
+    lat_stds = [0.0, 5.0, 500];
     llengths_mus = [0, 10];
 end
 
@@ -357,5 +358,74 @@ function test_fix_num_points
     clusts_fixed = fix_num_points(clusts, num_pts);
     assertNotEqual(clusts, clusts_fixed);
     assertEqual(sum(clusts_fixed), num_pts);
+
+end
+
+% Test the clupoints_n_1_template function
+function test_clupoints_n_1_template
+
+    global seeds num_dims num_points lat_stds llengths_mus;
+
+    % Number of line directions to test
+    ndirs = 3;
+
+    % Number of line centers to test
+    ncts = 3;
+
+    % Distance from points to projections will be 10
+    dist_pt = 10;
+
+    % Cycle through all test parameters
+    for nd = num_dims(2:end) % Skip nd==1
+        for tpts = num_points(num_points < 1000)
+            for seed = seeds
+                for lat_std = lat_stds
+                    for length = llengths_mus
+                        for dir = get_unitvecs(ndirs, nd)
+                            for ctr = get_vecs(ncts, nd)
+
+                                % Set seed
+                                set_seed(seed);
+
+                                % Create some point projections
+                                pd2ctr = length * rand(tpts, 1) - length / 2;
+                                proj = points_on_line(ctr{:}, dir{:}, pd2ctr);
+
+                                % Very simple dist_fn, always puts points at a
+                                % distance of dist_pt
+                                dist_fn = @(clu_num_points, ldisp) ...
+                                    randi([0 1], clu_num_points, 1) * dist_pt * 2 ...
+                                        - dist_pt;
+
+                                % Function should run without warnings
+                                lastwarn('');
+                                pts = clupoints_n_1_template( ...
+                                    proj, lat_std, dir{:}, dist_fn);
+                                assertTrue(isempty(lastwarn));
+
+                                % Check that number of points is the same as the
+                                % number of projections
+                                assertEqual(size(pts), size(proj));
+
+                                % For each vector from projection to point...
+                                proj_pt_vecs = pts - proj;
+                                for i = 1:num_points
+                                    % Get current vector
+                                    u = proj_pt_vecs(i, :)';
+                                    % Vector should be approximately orthogonal
+                                    % to the cluster line
+                                    assertElementsAlmostEqual(dot(dir{:}, u), 0);
+                                    % Vector should of a magnitude of
+                                    % approximately dist_pt
+                                    assertElementsAlmostEqual(norm(u), dist_pt);
+                                end
+
+                            end;
+                        end;
+                    end;
+                end;
+            end;
+        end;
+    end;
 
 end
