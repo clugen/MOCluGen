@@ -236,8 +236,7 @@ function [points, clu_num_points, clu_pts_idx, clu_centers, clu_dirs, lengths, p
     clu_centers = clucenters(num_clusters, cluster_sep, p.Results.cluster_offset);
 
     % Determine length of lines supporting clusters
-    % Line lengths are drawn from the folded normal distribution
-    lengths = abs(line_length + line_length_std * randn(num_clusters, 1));
+    lengths = llengths(num_clusters, line_length, line_length_std);
 
     % Obtain angles between main direction and cluster-supporting lines
     angles = angle_deltas(num_clusters, angle_std);
