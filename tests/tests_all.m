@@ -39,6 +39,7 @@ function init_data
     num_clusters = [1, 2, 5, 10, 100];
     lat_stds = [0.0, 5.0, 500];
     llengths_mus = [0, 10];
+    llengths_sigmas = [0, 15];
     angles_stds = [0, pi/256, pi/32, pi/4, pi/2, pi, 2*pi];
 
 end
@@ -511,3 +512,37 @@ function test_clucenters
         end;
     end;
 end
+
+% Test the llengths function
+function test_llengths
+
+    global num_dims seeds num_clusters;
+
+    % Cycle through all test parameters
+    for nd = num_dims
+        for seed = seeds
+            for nclu = num_clusters
+                for llength_mu = llengths_mus
+                    for llengths_sigma = llengths_sigmas
+
+                        % Set seed
+                        set_seed(seed);
+
+                        % Function should run without warnings
+                        lastwarn('');
+                        lens = llengths(nclu, llength_mu, llength_sigma);
+                        assertTrue(isempty(lastwarn));
+
+                        % Check that return value has the correct dimensions
+                        assertEqual(size(lens), [nclu 1]);
+
+                        % Check that all lengths are >= 0
+                        assertTrue(all(lens >= 0));
+
+                    end;
+                end;
+            end;
+        end;
+    end;
+end
+
