@@ -1,7 +1,3 @@
-% Copyright (c) 2012-2021 Nuno Fachada
-% Distributed under the MIT License (See accompanying file LICENSE or copy
-% at http://opensource.org/licenses/MIT)
-
 function [points, clu_num_points, clu_pts_idx, clu_centers, clu_dirs, lengths, points_proj] = ...
     clugen( ...
         num_dims, ...
@@ -293,77 +289,6 @@ function [points, clu_num_points, clu_pts_idx, clu_centers, clu_dirs, lengths, p
 
 end % function
 
-%
-% Determine cluster sizes
-%
-% Note that dist_fn should return a n x 1 array of non-negative numbers where
-% n is the desired number of clusters.
-function clu_num_points = clusizes(total_points, allow_empty, dist_fn)
-
-    % Determine number of points in each cluster
-    clu_num_points = dist_fn();
-    clu_num_points = clu_num_points / sum(clu_num_points);
-    clu_num_points = round(clu_num_points * total_points);
-
-    % Make sure total_points is respected
-    clu_num_points = fix_num_points(clu_num_points, total_points);
-
-    % If allow_empty is false make sure there are no empty clusters
-    if ~allow_empty
-        clu_num_points = fix_empty(clu_num_points, allow_empty);
-    end;
-
-end % function
-
-%
-% Determine cluster centers.
-%
-% Note that dist_fn should return a num_clusters * num_dims matrix.
-function clu_centers = clucenters(num_clusters, clu_sep, clu_offset, dist_fn)
-
-    clu_centers = num_clusters * dist_fn() * diag(clu_sep) + clu_offset';
-
-end % function
-
-% Function which generates points for a cluster from their projections in n-D,
-% placing points on a second line perpendicular to the cluster-supporting line
-% using a normal distribution centered at their intersection.
-%
-% `projs` are the point projections.
-% `lat_disp` is the lateral standard deviation or cluster "fatness".
-% `clu_dir` is the cluster direction.
-% `clu_ctr` is the cluster-supporting line center position (ignored).
-function points = clupoints_n_1(projs, lat_disp, clu_dir, clu_ctr)
-
-    % Define function to get distances from points to their projections on the
-    % line (i.e., using the normal distribution)
-    dist_fn = @(clu_num_points, ldisp) ldisp * randn(clu_num_points, 1);
-
-    % Use clupoints_n_1_template() to do the heavy lifting
-    points = clupoints_n_1_template(projs, lat_disp, clu_dir, dist_fn);
-
-end % function
-
-% Function which generates points for a cluster from their projections in n-D,
-% placing points using a multivariate normal distribution centered at the point
-% projection.
-%
-% `projs` are the point projections.
-% `lat_disp` is the lateral standard deviation or cluster "fatness".
-% `clu_dir` is the cluster direction.
-% `clu_ctr` is the cluster-supporting line center position (ignored).
-function points = clupoints_n(projs, lat_disp, clu_dir, clu_ctr)
-
-    % Number of dimensions
-    num_dims = numel(clu_dir);
-
-    % Number of points in this cluster
-    clu_num_points = size(projs, 1);
-
-    % Get random displacement vectors for each point projection
-    displ = lat_disp * randn(clu_num_points, num_dims);
-
-    % Add displacement vectors to each point projection
-    points = projs + displ;
-
-end % function
+% Copyright (c) 2012-2021 Nuno Fachada
+% Distributed under the MIT License (See accompanying file LICENSE or copy
+% at http://opensource.org/licenses/MIT)
