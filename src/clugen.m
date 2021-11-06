@@ -227,10 +227,8 @@ function [points, clu_num_points, clu_pts_idx, clu_centers, clu_dirs, lengths, p
     % Normalize direction
     direction = direction / norm(direction);
 
-    % Determine cluster sizes using the half-normal distribution (with std=1)
-    clu_num_points = clusizes(...
-        total_points, p.Results.allow_empty, ...
-        @() abs(randn(num_clusters, 1)));
+    % Determine cluster sizes
+    clu_num_points = clusizes(num_clusters, total_points, p.Results.allow_empty);
 
     % Determine cluster centers
     clu_centers = clucenters(num_clusters, cluster_sep, p.Results.cluster_offset);

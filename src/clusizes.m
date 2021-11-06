@@ -1,18 +1,47 @@
 
+% Determine cluster sizes, i.e., the number of points in each cluster, using the
+% normal distribution (μ=`num_points`/`num_clusters`, σ=μ/3), and then assuring
+% that the final cluster sizes add up to `num_points`.
 %
-% Determine cluster sizes
+%      clu_num_points = clusizes(num_clusters, num_points, allow_empty)
 %
-% Note that dist_fn should return a n x 1 array of non-negative numbers where
-% n is the desired number of clusters.
-function clu_num_points = clusizes(total_points, allow_empty, dist_fn)
+% ## Arguments
+%
+% - `num_clusters`: Number of clusters.
+% - `num_points`: Total number of points.
+% - `allow_empty`: Allow empty clusters?
+%
+% ## Return values
+%
+% - `clu_num_points`: Number of points in each cluster (`num_clusters` x 1 vector).
+function clu_num_points = clusizes(num_clusters, num_points, allow_empty)
 
-    % Determine number of points in each cluster
-    clu_num_points = dist_fn();
-    clu_num_points = clu_num_points / sum(clu_num_points);
-    clu_num_points = round(clu_num_points * total_points);
+    % Determine number of points in each cluster using the normal distribution
 
-    % Make sure total_points is respected
-    clu_num_points = fix_num_points(clu_num_points, total_points);
+    % Consider the mean an equal division of points between clusters
+    cmean = num_points / num_clusters;
+
+    % The standard deviation is such that the interval [0, 2 * mean] will contain
+    % ≈99.7% of cluster sizes
+    std = cmean / 3;
+
+    % Determine points with the normal distribution
+    clu_num_points = std * randn(num_clusters, 1) + cmean;
+
+    % Set negative values to zero
+    clu_num_points = max(clu_num_points, 0);
+
+    % Fix imbalances, so that num_points is respected
+    if sum(clu_num_points) > 0 % Be careful not to divide by zero
+        clu_num_points = (num_points / sum(clu_num_points)) * clu_num_points;
+    end
+
+    % Round the real values to integers since a cluster sizes is represented by
+    % an integer
+    clu_num_points = round(clu_num_points);
+
+    % Make sure num_points is respected
+    clu_num_points = fix_num_points(clu_num_points, num_points);
 
     % If allow_empty is false make sure there are no empty clusters
     if ~allow_empty
