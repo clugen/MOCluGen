@@ -1,12 +1,25 @@
 
-% Function which generates points for a cluster from their projections in n-D,
-% placing points using a multivariate normal distribution centered at the point
-% projection.
+% Generate points from their ``n``-dimensional projections on a cluster-supporting
+% line, placing each point around its projection using the normal distribution
+% (μ=0, σ=`lat_disp`).
 %
-% `projs` are the point projections.
-% `lat_disp` is the lateral standard deviation or cluster "fatness".
-% `clu_dir` is the cluster direction.
-% `clu_ctr` is the cluster-supporting line center position (ignored).
+%     points = clupoints_n(projs, lat_disp, line_len, clu_dir, clu_ctr)
+%
+% This function's main intended use is by the [`clugen()`](#clugen) function,
+% generating the final points when the `point_dist_fn` parameter is set to `"n"`.
+%
+% ## Arguments
+%
+% - `projs`: Point projections on the cluster-supporting line.
+% - `lat_disp`: Standard deviation for the normal distribution, i.e., cluster
+%   lateral dispersion.
+% - `line_len`: Length of cluster-supporting line (ignored).
+% - `clu_dir`: Direction of the cluster-supporting line.
+% - `clu_ctr`: Center position of the cluster-supporting line (ignored).
+%
+% # Return values
+%
+% - `points`: Generated points (_p_ x _n_ matrix).
 function points = clupoints_n(projs, lat_disp, line_len, clu_dir, clu_ctr)
 
     % Number of dimensions
