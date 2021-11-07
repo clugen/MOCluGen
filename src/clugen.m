@@ -200,7 +200,7 @@ function [points, clu_num_points, clu_pts_idx, clu_centers, clu_dirs, lengths, p
     % What distribution to use for placing points from their projections?
     if num_dims == 1
         % If 1D was specified, point projections are the points themselves
-        pt_from_proj_fn = @(projs, lat_disp, clu_dir, clu_ctr) projs;
+        pt_from_proj_fn = @(projs, lat_disp, len, clu_dir, clu_ctr) projs;
     elseif isa(p.Results.point_offset, 'function_handle')
         % Use user-defined distribution; assume function accepts point projections
         % on the line, lateral std., cluster direction and cluster center, and
@@ -277,7 +277,8 @@ function [points, clu_num_points, clu_pts_idx, clu_centers, clu_dirs, lengths, p
 
         % Determine points from their projections on the line
         points(idx_start:idx_end, :) = pt_from_proj_fn( ...
-            points_proj(idx_start:idx_end, :), lateral_std, clu_dirs(i, :)', clu_centers(i, :)');
+            points_proj(idx_start:idx_end, :), lateral_std, lengths(i), ...
+            clu_dirs(i, :)', clu_centers(i, :)');
 
     end;
 

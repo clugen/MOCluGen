@@ -7,7 +7,7 @@
 % `lat_disp` is the lateral standard deviation or cluster "fatness".
 % `clu_dir` is the cluster direction.
 % `clu_ctr` is the cluster-supporting line center position (ignored).
-function points = clupoints_n(projs, lat_disp, clu_dir, clu_ctr)
+function points = clupoints_n(projs, lat_disp, line_len, clu_dir, clu_ctr)
 
     % Number of dimensions
     num_dims = numel(clu_dir);
