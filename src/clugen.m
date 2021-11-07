@@ -1,4 +1,5 @@
-function [points, cluster_sizes, point_clusters, clu_centers, cluster_directions, cluster_lengths, point_projections] = ...
+function [points, point_clusters, point_projections, cluster_sizes, ...
+    cluster_centers, cluster_directions, cluster_angles, cluster_lengths] = ...
     clugen( ...
         num_dims, ...
         num_clusters, ...
@@ -15,7 +16,7 @@ function [points, cluster_sizes, point_clusters, clu_centers, cluster_directions
 %        along straight lines, which can be more or less parallel
 %        depending on the dirStd parameter.
 %
-% [points, cluster_sizes, point_clusters, clu_centers, cluster_directions, cluster_lengths] =
+% [points, cluster_sizes, point_clusters, cluster_centers, cluster_directions, cluster_lengths] =
 %    CLUGEN(num_dims, num_clusters, num_points, direction, angle_disp, ...
 %           cluster_sep,  llength, llength_disp, lateral_disp, ...)
 %
@@ -83,7 +84,7 @@ function [points, cluster_sizes, point_clusters, clu_centers, cluster_directions
 % point_clusters
 %     Vector (num_points x 1) containing the cluster indices of each
 %     point.
-% clu_centers
+% cluster_centers
 %     Matrix (num_clusters x num_dims) containing cluster centers, or more
 %     specifically, the centers of the cluster-supporting lines.
 % cluster_directions
@@ -231,18 +232,18 @@ function [points, cluster_sizes, point_clusters, clu_centers, cluster_directions
     cluster_sizes = clusizes(num_clusters, num_points, p.Results.allow_empty);
 
     % Determine cluster centers
-    clu_centers = clucenters(num_clusters, cluster_sep, p.Results.cluster_offset);
+    cluster_centers = clucenters(num_clusters, cluster_sep, p.Results.cluster_offset);
 
     % Determine length of lines supporting clusters
     cluster_lengths = llengths(num_clusters, llength, llength_disp);
 
     % Obtain angles between main direction and cluster-supporting lines
-    angles = angle_deltas(num_clusters, angle_disp);
+    cluster_angles = angle_deltas(num_clusters, angle_disp);
 
     % Determine normalized cluster direction
     cluster_directions = zeros(num_clusters, num_dims);
     for i = 1:num_clusters
-        cluster_directions(i, :) = rand_vector_at_angle(direction, angles(i));
+        cluster_directions(i, :) = rand_vector_at_angle(direction, cluster_angles(i));
     end;
 
     % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% %
@@ -273,12 +274,12 @@ function [points, cluster_sizes, point_clusters, clu_centers, cluster_directions
         % Determine coordinates of point projections on the line using the
         % parametric line equation (this works since cluster direction is normalized)
         point_projections(idx_start:idx_end, :) =  points_on_line(...
-            clu_centers(i, :)', cluster_directions(i, :)', ptproj_dist_center);
+            cluster_centers(i, :)', cluster_directions(i, :)', ptproj_dist_center);
 
         % Determine points from their projections on the line
         points(idx_start:idx_end, :) = pt_from_proj_fn( ...
             point_projections(idx_start:idx_end, :), lateral_disp, cluster_lengths(i), ...
-            cluster_directions(i, :)', clu_centers(i, :)');
+            cluster_directions(i, :)', cluster_centers(i, :)');
 
     end;
 
