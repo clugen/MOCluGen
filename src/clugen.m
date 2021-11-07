@@ -1,100 +1,4 @@
-function [points, point_clusters, point_projections, cluster_sizes, ...
-    cluster_centers, cluster_directions, cluster_angles, cluster_lengths] = ...
-    clugen( ...
-        num_dims, ...
-        num_clusters, ...
-        num_points, ...
-        direction, ...
-        angle_disp, ...
-        cluster_sep, ...
-        llength, ...
-        llength_disp, ...
-        lateral_disp, ...
-        varargin ...
-    )
-% CLUGEN Generates multidimensional data for clustering. Data is created
-%        along straight lines, which can be more or less parallel
-%        depending on the dirStd parameter.
-%
-% [points, cluster_sizes, point_clusters, cluster_centers, cluster_directions, cluster_lengths] =
-%    CLUGEN(num_dims, num_clusters, num_points, direction, angle_disp, ...
-%           cluster_sep,  llength, llength_disp, lateral_disp, ...)
-%
-% Required input parameters
-% -------------------------
-%
-% num_dims
-%     Number of dimensions (integer).
-% num_clusters
-%     Number of clusters to generate (integer).
-% num_points
-%     Total points in generated data (integer). These will be randomly
-%     divided between clusters using the half-normal distribution with unit
-%     standard deviation.
-% direction
-%     Main direction of clusters (num_dims x 1 vector).
-% angle_disp
-%     Standard deviation of cluster-supporting line angles (float).
-% cluster_sep
-%     Mean cluster separation (num_dims x 1 vector).
-% llength
-%     Mean length of cluster-supporting lines (integer).
-% llength_disp
-%     Standard deviation of the length of cluster-supporting lines (float).
-% lateral_disp
-%     Point dispersion from line, i.e. "cluster fatness" (integer).
-%
-% Optional named input parameters
-% -------------------------------
-%
-% allow_empty
-%    Allow empty clusters? This value is false by default (bool).
-% point_dist
-%    Specifies the distribution of points along lines, with two possible
-%    values:
-%    - 'norm' (default) distribute points along lines using a normal
-%      distribution (line center is the mean and the line length is equal
-%      to 3 standard deviations).
-%    - 'unif' distributes points uniformly along lines.
-%    - User-defined function which accepts length of line and number of points,
-%      and returns a num_dims x 1 vector.
-% point_offset
-%    Controls how points are created from their projections on the lines,
-%    with two possible values:
-%    - 'n-1' (default) places points on a second line perpendicular to the
-%      cluster-supporting line using a normal distribution centered at their
-%      intersection.
-%    - 'n' (default) places point using a multivariate normal distribution
-%      centered at the point projection.
-%    - Used-defined function which accepts point projections on the line
-%      (num_points x num_dims), lateral_disp, cluster direction (num_dims x 1)
-%      and cluster center (num_dims x 1), and returns a matrix containing the
-%      final points for the current cluster (num_points x num_dims).
-% cluster_offset
-%    Offset to add to all cluster centers. By default equal to
-%    zeros(num_dims, 1).
-%
-% Outputs
-% -------
-%
-% points
-%     Matrix (num_points x num_dims) with the generated data.
-% cluster_sizes
-%     Vector (num_clusters x 1) containing number of points in each cluster.
-% point_clusters
-%     Vector (num_points x 1) containing the cluster indices of each
-%     point.
-% cluster_centers
-%     Matrix (num_clusters x num_dims) containing cluster centers, or more
-%     specifically, the centers of the cluster-supporting lines.
-% cluster_directions
-%     Vector (num_clusters x num_dims) containing the vectors which define the
-%     angle cluster-supporting lines.
-% cluster_lengths
-%     Vector (num_clusters x 1) containing the lengths of the cluster-supporting
-%     lines.
-% point_projections
-%     Coordinates of point projections on the cluster-supporting lines
+% TODO
 %
 % Usage example
 % -------------
@@ -113,61 +17,104 @@ function [points, point_clusters, point_projections, cluster_sizes, ...
 % Reference (TODO Update with new paper):
 % Fachada, N., & Rosa, A. C. (2020). generateData—A 2D data generator.
 % Software Impacts, 4:100017. doi: 10.1016/j.simpa.2020.100017
+function [points, point_clusters, point_projections, cluster_sizes, ...
+    cluster_centers, cluster_directions, cluster_angles, cluster_lengths] = ...
+    clugen( ...
+        num_dims, ...
+        num_clusters, ...
+        num_points, ...
+        direction, ...
+        angle_disp, ...
+        cluster_sep, ...
+        llength, ...
+        llength_disp, ...
+        lateral_disp, ...
+        varargin ...
+    )
 
     % %%%%%%%%%%%%%%% %
     % Validate inputs %
     % %%%%%%%%%%%%%%% %
 
     % Known distributions for sampling points along lines
-    point_dists = {'norm', 'unif'};
-    point_offsets = {'n-1', 'n'};
+    proj_dist_fns = {'norm', 'unif'};
+    point_dist_fns = {'n-1', 'n'};
 
     % Setup input validation
     p = inputParser;
-    % Check that number of dimensions is more than zero
+
+    % Check that number of dimensions is > 0
     addRequired(p, 'num_dims', ...
         @(x) isnumeric(x) && isscalar(x) && (x > 0) && (mod(x, 1) == 0));
-    % Check that number of clusters is more than zero
+
+    % Check that number of clusters is > 0
     addRequired(p, 'num_clusters', ...
         @(x) isnumeric(x) && isscalar(x) && (x > 0) && (mod(x, 1) == 0));
-    % Check that num_points is more than zero
+
+    % Check that num_points is zero or more
     addRequired(p, 'num_points', ...
-        @(x) isnumeric(x) && isscalar(x) && (x > 0) && (mod(x, 1) == 0));
+        @(x) isnumeric(x) && isscalar(x) && (x >= 0) && (mod(x, 1) == 0));
+
     % Check that direction has num_dims dimensions and magnitude > 0
     addRequired(p, 'direction', ...
         @(x) isnumeric(x) && all(size(x) == [num_dims 1]) && norm(x) > eps);
+
     % Check that angle_disp is a scalar
     addRequired(p, 'angle_disp', ...
         @(x) isnumeric(x) && isscalar(x));
+
     % Check that cluster_sep has num_dims dimensions
     addRequired(p, 'cluster_sep', ...
         @(x) isnumeric(x) && all(size(x) == [num_dims 1]));
+
     % Check that llength is a scalar
     addRequired(p, 'llength', ...
         @(x) isnumeric(x) && isscalar(x) && (x >= 0));
+
     % Check that llength_disp is a scalar
     addRequired(p, 'llength_disp', ...
         @(x) isnumeric(x) && isscalar(x) && (x >= 0));
+
     % Check that lateral_disp is a scalar
     addRequired(p, 'lateral_disp', ...
         @(x) isnumeric(x) && isscalar(x) && (x >= 0));
+
+    % Check that allow_empty is a boolean
+    addParameter(p, 'allow_empty', false, ...
+        @(x) isscalar(x) && isa(x, 'logical'));
+
     % If given, cluster_offset must have the correct number of dimensions,
     % if not given then it will be a num_dims x 1 vector of zeros
     addParameter(p, 'cluster_offset', zeros(num_dims, 1), ...
         @(x) isnumeric(x) && all(size(x) == [num_dims 1]));
-    % Check that allow_empty is a boolean
-    addParameter(p, 'allow_empty', false, ...
-        @(x) isscalar(x) && isa(x, 'logical'));
-    % Check that point_dist specifies a valid way for projecting points along
+
+    % Check that proj_dist_fn specifies a valid way for projecting points along
     % cluster-supporting lines, i.e., either 'norm' (default), 'unif' or a
     % user-defined function
-    addParameter(p, 'point_dist', point_dists{1}, ...
-        @(x) isa(x, 'function_handle') || any(validatestring(x, point_dists)));
-    % Check that point_offset specifies a valid way for generating points given
+    addParameter(p, 'proj_dist_fn', proj_dist_fns{1}, ...
+        @(x) isa(x, 'function_handle') || any(validatestring(x, proj_dist_fns)));
+
+    % Check that point_dist_fn specifies a valid way for generating points given
     % their projections along cluster-supporting lines, i.e., either 'n-1'
     % (default), 'n' or a user-defined function
-    addParameter(p, 'point_offset', point_offsets{1}, ...
-        @(x) isa(x, 'function_handle') || any(validatestring(x, point_offsets)));
+    addParameter(p, 'point_dist_fn', point_dist_fns{1}, ...
+        @(x) isa(x, 'function_handle') || any(validatestring(x, point_dist_fns)));
+
+    % Check that clusizes_fn is a function, and if it was not given, assign the
+    % clusizes() function as the default
+    addParameter(p, 'clusizes_fn', @clusizes, @(x) isa(x, 'function_handle'));
+
+    % Check that clucenters_fn is a function, and if it was not given, assign
+    % the clucenters() function as the default
+    addParameter(p, 'clucenters_fn', @clucenters, @(x) isa(x, 'function_handle'));
+
+    % Check that llengths_fn is a function, and if it was not given, assign the
+    % llengths() function as the default
+    addParameter(p, 'llengths_fn', @llengths, @(x) isa(x, 'function_handle'));
+
+    % Check that angle_deltas_fn is a function, and if it was not given, assign
+    % the angle_deltas() function as the default
+    addParameter(p, 'angle_deltas_fn', @angle_deltas, @(x) isa(x, 'function_handle'));
 
     % Perform input validation and parsing
     parse(p, num_dims, num_clusters, num_points, direction, angle_disp, ...
@@ -176,20 +123,19 @@ function [points, point_clusters, point_projections, cluster_sizes, ...
     % If allow_empty is false, make sure there are enough points to distribute
     % by the clusters
     if ~p.Results.allow_empty && num_points < num_clusters
-        error(['Number of points must be equal or larger than the ' ...
-            'number of clusters. Set ''allow_empty'' to true to allow ' ...
-            'for empty clusters.']);
+        error(['A total of ' int2str(num_points) 'is not enough for '...
+            int2str(num_clusters) ' non-empty clusters']);
     end;
 
     % What distribution to use for point projections along cluster-supporting lines?
-    if isa(p.Results.point_dist, 'function_handle')
+    if isa(p.Results.proj_dist_fn, 'function_handle')
         % Use user-defined distribution; assume function accepts length of line
         % and number of points, and returns a num_dims x 1 vector
-        pointproj_fn = p.Results.point_dist;
-    elseif strcmp(p.Results.point_dist, 'unif')
+        pointproj_fn = p.Results.proj_dist_fn;
+    elseif strcmp(p.Results.proj_dist_fn, 'unif')
         % Point projections will be uniformly placed along cluster-supporting lines
         pointproj_fn = @(len, n) len * rand(n, 1) - len / 2;
-    elseif strcmp(p.Results.point_dist, 'norm')
+    elseif strcmp(p.Results.proj_dist_fn, 'norm')
         % Use normal distribution for placing point projections along cluster-supporting
         % lines, mean equal to line center, standard deviation equal to 1/6 of line length
         pointproj_fn = @(len, n) len * randn(n, 1) / 6;
@@ -202,17 +148,17 @@ function [points, point_clusters, point_projections, cluster_sizes, ...
     if num_dims == 1
         % If 1D was specified, point projections are the points themselves
         pt_from_proj_fn = @(projs, lat_disp, len, clu_dir, clu_ctr) projs;
-    elseif isa(p.Results.point_offset, 'function_handle')
+    elseif isa(p.Results.point_dist_fn, 'function_handle')
         % Use user-defined distribution; assume function accepts point projections
         % on the line, lateral std., cluster direction and cluster center, and
         % returns a num_points x num_dims matrix containing the final points
         % for the current cluster
-        pt_from_proj_fn = p.Results.point_offset;
-    elseif strcmp(p.Results.point_offset, 'n-1')
+        pt_from_proj_fn = p.Results.point_dist_fn;
+    elseif strcmp(p.Results.point_dist_fn, 'n-1')
         % Points will be placed on a second line perpendicular to the cluster
         % line using a normal distribution centered at their intersection
         pt_from_proj_fn = @clupoints_n_1;
-    elseif strcmp(p.Results.point_offset, 'n')
+    elseif strcmp(p.Results.point_dist_fn, 'n')
         % Points will be placed using a multivariate normal distribution
         % centered at the point projection
         pt_from_proj_fn = @clupoints_n;
@@ -229,16 +175,16 @@ function [points, point_clusters, point_projections, cluster_sizes, ...
     direction = direction / norm(direction);
 
     % Determine cluster sizes
-    cluster_sizes = clusizes(num_clusters, num_points, p.Results.allow_empty);
+    cluster_sizes = p.Results.clusizes_fn(num_clusters, num_points, p.Results.allow_empty);
 
     % Determine cluster centers
-    cluster_centers = clucenters(num_clusters, cluster_sep, p.Results.cluster_offset);
+    cluster_centers = p.Results.clucenters_fn(num_clusters, cluster_sep, p.Results.cluster_offset);
 
     % Determine length of lines supporting clusters
-    cluster_lengths = llengths(num_clusters, llength, llength_disp);
+    cluster_lengths = p.Results.llengths_fn(num_clusters, llength, llength_disp);
 
     % Obtain angles between main direction and cluster-supporting lines
-    cluster_angles = angle_deltas(num_clusters, angle_disp);
+    cluster_angles = p.Results.angle_deltas_fn(num_clusters, angle_disp);
 
     % Determine normalized cluster direction
     cluster_directions = zeros(num_clusters, num_dims);
