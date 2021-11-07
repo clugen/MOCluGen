@@ -149,12 +149,13 @@ function test_points_on_line
     for nd = num_dims
         for tpts = num_points(num_points < 1000)
             for seed = seeds
+
+                % Set seed
+                set_seed(seed);
+
                 for length = llengths_mus
                     for dir = get_unitvecs(ndirs, nd)
                         for ctr = get_vecs(ncts, nd)
-
-                            % Set seed
-                            set_seed(seed);
 
                             % Create some random distances from center
                             dist2ctr = length .* rand(tpts, 1) - length / 2;
@@ -225,10 +226,11 @@ function test_rand_ortho_vector
     % Cycle through all test parameters
     for nd = num_dims
         for seed = seeds
-            for uvec = get_unitvecs(nvec, nd)
 
-                % Set seed
-                set_seed(seed);
+            % Set seed
+            set_seed(seed);
+
+            for uvec = get_unitvecs(nvec, nd)
 
                 % Function should run without warnings
                 lastwarn('');
@@ -268,11 +270,12 @@ function test_rand_vector_at_angle
     % Cycle through all test parameters
     for nd = num_dims
         for seed = seeds
+
+            % Set seed
+            set_seed(seed);
+
             for uvec = get_unitvecs(nvec, nd)
                 for a = get_angles(nang)
-
-                    % Set seed
-                    set_seed(seed);
 
                     % Function should run without warnings
                     lastwarn('');
@@ -402,13 +405,14 @@ function test_clupoints_n_1_template
     for nd = num_dims(2:end) % Skip nd==1
         for tpts = num_points(num_points < 1000)
             for seed = seeds
+
+                % Set seed
+                set_seed(seed);
+
                 for lat_std = lat_stds
                     for length = llengths_mus
                         for dir = get_unitvecs(ndirs, nd)
                             for ctr = get_vecs(ncts, nd)
-
-                                % Set seed
-                                set_seed(seed);
 
                                 % Create some point projections
                                 pd2ctr = length * rand(tpts, 1) - length / 2;
@@ -460,11 +464,12 @@ function test_angle_deltas
 
     % Cycle through all test parameters
     for seed = seeds
+
+        % Set seed
+        set_seed(seed);
+
         for nclu = num_clusters
             for astd = angles_stds
-
-                % Set seed
-                set_seed(seed);
 
                 % Function should run without warnings
                 lastwarn('');
@@ -491,12 +496,14 @@ function test_clucenters
     % Cycle through all test parameters
     for nd = num_dims
         for seed = seeds
+
+            % Set seed
+            set_seed(seed);
+
             for nclu = num_clusters
                 for clu_sep = get_clu_seps(nd)'
                     for clu_off = get_clu_offsets(nd)'
 
-                        % Set seed
-                        set_seed(seed);
 
                         % Function should run without warnings
                         lastwarn('');
@@ -521,12 +528,13 @@ function test_llengths
     % Cycle through all test parameters
     for nd = num_dims
         for seed = seeds
+
+            % Set seed
+            set_seed(seed);
+
             for nclu = num_clusters
                 for llength_mu = llengths_mus
                     for llengths_sigma = llengths_sigmas
-
-                        % Set seed
-                        set_seed(seed);
 
                         % Function should run without warnings
                         lastwarn('');
@@ -553,6 +561,10 @@ function test_clusizes
 
     % Cycle through all test parameters
     for seed = seeds
+
+        % Set seed
+        set_seed(seed);
+
         for nclu = num_clusters
             for tpts = num_points
                 for ae = [true, false]
@@ -562,9 +574,6 @@ function test_clusizes
                     if ~ae && tpts < nclu
                         continue;
                     end
-
-                    % Set seed
-                    set_seed(seed);
 
                     % Function should run without warnings
                     lastwarn('');
@@ -604,13 +613,14 @@ function test_clupoints_n_1
     for nd = num_dims(2:end) % Skip nd==1
         for tpts = num_points(num_points < 1000)
             for seed = seeds
+
+                % Set seed
+                set_seed(seed);
+
                 for lat_std = lat_stds
                     for length = llengths_mus
                         for dir = get_unitvecs(ndirs, nd)
                             for ctr = get_vecs(ncts, nd)
-
-                                % Set seed
-                                set_seed(seed);
 
                                 % Create some point projections
                                 pd2ctr = length * rand(tpts, 1) - length / 2;
@@ -661,13 +671,14 @@ function test_clupoints_n
     for nd = num_dims(2:end) % Skip nd==1
         for tpts = num_points
             for seed = seeds
+
+                % Set seed
+                set_seed(seed);
+
                 for lat_std = lat_stds
                     for length = llengths_mus
                         for dir = get_unitvecs(ndirs, nd)
                             for ctr = get_vecs(ncts, nd)
-
-                                % Set seed
-                                set_seed(seed);
 
                                 % Create some point projections
                                 pd2ctr = length * rand(tpts, 1) - length / 2;
