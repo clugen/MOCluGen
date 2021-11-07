@@ -589,3 +589,59 @@ function test_clusizes
     end;
 end
 
+% Test the clupoints_n_1 function
+function test_clupoints_n_1
+
+    global seeds num_dims num_points lat_stds llengths_mus;
+
+    % Number of line directions to test
+    ndirs = 3;
+
+    % Number of line centers to test
+    ncts = 3;
+
+    % Cycle through all test parameters
+    for nd = num_dims(2:end) % Skip nd==1
+        for tpts = num_points(num_points < 1000)
+            for seed = seeds
+                for lat_std = lat_stds
+                    for length = llengths_mus
+                        for dir = get_unitvecs(ndirs, nd)
+                            for ctr = get_vecs(ncts, nd)
+
+                                % Set seed
+                                set_seed(seed);
+
+                                % Create some point projections
+                                pd2ctr = length * rand(tpts, 1) - length / 2;
+                                proj = points_on_line(ctr{:}, dir{:}, pd2ctr);
+
+                                % Function should run without warnings
+                                lastwarn('');
+                                pts = clupoints_n_1( ...
+                                    proj, lat_std, length, dir{:}, ctr{:});
+                                assertTrue(isempty(lastwarn));
+
+                                % Check that number of points is the same as the
+                                % number of projections
+                                assertEqual(size(pts), size(proj));
+
+                                % For each vector from projection to point...
+                                proj_pt_vecs = pts - proj;
+                                for i = 1:num_points
+                                    % Get current vector
+                                    u = proj_pt_vecs(i, :)';
+                                    % Vector should be approximately orthogonal
+                                    % to the cluster line
+                                    assertElementsAlmostEqual(dot(dir{:}, u), 0);
+                                end
+
+                            end;
+                        end;
+                    end;
+                end;
+            end;
+        end;
+    end;
+
+end
