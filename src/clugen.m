@@ -61,10 +61,10 @@ function [points, point_clusters, point_projections, cluster_sizes, ...
 % point_offset
 %    Controls how points are created from their projections on the lines,
 %    with two possible values:
-%    - 'd-1' (default) places points on a second line perpendicular to the
+%    - 'n-1' (default) places points on a second line perpendicular to the
 %      cluster-supporting line using a normal distribution centered at their
 %      intersection.
-%    - 'd' (default) places point using a multivariate normal distribution
+%    - 'n' (default) places point using a multivariate normal distribution
 %      centered at the point projection.
 %    - Used-defined function which accepts point projections on the line
 %      (num_points x num_dims), lateral_disp, cluster direction (num_dims x 1)
@@ -120,7 +120,7 @@ function [points, point_clusters, point_projections, cluster_sizes, ...
 
     % Known distributions for sampling points along lines
     point_dists = {'norm', 'unif'};
-    point_offsets = {'d-1', 'd'};
+    point_offsets = {'n-1', 'n'};
 
     % Setup input validation
     p = inputParser;
@@ -164,8 +164,8 @@ function [points, point_clusters, point_projections, cluster_sizes, ...
     addParameter(p, 'point_dist', point_dists{1}, ...
         @(x) isa(x, 'function_handle') || any(validatestring(x, point_dists)));
     % Check that point_offset specifies a valid way for generating points given
-    % their projections along cluster-supporting lines, i.e., either 'd-1'
-    % (default), 'd' or a user-defined function
+    % their projections along cluster-supporting lines, i.e., either 'n-1'
+    % (default), 'n' or a user-defined function
     addParameter(p, 'point_offset', point_offsets{1}, ...
         @(x) isa(x, 'function_handle') || any(validatestring(x, point_offsets)));
 
@@ -208,11 +208,11 @@ function [points, point_clusters, point_projections, cluster_sizes, ...
         % returns a num_points x num_dims matrix containing the final points
         % for the current cluster
         pt_from_proj_fn = p.Results.point_offset;
-    elseif strcmp(p.Results.point_offset, 'd-1')
+    elseif strcmp(p.Results.point_offset, 'n-1')
         % Points will be placed on a second line perpendicular to the cluster
         % line using a normal distribution centered at their intersection
         pt_from_proj_fn = @clupoints_n_1;
-    elseif strcmp(p.Results.point_offset, 'd')
+    elseif strcmp(p.Results.point_offset, 'n')
         % Points will be placed using a multivariate normal distribution
         % centered at the point projection
         pt_from_proj_fn = @clupoints_n;
