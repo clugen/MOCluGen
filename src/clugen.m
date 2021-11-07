@@ -130,7 +130,7 @@ function [points, point_clusters, point_projections, cluster_sizes, ...
     % What distribution to use for point projections along cluster-supporting lines?
     if isa(p.Results.proj_dist_fn, 'function_handle')
         % Use user-defined distribution; assume function accepts length of line
-        % and number of points, and returns a num_dims x 1 vector
+        % and number of points, and returns a number of points x 1 vector
         pointproj_fn = p.Results.proj_dist_fn;
     elseif strcmp(p.Results.proj_dist_fn, 'unif')
         % Point projections will be uniformly placed along cluster-supporting lines
@@ -138,6 +138,7 @@ function [points, point_clusters, point_projections, cluster_sizes, ...
     elseif strcmp(p.Results.proj_dist_fn, 'norm')
         % Use normal distribution for placing point projections along cluster-supporting
         % lines, mean equal to line center, standard deviation equal to 1/6 of line length
+        % such that the line length contains ≈99.73% of the points
         pointproj_fn = @(len, n) len * randn(n, 1) / 6;
     else
         % We should never get here
@@ -150,12 +151,12 @@ function [points, point_clusters, point_projections, cluster_sizes, ...
         pt_from_proj_fn = @(projs, lat_disp, len, clu_dir, clu_ctr) projs;
     elseif isa(p.Results.point_dist_fn, 'function_handle')
         % Use user-defined distribution; assume function accepts point projections
-        % on the line, lateral std., cluster direction and cluster center, and
+        % on the line, lateral disp., cluster direction and cluster center, and
         % returns a num_points x num_dims matrix containing the final points
         % for the current cluster
         pt_from_proj_fn = p.Results.point_dist_fn;
     elseif strcmp(p.Results.point_dist_fn, 'n-1')
-        % Points will be placed on a second line perpendicular to the cluster
+        % Points will be placed on a hyperplane orthogonal to the cluster-supporting
         % line using a normal distribution centered at their intersection
         pt_from_proj_fn = @clupoints_n_1;
     elseif strcmp(p.Results.point_dist_fn, 'n')
@@ -176,6 +177,10 @@ function [points, point_clusters, point_projections, cluster_sizes, ...
 
     % Determine cluster sizes
     cluster_sizes = p.Results.clusizes_fn(num_clusters, num_points, p.Results.allow_empty);
+
+    % Custom clusizes_fn's are not required to obey num_points, so we update
+    % it here just in case it's different from what the user specified
+    num_points = sum(cluster_sizes);
 
     % Determine cluster centers
     cluster_centers = p.Results.clucenters_fn(num_clusters, cluster_sep, p.Results.cluster_offset);
@@ -200,9 +205,9 @@ function [points, point_clusters, point_projections, cluster_sizes, ...
     cumsum_points = [0; cumsum(cluster_sizes)];
 
     % Pre-allocate data structures for holding cluster info and points
-    point_clusters = zeros(num_points, 1);        % Cluster indices of each point
+    point_clusters = zeros(num_points, 1);           % Cluster indices of each point
     point_projections = zeros(num_points, num_dims); % Point projections on cluster-supporting lines
-    points = zeros(num_points, num_dims);      % Final points to be generated
+    points = zeros(num_points, num_dims);            % Final points to be generated
 
     % Loop through cluster and create points for each one
     for i = 1:num_clusters
@@ -224,8 +229,11 @@ function [points, point_clusters, point_projections, cluster_sizes, ...
 
         % Determine points from their projections on the line
         points(idx_start:idx_end, :) = pt_from_proj_fn( ...
-            point_projections(idx_start:idx_end, :), lateral_disp, cluster_lengths(i), ...
-            cluster_directions(i, :)', cluster_centers(i, :)');
+            point_projections(idx_start:idx_end, :), ...
+            lateral_disp, ...
+            cluster_lengths(i), ...
+            cluster_directions(i, :)', ...
+            cluster_centers(i, :)');
 
     end;
 
