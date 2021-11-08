@@ -95,6 +95,51 @@ function s = signbit(x)
     s = x < 0;
 end
 
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% %
+% Alternative module functions for clugen() testing purposes only %
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% %
+
+% Alternative function for proj_dist_fn parameter
+function projd = proj_dist_alt_equidist(len, n)
+    % Equidistant projections along line
+    projd = (-len/2:len/n:len/2)';
+    projd = projd(1:n);
+end
+
+% Alternative function for point_dist_fn parameter
+function ptd = point_dist_alt_plus1(projs, lstd, len, cdir, cctr)
+    % Add one to each projection component to obtain respective point
+    ptd = projs + 1;
+end
+
+% Alternative function for clusizes_fn parameter
+function csz = clusizes_alt_equi(nclu, tpts, ae)
+    % All clusters have the same size, approximatelly
+    csz = zeros(nclu, 1);
+    for i = 1:tpts
+        idx = rem(i, nclu) + 1;
+        csz(idx) = csz(idx) + 1;
+    end;
+end
+
+% Alternative function for clucenters_fn parameter
+function ctrs = clucenters_alt_diag(nclu, csep, coff)
+    % Put cluster centers equidistant on a diagonal line
+    ctrs = ones(nclu, length(csep)) .* (1:nclu)';
+end
+
+% Alternative function for llengths_fn
+function lens = llengths_alt_unif_btw_10_20(nclu, llen, llenstd)
+    % Uniform lengths between 10 and 20
+    lens = 10 + 10 * rand(nclu, 1);
+end
+
+% Alternative function for angle_deltas_fn
+function angd = angle_deltas_alt_zeros(nclu, astd)
+    % All angles deltas are zero
+    angd = zeros(nclu, 1);
+end
+
 % Get angle between two vectors, useful for checking correctness of results
 % Previous version was unstable: angle(u, v) = acos(dot(u, v) / (norm(u) * norm(v)))
 % Version below is based on AngleBetweenVectors.jl by Jeffrey Sarnoff (MIT license),
@@ -878,7 +923,100 @@ end
 
 % Test the clugen function optional parameters
 function test_clugen_optional
-    % TODO
+
+    global seeds;
+
+    % Any tests performed?
+    tests_any_done = false;
+
+    % Valid arguments
+    nclu = 7;
+    tpts = 500;
+    astd = pi/256;
+    len_mu = 9;
+    len_std = 1.2;
+    lat_std = 2;
+
+    % Cycle through all test parameters
+    for seed = seeds(1:end-1)
+
+        % Set seed
+        set_seed(seed);
+
+        for nd = [2, 7]
+
+            clu_sep = len_mu * 3 * rand(nd, 1);
+            clu_off = rand(nd, 1);
+            dir = rand(nd, 1);
+
+            for ae = [true, false]
+                for projd_fn = {'unif', @proj_dist_alt_equidist}
+                    for ptd_fn = {'n', @point_dist_alt_plus1}
+                        for csz_fn = {@clusizes, @clusizes_alt_equi}
+                            for cc_fn = {@clucenters, @clucenters_alt_diag}
+                                for ll_fn = {@llengths, @llengths_alt_unif_btw_10_20}
+                                    for angd_fn = {@angle_deltas, @angle_deltas_alt_zeros}
+
+                                        % Function must execute without warnings
+                                        lastwarn('');
+                                        [points, point_clusters, point_projections, ...
+                                        cluster_sizes, cluster_centers, cluster_directions, ...
+                                        cluster_angles, cluster_lengths] = clugen( ...
+                                            nd, nclu, tpts, dir, astd, clu_sep, len_mu, ...
+                                            len_std, lat_std, ...
+                                            'allow_empty', ae, ...
+                                            'cluster_offset', clu_off, ...
+                                            'proj_dist_fn', projd_fn{:}, ...
+                                            'point_dist_fn', ptd_fn{:}, ...
+                                            'clusizes_fn', csz_fn{:}, ...
+                                            'clucenters_fn', cc_fn{:}, ...
+                                            'llengths_fn', ll_fn{:}, ...
+                                            'angle_deltas_fn', angd_fn{:});
+                                        assertTrue(isempty(lastwarn));
+
+                                        % Check expected sizes and types of return values
+                                        assertEqual(size(points), [tpts nd]);
+                                        assertTrue(isnumeric(points));
+                                        assertEqual(size(point_clusters), [tpts 1]);
+                                        assertTrue(isnumeric(point_clusters));
+                                        assertTrue(all(rem(point_clusters, 1) == 0));
+                                        assertEqual(size(point_projections), [tpts nd]);
+                                        assertTrue(isnumeric(point_projections));
+                                        assertEqual(size(cluster_sizes), [nclu 1]);
+                                        assertTrue(isnumeric(cluster_sizes));
+                                        assertTrue(all(rem(cluster_sizes, 1) == 0));
+                                        assertEqual(size(cluster_centers), [nclu nd]);
+                                        assertTrue(isnumeric(cluster_centers));
+                                        assertEqual(size(cluster_directions), [nclu nd]);
+                                        assertTrue(isnumeric(cluster_directions));
+                                        assertEqual(size(cluster_angles), [nclu 1]);
+                                        assertTrue(isnumeric(cluster_angles));
+                                        assertEqual(size(cluster_lengths), [nclu 1]);
+                                        assertTrue(isnumeric(cluster_lengths));
+
+                                        % Check point cluster indexes
+                                        if ~ae
+                                            assertEqual(unique(point_clusters), (1:nclu)');
+                                        else
+                                            assertTrue(all(point_clusters <= nclu));
+                                        end;
+
+                                        % Check total points
+                                        assertEqual(sum(cluster_sizes), tpts);
+
+                                        % Some tests done
+                                        tests_any_done = true;
+                                    end;
+                                end;
+                            end;
+                        end;
+                    end;
+                end;
+            end;
+        end;
+    end;
+    % Make sure some tests were performed
+    assertTrue(tests_any_done);
 end
 
 % Test the clugen function exceptions / errors
