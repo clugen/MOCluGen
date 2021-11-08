@@ -41,7 +41,7 @@ function init_data
     lat_stds = [0.0, 5.0, 500];
     llengths_mus = [0, 10];
     llengths_sigmas = [0, 15];
-    angles_stds = [0, pi/256, pi/32, pi/4, pi/2, pi, 2*pi];
+    angles_stds = [0, pi/256, pi/4, pi/2, pi, 2*pi];
 
 end
 
@@ -844,14 +844,14 @@ function test_clugen_mandatory
     ndirs = 2;
 
     % Cycle through all test parameters
-    for seed = seeds(1:end-1)
+    for seed = seeds(1:end-2) % Skip last two
 
         % Set seed
         set_seed(seed);
 
         for nd = num_dims(1:end-1) % Skip last
-            for nclu = num_clusters
-                for tpts = num_points(1:end-1)
+            for nclu = num_clusters(1:end-1) % Skip last
+                for tpts = num_points(1:end-1) % Skip last
                     for dir = get_vecs(ndirs, nd)
                         for astd = angles_stds(1:end-1)
                             for clu_sep = get_clu_seps(nd)'
@@ -880,13 +880,23 @@ function test_clugen_mandatory
 
                                             % Check dimensions of result variables
                                             assertEqual(size(points), [tpts nd]);
+                                            assertTrue(isnumeric(points));
                                             assertEqual(size(point_clusters), [tpts 1]);
+                                            assertTrue(isnumeric(point_clusters));
+                                            assertTrue(all(rem(point_clusters, 1) == 0));
                                             assertEqual(size(point_projections), [tpts nd]);
+                                            assertTrue(isnumeric(point_projections));
                                             assertEqual(size(cluster_sizes), [nclu 1]);
+                                            assertTrue(isnumeric(cluster_sizes));
+                                            assertTrue(all(rem(cluster_sizes, 1) == 0));
                                             assertEqual(size(cluster_centers), [nclu nd]);
+                                            assertTrue(isnumeric(cluster_centers));
                                             assertEqual(size(cluster_directions), [nclu nd]);
+                                            assertTrue(isnumeric(cluster_directions));
                                             assertEqual(size(cluster_angles), [nclu 1]);
+                                            assertTrue(isnumeric(cluster_angles));
                                             assertEqual(size(cluster_lengths), [nclu 1]);
+                                            assertTrue(isnumeric(cluster_lengths));
 
                                             % Check point cluster indexes
                                             assertEqual(unique(point_clusters), (1:nclu)');
@@ -1003,6 +1013,9 @@ function test_clugen_optional
 
                                         % Check total points
                                         assertEqual(sum(cluster_sizes), tpts);
+                                        % This might not be the case if the
+                                        % specified clusize_fn does not obey the
+                                        % total number of points
 
                                         % Some tests done
                                         tests_any_done = true;
