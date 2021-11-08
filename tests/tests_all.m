@@ -704,3 +704,96 @@ function test_clupoints_n
     end;
 
 end
+
+% Test the clugen function mandatory parameters
+function test_clugen_mandatory
+
+    global seeds num_dims num_clusters num_points angles_stds llengths_mus ...
+        llengths_sigmas lat_stds;
+
+    % Number of line directions to test
+    ndirs = 2;
+
+    % Cycle through all test parameters
+    for seed = seeds(1:end-1)
+
+        % Set seed
+        set_seed(seed);
+
+        for nd = num_dims(1:end-1) % Skip last
+            for nclu = num_clusters
+                for tpts = num_points(1:end-1)
+                    for dir = get_vecs(ndirs, nd)
+                        for astd = angles_stds(1:end-1)
+                            for clu_sep = get_clu_seps(nd)'
+                                for len_mu = llengths_mus
+                                    for len_std = llengths_sigmas
+                                        for lat_std = lat_stds(1:end-1)
+
+                                            % By default, allow_empty is false, so clugen() must be
+                                            % given more points than clusters...
+                                            if tpts >= nclu
+                                                % ...in which case it runs without problem
+                                                lastwarn('');
+                                                [points, point_clusters, point_projections, ...
+                                                cluster_sizes, cluster_centers, cluster_directions, ...
+                                                cluster_angles, cluster_lengths] = clugen( ...
+                                                    nd, nclu, tpts, dir{:}, astd, clu_sep, len_mu, ...
+                                                    len_std, lat_std);
+                                                assertTrue(isempty(lastwarn));
+                                            else
+                                                % ...otherwise an error will be thrown
+                                                fn = @() clugen(nd, nclu, tpts, dir, astd, ...
+                                                    clu_sep, len_mu, len_std, lat_std);
+                                                assertError(fn);
+                                                continue; % No need for more tests with this parameter set
+                                            end;
+
+                                            % Check dimensions of result variables
+                                            assertEqual(size(points), [tpts nd]);
+                                            assertEqual(size(point_clusters), [tpts 1]);
+                                            assertEqual(size(point_projections), [tpts nd]);
+                                            assertEqual(size(cluster_sizes), [nclu 1]);
+                                            assertEqual(size(cluster_centers), [nclu nd]);
+                                            assertEqual(size(cluster_directions), [nclu nd]);
+                                            assertEqual(size(cluster_angles), [nclu 1]);
+                                            assertEqual(size(cluster_lengths), [nclu 1]);
+
+                                            % Check point cluster indexes
+                                            assertEqual(unique(point_clusters), (1:nclu)');
+
+                                            % Check total points
+                                            assertEqual(sum(cluster_sizes), tpts);
+
+                                            % Check that cluster directions have the correct angles
+                                            % with the main direction
+                                            if nd > 1
+                                                for i = 1:nclu
+                                                    assertElementsAlmostEqual(...
+                                                        angle_btw(dir{:}, cluster_directions(i, :)'), ...
+                                                        abs(cluster_angles(i)));
+                                                end;
+                                            end;
+
+                                        end;
+                                    end;
+                                end;
+                            end;
+                        end;
+                    end;
+                end;
+            end;
+        end;
+    end;
+
+end
+
+% Test the clugen function optional parameters
+function test_clugen_optional
+    % TODO
+end
+
+% Test the clugen function exceptions / errors
+function test_clugen_exceptions
+    % TODO
+end
