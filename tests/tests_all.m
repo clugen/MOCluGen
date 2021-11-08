@@ -31,7 +31,8 @@ end
 % %%%%%%%%% %
 
 function init_data
-    global seeds num_dims num_points lat_stds llengths_mus;
+    global seeds num_dims num_points num_clusters lat_stds llengths_mus ...
+        llengths_sigmas angles_stds;
 
     seeds = [0, 123, 9999, 9876543];
     num_dims = [1, 2, 3, 4, 30];
@@ -523,7 +524,7 @@ end
 % Test the llengths function
 function test_llengths
 
-    global num_dims seeds num_clusters;
+    global num_dims seeds num_clusters llengths_mus llengths_sigmas;
 
     % Cycle through all test parameters
     for nd = num_dims
@@ -533,12 +534,12 @@ function test_llengths
             set_seed(seed);
 
             for nclu = num_clusters
-                for llength_mu = llengths_mus
-                    for llengths_sigma = llengths_sigmas
+                for len = llengths_mus
+                    for len_std = llengths_sigmas
 
                         % Function should run without warnings
                         lastwarn('');
-                        lens = llengths(nclu, llength_mu, llength_sigma);
+                        lens = llengths(nclu, len, len_std);
                         assertTrue(isempty(lastwarn));
 
                         % Check that return value has the correct dimensions
