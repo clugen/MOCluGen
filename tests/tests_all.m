@@ -140,6 +140,9 @@ function test_points_on_line
 
     global seeds num_dims num_points llengths_mus;
 
+    % Any tests performed?
+    tests_any_done = false;
+
     % Number of line directions to test
     ndirs = 3;
 
@@ -179,6 +182,9 @@ function test_points_on_line
                                 % Check that it's approximately zero
                                 assertVectorsAlmostEqual(d, 0);
                             end;
+
+                            % Some tests done
+                            tests_any_done = true;
                         end;
                     end;
                 end;
@@ -186,12 +192,17 @@ function test_points_on_line
         end;
     end;
 
+    % Make sure some tests were performed
+    assertTrue(tests_any_done);
 end
 
 % Test the rand_unit_vector() function
 function test_rand_unit_vector
 
     global seeds num_dims;
+
+    % Any tests performed?
+    tests_any_done = false;
 
     % Cycle through all test parameters
     for nd = num_dims
@@ -211,15 +222,22 @@ function test_rand_unit_vector
             % Check that returned vector has norm == 1
             assertElementsAlmostEqual(norm(r), 1);
 
+            % Some tests done
+            tests_any_done = true;
         end;
     end;
 
+    % Make sure some tests were performed
+    assertTrue(tests_any_done);
 end
 
 % Test the rand_ortho_vector() function
 function test_rand_ortho_vector
 
     global seeds num_dims;
+
+    % Any tests performed?
+    tests_any_done = false;
 
     % How many vectors to test?
     nvec = 10;
@@ -251,16 +269,23 @@ function test_rand_ortho_vector
                     assertElementsAlmostEqual(dot(uvec{:}, r), 0);
                 end;
 
+                % Some tests done
+                tests_any_done = true;
             end;
         end;
     end;
 
+    % Make sure some tests were performed
+    assertTrue(tests_any_done);
 end
 
 % Test the rand_vector_at_angle() function
 function test_rand_vector_at_angle
 
     global seeds num_dims;
+
+    % Any tests performed?
+    tests_any_done = false;
 
     % How many vectors to test?
     nvec = 10;
@@ -294,11 +319,15 @@ function test_rand_vector_at_angle
                         assertElementsAlmostEqual(angle_btw(uvec{:}, r), abs(a));
                     end
 
+                    % Some tests done
+                    tests_any_done = true;
                 end;
             end;
         end;
     end;
 
+    % Make sure some tests were performed
+    assertTrue(tests_any_done);
 end
 
 % Test the fix_empty() function
@@ -393,6 +422,9 @@ function test_clupoints_n_1_template
 
     global seeds num_dims num_points lat_stds llengths_mus;
 
+    % Any tests performed?
+    tests_any_done = false;
+
     % Number of line directions to test
     ndirs = 3;
 
@@ -448,6 +480,8 @@ function test_clupoints_n_1_template
                                     assertElementsAlmostEqual(norm(u), dist_pt);
                                 end
 
+                                % Some tests done
+                                tests_any_done = true;
                             end;
                         end;
                     end;
@@ -456,12 +490,17 @@ function test_clupoints_n_1_template
         end;
     end;
 
+    % Make sure some tests were performed
+    assertTrue(tests_any_done);
 end
 
 % Test the angle_deltas function
 function test_angle_deltas
 
     global seeds num_clusters angles_stds;
+
+    % Any tests performed?
+    tests_any_done = false;
 
     % Cycle through all test parameters
     for seed = seeds
@@ -484,15 +523,23 @@ function test_angle_deltas
                 assertTrue(all(angles <= pi/2));
                 assertTrue(all(angles >= -pi/2));
 
+                % Some tests done
+                tests_any_done = true;
             end;
         end;
     end;
+
+    % Make sure some tests were performed
+    assertTrue(tests_any_done);
 end
 
 % Test the clucenters function
 function test_clucenters
 
     global num_dims seeds num_clusters;
+
+    % Any tests performed?
+    tests_any_done = false;
 
     % Cycle through all test parameters
     for nd = num_dims
@@ -505,7 +552,6 @@ function test_clucenters
                 for clu_sep = get_clu_seps(nd)'
                     for clu_off = get_clu_offsets(nd)'
 
-
                         % Function should run without warnings
                         lastwarn('');
                         clu_ctrs = clucenters(nclu, clu_sep, clu_off);
@@ -514,17 +560,25 @@ function test_clucenters
                         % Check that return value has the correct dimensions
                         assertEqual(size(clu_ctrs), [nclu nd]);
 
+                        % Some tests done
+                        tests_any_done = true;
                     end;
                 end;
             end;
         end;
     end;
+
+    % Make sure some tests were performed
+    assertTrue(tests_any_done);
 end
 
 % Test the llengths function
 function test_llengths
 
     global num_dims seeds num_clusters llengths_mus llengths_sigmas;
+
+    % Any tests performed?
+    tests_any_done = false;
 
     % Cycle through all test parameters
     for nd = num_dims
@@ -548,17 +602,25 @@ function test_llengths
                         % Check that all lengths are >= 0
                         assertTrue(all(lens >= 0));
 
+                        % Some tests done
+                        tests_any_done = true;
                     end;
                 end;
             end;
         end;
     end;
+
+    % Make sure some tests were performed
+    assertTrue(tests_any_done);
 end
 
 % Test the clusizes function
 function test_clusizes
 
     global seeds num_clusters num_points;
+
+    % Any tests performed?
+    tests_any_done = false;
 
     % Cycle through all test parameters
     for seed = seeds
@@ -593,16 +655,24 @@ function test_clusizes
                         assertTrue(all(clu_sizes > 0));
                     end;
 
+                    % Some tests done
+                    tests_any_done = true;
                 end;
             end;
         end;
     end;
+
+    % Make sure some tests were performed
+    assertTrue(tests_any_done);
 end
 
 % Test the clupoints_n_1 function
 function test_clupoints_n_1
 
     global seeds num_dims num_points lat_stds llengths_mus;
+
+    % Any tests performed?
+    tests_any_done = false;
 
     % Number of line directions to test
     ndirs = 3;
@@ -647,6 +717,8 @@ function test_clupoints_n_1
                                     assertElementsAlmostEqual(dot(dir{:}, u), 0);
                                 end
 
+                                % Some tests done
+                                tests_any_done = true;
                             end;
                         end;
                     end;
@@ -655,12 +727,17 @@ function test_clupoints_n_1
         end;
     end;
 
+    % Make sure some tests were performed
+    assertTrue(tests_any_done);
 end
 
 % Test the clupoints_n function
 function test_clupoints_n
 
     global seeds num_dims num_points lat_stds llengths_mus;
+
+    % Any tests performed?
+    tests_any_done = false;
 
     % Number of line directions to test
     ndirs = 3;
@@ -695,6 +772,8 @@ function test_clupoints_n
                                 % number of projections
                                 assertEqual(size(pts), size(proj));
 
+                                % Some tests done
+                                tests_any_done = true;
                             end;
                         end;
                     end;
@@ -703,6 +782,8 @@ function test_clupoints_n
         end;
     end;
 
+    % Make sure some tests were performed
+    assertTrue(tests_any_done);
 end
 
 % Test the clugen function mandatory parameters
@@ -710,6 +791,9 @@ function test_clugen_mandatory
 
     global seeds num_dims num_clusters num_points angles_stds llengths_mus ...
         llengths_sigmas lat_stds;
+
+    % Any tests performed?
+    tests_any_done = false;
 
     % Number of line directions to test
     ndirs = 2;
@@ -775,6 +859,8 @@ function test_clugen_mandatory
                                                 end;
                                             end;
 
+                                            % Some tests done
+                                            tests_any_done = true;
                                         end;
                                     end;
                                 end;
@@ -786,6 +872,8 @@ function test_clugen_mandatory
         end;
     end;
 
+    % Make sure some tests were performed
+    assertTrue(tests_any_done);
 end
 
 % Test the clugen function optional parameters
