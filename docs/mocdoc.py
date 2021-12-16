@@ -14,8 +14,12 @@ from pathlib import Path
 # Get input files, assuming each file contains a MATLAB function
 input_filepaths = sorted(Path('..', 'src').glob('*.m'))
 
+# Docs and API folders
+docs_dir = 'docs'
+api_dir = 'api'
+
 # Output folder
-output_dir = Path('docs', 'api')
+output_dir = Path(docs_dir, api_dir)
 
 # Total files
 n = len(input_filepaths)
@@ -144,8 +148,13 @@ for mfilepath in input_filepaths:
 # For each key (function name) in the dictionary...
 for kfun in docs.keys():
 
-    # Add links to functions
-    ### TODO
+    # Get the names of all functions except the current one
+    other_kfuns = docs.keys() - {(kfun,)}
+
+    # Replace function names with links to their documentation
+    for okfun in other_kfuns:
+        docs[kfun] = docs[kfun].replace(f"`{okfun}`", f"[`{okfun}`](../{okfun})")
+        docs[kfun] = docs[kfun].replace(f"`{okfun}()`", f"[`{okfun}()`](../{okfun})")
 
     # Save respective Markdown file
     mdfilepath = Path(output_dir, kfun + ".md")
