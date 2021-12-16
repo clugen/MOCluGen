@@ -10,6 +10,11 @@
 % ## Return values
 %
 % * `v` - A random unit vector which is at `angle` radians with vector `u`
+%
+% ## Note
+%
+% This function is stochastic. For reproducibility set the PRNG seed as
+% discussed in the [API](..).
 function v = rand_vector_at_angle(u, angle)
 
     if abs(abs(angle) - pi/2) < eps && numel(u) > 1

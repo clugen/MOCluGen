@@ -18,9 +18,14 @@
 % - `dist_fn`: Function to place points on a second line, orthogonal to the
 %   first.
 %
-% # Return values
+% ## Return values
 %
 % - `points`: Generated points ($p \times n$ matrix).
+%
+% ## Note
+%
+% This function is stochastic. For reproducibility set the PRNG seed as
+% discussed in the [API](..).
 function points = clupoints_n_1_template(projs, lat_disp, clu_dir, dist_fn)
 
     % Number of dimensions

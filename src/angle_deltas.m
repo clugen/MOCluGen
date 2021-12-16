@@ -13,6 +13,11 @@
 %
 % - `angles` - Angles between the average cluster direction and the
 %   cluster-supporting lines, given in radians in the interval [-π/2, π/2].
+%
+% ## Note
+%
+% This function is stochastic. For reproducibility set the PRNG seed as
+% discussed in the [API](..).
 function angles = angle_deltas(num_clusters, angle_disp)
 
     % Get random angle differences using the normal distribution

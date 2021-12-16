@@ -9,6 +9,11 @@
 % ## Return values
 %
 % * `r` - A random unit vector with `num_dims` dimensions.
+%
+% ## Note
+%
+% This function is stochastic. For reproducibility set the PRNG seed as
+% discussed in the [API](..).
 function r = rand_unit_vector(num_dims)
 
 r = rand(num_dims, 1) - 0.5;

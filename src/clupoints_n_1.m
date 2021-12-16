@@ -16,9 +16,14 @@
 % - `clu_dir`: Direction of the cluster-supporting line (unit vector).
 % - `clu_ctr`: Center position of the cluster-supporting line (ignored).
 %
-% # Return values
+% ## Return values
 %
 % - `points`: Generated points ($p \times n$ matrix).
+%
+% ## Note
+%
+% This function is stochastic. For reproducibility set the PRNG seed as
+% discussed in the [API](..).
 function points = clupoints_n_1(projs, lat_disp, line_len, clu_dir, clu_ctr)
 
     % Define function to get distances from points to their projections on the

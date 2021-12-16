@@ -15,6 +15,11 @@
 % ## Return values
 %
 % - `clu_num_points`: Number of points in each cluster (`num_clusters` x 1 vector).
+%
+% ## Note
+%
+% This function is stochastic. For reproducibility set the PRNG seed as
+% discussed in the [API](..).
 function clu_num_points = clusizes(num_clusters, num_points, allow_empty)
 
     % Determine number of points in each cluster using the normal distribution

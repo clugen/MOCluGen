@@ -9,6 +9,11 @@
 % ## Return values
 %
 % * `v` - A random unit vector orthogonal to `u`.
+%
+% ## Note
+%
+% This function is stochastic. For reproducibility set the PRNG seed as
+% discussed in the [API](..).
 function v = rand_ortho_vector(u)
 
     % Is vector 1D?

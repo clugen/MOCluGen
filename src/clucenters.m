@@ -27,6 +27,11 @@
 %
 % - `clu_centers` - A `num_clusters` x `num_dims` matrix containing the cluster
 %   centers.
+%
+% ## Note
+%
+% This function is stochastic. For reproducibility set the PRNG seed as
+% discussed in the [API](..).
 function clu_centers = clucenters(num_clusters, clu_sep, clu_offset)
 
     % Obtain a num_clusters x num_dims matrix of uniformly distributed values

@@ -16,25 +16,24 @@ referred to as *lines*.
 
 Given an $n$-dimensional direction vector $\mathbf{d}$ (and a number of
 additional parameters, which will be discussed shortly), the _clugen_ algorithm
-works as follows ($^*$ means the algorithm step is stochastic):
+works as follows ($^\star$ means the algorithm step is stochastic):
 
 1. Normalize $\mathbf{d}$.
-2. $^*$Determine cluster sizes.
-3. $^*$Determine cluster centers.
-4. $^*$Determine lengths of cluster-supporting lines.
-5. $^*$Determine angles between $\mathbf{d}$ and cluster-supporting lines.
+2. $^\star$ Determine cluster sizes.
+3. $^\star$ Determine cluster centers.
+4. $^\star$ Determine lengths of cluster-supporting lines.
+5. $^\star$ Determine angles between $\mathbf{d}$ and cluster-supporting lines.
 6. For each cluster:
-    1. $^*$Determine direction of the cluster-supporting line.
-    2. $^*$Determine distance of point projections from the center of the
+    1. $^\star$ Determine direction of the cluster-supporting line.
+    2. $^\star$ Determine distance of point projections from the center of the
        cluster-supporting line.
     3. Determine coordinates of point projections on the cluster-supporting line.
-    4. $^*$Determine points from their projections on the cluster-supporting
+    4. $^\star$ Determine points from their projections on the cluster-supporting
       line.
 
-Details of the algorithm are given (TODO: add link to Julia's implementation
-Theory section).
+## Further reading
 
-## See also
-
+* [The CluGen algorithm in detail](https://clugen.github.io/CluGen.jl/theory/)
+  (refers to the Julia documentation)
 * [Examples](examples)
 * [API](api)

@@ -12,6 +12,11 @@
 % ## Return values
 %
 % - `lengths`: Lengths of cluster-supporting lines (`num_clusters` x 1 vector).
+%
+% ## Note
+%
+% This function is stochastic. For reproducibility set the PRNG seed as
+% discussed in the [API](..).
 function lengths = llengths(num_clusters, llength, llength_disp)
 
     lengths = abs(llength + llength_disp * randn(num_clusters, 1));
