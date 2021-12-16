@@ -1,0 +1,56 @@
+site_name: MOCluGen Documentation
+site_url: https://clugen.github.io/MOCluGen
+#repo_url: https://github.com/clugen/MOCluGen/
+#edit_uri: docs/docs
+site_description: Documentation for the MOCluGen MATLAB/Octave cluster
+  generation toolbox
+site_author: Nuno Fachada
+#copyright: <a rel="license" href="http://creativecommons.org/licenses/by/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by/4.0/80x15.png" /></a>
+
+theme:
+  name: material
+  custom_dir: overrides
+  icon:
+    repo: fontawesome/brands/github
+#  palette:
+#    scheme: slate
+  features:
+    - navigation.instant
+    - navigation.expand
+    - navigation.indexes
+
+markdown_extensions:
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences
+  - pymdownx.arithmatex:
+      generic: true
+
+extra_javascript:
+  - javascripts/mathjax.js
+  - https://polyfill.io/v3/polyfill.min.js?features=es6
+  - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
+
+# extra:
+#   generator: false
+
+nav:
+  - Home: 'index.md'
+  - API:
+    - api/index.md
+    - angle_deltas: 'api/angle_deltas.md'
+    - clucenters: 'api/clucenters.md'
+    - clugen: 'api/clugen.md'
+    - points_on_line: 'api/points_on_line.md'
+    - clupoints: 'api/clupoints_n.md'
+    - clupoints_n_1: 'api/clupoints_n_1.md'
+    - clupoints_n_1_template: 'api/clupoints_n_1_template.md'
+    - clusizes: 'api/clusizes.md'
+    - fix_empty: 'api/fix_empty.md'
+    - fix_num_points: 'api/fix_num_points.md'
+    - llengths: 'api/llengths.md'
+    - rand_ortho_vector: 'api/rand_ortho_vector.md'
+    - rand_unit_vector: 'api/rand_unit_vector.md'
+    - rand_vector_at_angle: 'api/rand_vector_at_angle.md'

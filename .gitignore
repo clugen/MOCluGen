@@ -11,3 +11,8 @@
 *.gz
 *.ods
 *.eps
+docs/env/
+docs/venv/
+docs/site/
+docs/docs/api/*
+!docs/docs/api/index.md
