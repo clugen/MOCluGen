@@ -8,9 +8,9 @@
 % points in the smallest cluster while `sum(clu_num_points) < num_points`, or
 % decrements the largest cluster while `sum(clu_num_points) > num_points`.
 %
-% This function is used internally by [`clusizes()`](#clusizes) and might be
-% useful for custom cluster sizing implementations given as the `clusizes_fn`
-% parameter of the main [`clugen()`](#clugen) function.
+% This function is used internally by `clusizes()` and might be useful for
+% custom cluster sizing implementations given as the `clusizes_fn` parameter of
+% the main `clugen()` function.
 %
 % ## Arguments
 %

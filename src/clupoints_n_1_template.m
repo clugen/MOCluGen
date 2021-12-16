@@ -5,9 +5,9 @@
 %
 %     points = clupoints_n_1_template(projs, lat_std, clu_dir, dist_fn)
 %
-% This function is used internally by [`clupoints_n_1()`](#clupoints_n_1) and
-% may be useful for constructing user-defined final point placement strategies
-% for the `point_dist_fn` parameter of the main [`clugen()`](#clugen) function.
+% This function is used internally by `clupoints_n_1()` and may be useful for
+% constructing user-defined final point placement strategies for the
+% `point_dist_fn` parameter of the main `clugen()` function.
 %
 % ## Arguments
 %

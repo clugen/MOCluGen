@@ -53,37 +53,37 @@
 %   - `"n-1"` (default): Final points are placed on a hyperplane orthogonal to
 %     the cluster-supporting line, centered at each point's projection, using the
 %     normal distribution (μ=0, σ=`lateral_disp`). This is done by the
-%     [`clupoints_n_1()`](#clupoints_n_1) function.
+%     `clupoints_n_1()` function.
 %   - `"n"`: Final points are placed around their projection on the cluster-supporting
 %     line using the normal distribution (μ=0, σ=`lateral_disp`). This is done by the
-%     [`clupoints_n()`](#clupoints_n) function.
+%     `clupoints_n()` function.
 %   - User-defined function: The user can specify a custom point placement strategy
-%     by passing a function with the same signature as [`clupoints_n_1()`](#clupoints_n_1)
-%     and [`clupoints_n()`](#clupoints_n).
+%     by passing a function with the same signature as `clupoints_n_1()`and
+%     `clupoints_n().
 % - `clusizes_fn`: Distribution of cluster sizes. By default, cluster sizes are
-%   determined by the [`clusizes()`](#clusizes) function, which uses the normal
-%   distribution (μ=`num_points`/`num_clusters`, σ=μ/3), and assures that the final
-%   cluster sizes add up to `num_points`. This parameter allows the user to specify a
-%   custom function for this purpose, which must follow [`clusizes()`](#clusizes)'s
-%   signature. Note that custom functions are not required to strictly obey the
-%   `num_points` parameter.
+%   determined by the `clusizes()` function, which uses the normaldistribution
+%   (μ=`num_points`/`num_clusters`, σ=μ/3), and assures that the finalcluster
+%   sizes add up to `num_points`. This parameter allows the user to specify a
+%   custom function for this purpose, which must follow `clusizes()`signature.
+%   Note that custom functions are not required to strictly obey the `num_points`
+%   parameter.
 % - `clucenters_fn`: Distribution of cluster centers. By default, cluster centers
-%   are determined by the [`clucenters()`](#clucenters) function, which uses the
-%   uniform distribution, and takes into account the `num_clusters` and `cluster_sep`
+%   are determined by the `clucenters()` function, which uses the uniform
+%   distribution, and takes into account the `num_clusters` and `cluster_sep`
 %   parameters for generating well-distributed cluster centers. This parameter allows
 %   the user to specify a custom function for this purpose, which must follow
-%   [`clucenters()`](#clucenters)'s signature.
+%   `clucenters()` signature.
 % - `llengths_fn`: Distribution of line lengths. By default, the lengths of
-%   cluster-supporting lines are determined by the [`llengths()`](#llengths) function,
-%   which uses the folded normal distribution (μ=`llength`, σ=`llength_disp`). This
+%   cluster-supporting lines are determined by the `llengths()` function, which
+%   uses the folded normal distribution (μ=`llength`, σ=`llength_disp`). This
 %   parameter allows the user to specify a custom function for this purpose, which
-%   must follow [`llengths()`](#llengths)'s signature.
+%   must follow `llengths()` signature.
 % - `angle_deltas_fn`: Distribution of line angle differences with respect to `direction`.
 %   By default, the angles between `direction` and the direction of cluster-supporting
-%   lines are determined by the [`angle_deltas()`](#angle_deltas) function, which uses
-%   the wrapped normal distribution (μ=0, σ=`angle_disp`) with support in the interval
+%   lines are determined by the `angle_deltas()` function, which uses the wrapped
+%   normal distribution (μ=0, σ=`angle_disp`) with support in the interval
 %   [-π/2, π/2]. This parameter allows the user to specify a custom function for this
-%   purpose, which must follow [`angle_deltas()`](#angle_deltas)'s signature.
+%   purpose, which must follow `angle_deltas()` signature.
 %
 % ## Return values
 %

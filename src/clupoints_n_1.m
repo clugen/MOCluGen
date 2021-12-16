@@ -4,8 +4,8 @@
 %
 %     points = clupoints_n_1(projs, lat_disp, line_len, clu_dir, clu_ctr)
 %
-% This function's main intended use is by the [`clugen()`](#clugen) function,
-% generating the final points when the `point_dist_fn` parameter is set to `"n-1"`.
+% This function's main intended use is by the `clugen()` function, generating
+% the final points when the `point_dist_fn` parameter is set to `"n-1"`.
 %
 % ## Arguments
 %

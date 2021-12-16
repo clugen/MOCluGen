@@ -7,9 +7,9 @@
 % smaller than the number of clusters (or if the `allow_empty` parameter is set
 % to `true`), this function does nothing.
 %
-% This function is used internally by [`clusizes()`](#clusizes) and might be
-% useful for custom cluster sizing implementations given as the `clusizes_fn`
-% parameter of the main [`clugen()`](#clugen) function.
+% This function is used internally by `clusizes()` and might be useful for
+% custom cluster sizing implementations given as the `clusizes_fn` parameter of
+% the main `clugen()` function.
 %
 % ## Arguments
 %
