@@ -12,11 +12,11 @@
 from pathlib import Path
 
 # Get input files, assuming each file contains a MATLAB function
-input_filepaths = sorted(Path('..', 'src').glob('*.m'))
+input_filepaths = sorted(Path("..", "src").glob("*.m"))
 
 # Docs and API folders
-docs_dir = 'docs'
-api_dir = 'api'
+docs_dir = "docs"
+api_dir = "api"
 
 # Output folder
 output_dir = Path(docs_dir, api_dir)
@@ -82,7 +82,7 @@ for mfilepath in input_filepaths:
     for i in range(len(blanks) - 1):
 
         # Get current pair
-        pair = blanks[i:i+2]
+        pair = blanks[i : i + 2]
 
         # If blank lines are adjacent they don't contain code, so we can ignore
         # this pair
@@ -143,7 +143,7 @@ for mfilepath in input_filepaths:
                 curr_doc[i] = curr_doc[i][4:]
 
     # Add current function's Markdown documentation to the dictionary
-    docs[mfilepath.stem] = ''.join(curr_doc)
+    docs[mfilepath.stem] = "".join(curr_doc)
 
 # For each key (function name) in the dictionary...
 for kfun in docs.keys():
@@ -159,8 +159,3 @@ for kfun in docs.keys():
     # Save respective Markdown file
     mdfilepath = Path(output_dir, kfun + ".md")
     print(docs[kfun], file=mdfilepath.open("w"))
-
-
-
-
-
