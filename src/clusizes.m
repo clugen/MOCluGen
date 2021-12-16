@@ -1,7 +1,8 @@
 
 % Determine cluster sizes, i.e., the number of points in each cluster, using the
 % normal distribution (μ=`num_points`/`num_clusters`, σ=μ/3), and then assuring
-% that the final cluster sizes add up to `num_points`.
+% that the final cluster sizes add up to `num_points` via the
+% `fix_num_points()` function.
 %
 %      clu_num_points = clusizes(num_clusters, num_points, allow_empty)
 %

@@ -4,18 +4,28 @@
 %     points = points_on_line(center, direction, dist_center)
 %
 % This works by using the vector formulation of the line equation assuming
-% `direction` is a n-dimensional unit vector.
+% `direction` is a $n$-dimensional unit vector. In other words, considering
+% $\mathbf{d}=$ `direction` ($n \times 1$), $\mathbf{c}=$ `center`
+% ($n \times 1$), and $\mathbf{w}=$ `dist_center` ($p \times 1$), the
+% coordinates of points on the line are given by:
+%
+% $$
+% \mathbf{P}=\mathbf{1}\,\mathbf{c}^T + \mathbf{w}\mathbf{d}^T
+% $$
+%
+% where $\mathbf{P}$ is the $p \times n$ matrix of point coordinates on the
+% line, and $\mathbf{1}$ is a $p \times 1$ vector with all entries equal to 1.
 %
 % ## Arguments
 %
-% * `center` - Center of the line (n x 1 vector).
-% * `direction` - Line direction (n x 1 unit vector).
-% * `dist_center` - Distance of each point to the center of the line (p x 1
-%   vector, where p is the number of points).
+% * `center` - Center of the line ($n \times 1$ vector).
+% * `direction` - Line direction ($n \times 1$ unit vector).
+% * `dist_center` - Distance of each point to the center of the line
+%   ($p \times 1$ vector, where $p$ is the number of points).
 %
 % ## Return values
 %
-% * `points` - Coordinates of points on the specified line (p x n matrix).
+% * `points` - Coordinates of points on the specified line ($p \times n$ matrix).
 function points = points_on_line(center, direction, dist_center)
 
     points = center' + dist_center * direction';

@@ -18,7 +18,7 @@
 %
 % # Return values
 %
-% - `points`: Generated points (_p_ x _n_ matrix).
+% - `points`: Generated points ($p \times n$ matrix).
 function points = clupoints_n_1(projs, lat_disp, line_len, clu_dir, clu_ctr)
 
     % Define function to get distances from points to their projections on the

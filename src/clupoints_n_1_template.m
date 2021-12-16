@@ -1,4 +1,4 @@
-% Generate points from their _n_-dimensional projections on a cluster-supporting
+% Generate points from their $n$-dimensional projections on a cluster-supporting
 % line, placing each point on a hyperplane orthogonal to that line and centered
 % at the point's projection. The function specified in `dist_fn` is used to
 % perform the actual placement.
@@ -11,7 +11,8 @@
 %
 % ## Arguments
 %
-% - `projs`: Point projections on the cluster-supporting line (_p_ x _n_ matrix).
+% - `projs`: Point projections on the cluster-supporting line ($p \times n$
+%   matrix).
 % - `lat_disp`: Dispersion of points from their projection.
 % - `clu_dir`: Direction of the cluster-supporting line (unit vector).
 % - `dist_fn`: Function to place points on a second line, orthogonal to the
@@ -19,7 +20,7 @@
 %
 % # Return values
 %
-% - `points`: Generated points (_p_ x _n_ matrix).
+% - `points`: Generated points ($p \times n$ matrix).
 function points = clupoints_n_1_template(projs, lat_disp, clu_dir, dist_fn)
 
     % Number of dimensions

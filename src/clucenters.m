@@ -4,6 +4,19 @@
 %
 %     clu_centers = clucenters(num_clusters, clu_sep, clu_offset)
 %
+% More specifically, let $c=$ `num_clusters`, $\mathbf{s}=$ `clu_sep`,
+% $\mathbf{o}=$ `clu_offset`, $n=$ `length(clu_sep)` (i.e., number of dimensions).
+% Cluster centers are obtained according to the following equation:
+%
+% $$
+% \mathbf{C}=c\mathbf{U} \cdot \operatorname{diag}(\mathbf{s}) + \mathbf{1}\,\mathbf{o}^T
+% $$
+%
+% where $\mathbf{C}$ is the $c \times n$ matrix of cluster centers,
+% $\mathbf{U}$ is an $c \times n$ matrix of random values drawn from the
+% uniform distribution between -0.5 and 0.5, and $\mathbf{1}$ is an $c \times
+% 1$ vector with all entries equal to 1.
+%
 % ## Arguments
 %
 % - `num_clusters` - Number of clusters.
