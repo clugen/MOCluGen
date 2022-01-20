@@ -90,11 +90,6 @@ function angs = get_angles(n)
     angs = 2 * pi * rand(1, n) - pi;
 end
 
-% Returns true if the value of the sign of x is negative, otherwise false.
-function s = signbit(x)
-    s = x < 0;
-end
-
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% %
 % Alternative module functions for clugen() testing purposes only %
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% %
@@ -147,6 +142,9 @@ end
 % in turn based on these notes by Prof. W. Kahan, see page 15:
 % https://people.eecs.berkeley.edu/~wkahan/MathH110/Cross.pdf
 function a = angle_btw(v1, v2)
+
+    % Returns true if the value of the sign of x is negative, otherwise false.
+    signbit = @(x) x < 0;
 
     u1 = v1 / norm(v1);
     u2 = v2 / norm(v2);
