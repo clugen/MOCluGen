@@ -5,7 +5,7 @@
 %     clu_centers = clucenters(num_clusters, clu_sep, clu_offset)
 %
 % More specifically, let $c=$ `num_clusters`, $\mathbf{s}=$ `clu_sep`,
-% $\mathbf{o}=$ `clu_offset`, $n=$ `length(clu_sep)` (i.e., number of dimensions).
+% $\mathbf{o}=$ `clu_offset`, $n=$ `numel(clu_sep)` (i.e., number of dimensions).
 % Cluster centers are obtained according to the following equation:
 %
 % $$
@@ -20,13 +20,12 @@
 % ## Arguments
 %
 % - `num_clusters` - Number of clusters.
-% - `clu_sep` - Average cluster separation (`num_clusters` x 1 vector).
-% - `clu_offset` -Cluster offsets (`num_clusters` x 1 vector).
+% - `clu_sep` - Average cluster separation ($n \times 1$ vector).
+% - `clu_offset` - Cluster offsets ($n \times 1$ vector).
 %
 % ## Return values
 %
-% - `clu_centers` - A `num_clusters` x `num_dims` matrix containing the cluster
-%   centers.
+% - `clu_centers` - A $c \times n$ matrix containing the cluster centers.
 %
 % ## Note
 %
@@ -42,6 +41,6 @@ function clu_centers = clucenters(num_clusters, clu_sep, clu_offset)
 
 end % function
 
-% Copyright (c) 2012-2021 Nuno Fachada
+% Copyright (c) 2012-2022 Nuno Fachada
 % Distributed under the MIT License (See accompanying file LICENSE or copy
 % at http://opensource.org/licenses/MIT)
