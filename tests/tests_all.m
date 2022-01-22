@@ -79,8 +79,7 @@ function clu_offs = get_clu_offsets(nd)
     clu_offs = zeros(2 + numel(seeds), nd);
     clu_offs(2, :) = ones(1, nd);
     for i = 1:numel(seeds)
-        set_seed(seeds(i));
-        clu_offs(2 + i, :) = 1000 * rand(1, nd);
+        clu_offs(2 + i, :) = 1000 * randn(1, nd);
     end;
 
 end
