@@ -9,7 +9,8 @@
 %
 % ## Arguments
 %
-% - `projs`: Point projections on the cluster-supporting line.
+% - `projs`: Point projections on the cluster-supporting line ($p \times n$
+%   matrix).
 % - `lat_disp`: Standard deviation for the normal distribution, i.e., cluster
 %   lateral dispersion.
 % - `line_len`: Length of cluster-supporting line (ignored).
