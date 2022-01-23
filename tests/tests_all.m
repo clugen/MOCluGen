@@ -623,30 +623,28 @@ function test_llengths
     tests_any_done = false;
 
     % Cycle through all test parameters
-    for nd = num_dims
-        for seed = seeds
+    for seed = seeds
 
-            % Set seed
-            set_seed(seed);
+        % Set seed
+        set_seed(seed);
 
-            for nclu = num_clusters
-                for len = llengths_mus
-                    for len_std = llengths_sigmas
+        for nclu = num_clusters
+            for len = llengths_mus
+                for len_std = llengths_sigmas
 
-                        % Function should run without warnings
-                        lastwarn('');
-                        lens = llengths(nclu, len, len_std);
-                        assertTrue(isempty(lastwarn));
+                    % Function should run without warnings
+                    lastwarn('');
+                    lens = llengths(nclu, len, len_std);
+                    assertTrue(isempty(lastwarn));
 
-                        % Check that return value has the correct dimensions
-                        assertEqual(size(lens), [nclu 1]);
+                    % Check that return value has the correct dimensions
+                    assertEqual(size(lens), [nclu 1]);
 
-                        % Check that all lengths are >= 0
-                        assertTrue(all(lens >= 0));
+                    % Check that all lengths are >= 0
+                    assertTrue(all(lens >= 0));
 
-                        % Some tests done
-                        tests_any_done = true;
-                    end;
+                    % Some tests done
+                    tests_any_done = true;
                 end;
             end;
         end;
