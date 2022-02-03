@@ -477,7 +477,7 @@ function test_clupoints_n_1_template
     dist_pt = 10;
 
     % Cycle through all test parameters
-    for nd = num_dims(2:end) % Skip nd==1
+    for nd = num_dims
         for tpts = num_points(num_points < 1000)
             for seed = seeds
 
@@ -509,17 +509,21 @@ function test_clupoints_n_1_template
                                 % number of projections
                                 assertEqual(size(pts), size(proj));
 
-                                % For each vector from projection to point...
-                                proj_pt_vecs = pts - proj;
-                                for i = 1:num_points
-                                    % Get current vector
-                                    u = proj_pt_vecs(i, :)';
-                                    % Vector should be approximately orthogonal
-                                    % to the cluster line
-                                    assertElementsAlmostEqual(dot(dir{:}, u), 0);
-                                    % Vector should of a magnitude of
-                                    % approximately dist_pt
-                                    assertElementsAlmostEqual(norm(u), dist_pt);
+                                % The following checks are only for
+                               % dimensionality above 1
+                               if nd > 1
+                                    % For each vector from projection to point...
+                                    proj_pt_vecs = pts - proj;
+                                    for i = 1:num_points
+                                        % Get current vector
+                                        u = proj_pt_vecs(i, :)';
+                                        % Vector should be approximately
+                                        % orthogonalto the cluster line
+                                        assertElementsAlmostEqual(dot(dir{:}, u), 0);
+                                        % Vector should have a magnitude of
+                                        % approximately dist_pt
+                                        assertElementsAlmostEqual(norm(u), dist_pt);
+                                    end
                                 end
 
                                 % Some tests done
