@@ -794,7 +794,7 @@ function test_clupoints_n
     ncts = 3;
 
     % Cycle through all test parameters
-    for nd = num_dims(2:end) % Skip nd==1
+    for nd = num_dims
         for tpts = num_points
             for seed = seeds
 
