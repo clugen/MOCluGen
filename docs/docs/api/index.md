@@ -36,8 +36,9 @@ randn("state", 123);
 * [`clusizes`](clusizes) $^\star$
 * [`llengths`](llengths) $^\star$
 
-## Algorithm module helper functions
+## Helper functions
 
+* [`angle_btw`](angle_btw)
 * [`clupoints_n_1_template`](clupoints_n_1_template) $^\star$
 * [`fix_empty`](fix_empty)
 * [`fix_num_points`](fix_num_points)

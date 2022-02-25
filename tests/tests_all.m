@@ -134,35 +134,6 @@ function angd = angle_deltas_alt_zeros(nclu, astd)
     angd = zeros(nclu, 1);
 end
 
-% Get angle between two vectors, useful for checking correctness of results
-% Previous version was unstable: angle(u, v) = acos(dot(u, v) / (norm(u) * norm(v)))
-% Version below is based on AngleBetweenVectors.jl by Jeffrey Sarnoff (MIT license),
-% https://github.com/JeffreySarnoff/AngleBetweenVectors.jl/blob/master/src/AngleBetweenVectors.jl
-% in turn based on these notes by Prof. W. Kahan, see page 15:
-% https://people.eecs.berkeley.edu/~wkahan/MathH110/Cross.pdf
-function a = angle_btw(v1, v2)
-
-    % Returns true if the value of the sign of x is negative, otherwise false.
-    signbit = @(x) x < 0;
-
-    u1 = v1 / norm(v1);
-    u2 = v2 / norm(v2);
-
-    y = u1 - u2;
-    x = u1 + u2;
-
-    a0 = 2 * atan(norm(y) / norm(x));
-
-    if not(signbit(a0) || signbit(pi - a0))
-        a = a0;
-    elseif signbit(a0)
-        a = 0.0;
-    else
-        a = pi;
-    end;
-
-end
-
 % Reset random number generator with a given seed
 function set_seed(seed)
     if moxunit_util_platform_is_octave()

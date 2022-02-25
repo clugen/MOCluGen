@@ -41,6 +41,7 @@ nav:
   - Examples: 'examples.md'
   - API:
     - api/index.md
+    - angle_btw: 'api/angle_btw.md'
     - angle_deltas: 'api/angle_deltas.md'
     - clucenters: 'api/clucenters.md'
     - clugen: 'api/clugen.md'
