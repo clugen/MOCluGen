@@ -20,6 +20,7 @@ theme:
     - navigation.indexes
 
 markdown_extensions:
+  - attr_list
   - pymdownx.highlight:
       anchor_linenums: true
   - pymdownx.inlinehilite
@@ -27,6 +28,8 @@ markdown_extensions:
   - pymdownx.superfences
   - pymdownx.arithmatex:
       generic: true
+  # - toc:
+  #     permalink: true
 
 extra_javascript:
   - javascripts/mathjax.js
@@ -38,6 +41,7 @@ extra_javascript:
 
 nav:
   - Home: 'index.md'
+  - Theory: 'theory.md'
   - Examples: 'examples.md'
   - API:
     - api/index.md
@@ -56,3 +60,4 @@ nav:
     - rand_ortho_vector: 'api/rand_ortho_vector.md'
     - rand_unit_vector: 'api/rand_unit_vector.md'
     - rand_vector_at_angle: 'api/rand_vector_at_angle.md'
+  - Development: 'dev.md'
