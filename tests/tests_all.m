@@ -508,7 +508,7 @@ function test_clupoints_n_1_template
                                if nd > 1
                                     % For each vector from projection to point...
                                     proj_pt_vecs = pts - proj;
-                                    for i = 1:num_points
+                                    for i = 1:tpts
                                         % Get current vector
                                         u = proj_pt_vecs(i, :)';
                                         % Vector should be approximately
@@ -750,7 +750,7 @@ function test_clupoints_n_1
                                 if nd > 1
                                     % For each vector from projection to point...
                                     proj_pt_vecs = pts - proj;
-                                    for i = 1:num_points
+                                    for i = 1:tpts
                                         % Get current vector
                                         u = proj_pt_vecs(i, :)';
                                         % Vector should be approximately
