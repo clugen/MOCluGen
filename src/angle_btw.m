@@ -22,7 +22,7 @@
 % ## Return values
 %
 % - `a`- Angle between `v1` and `v2` in radians.
-% 
+%
 % ## Examples
 %
 % ```matlab

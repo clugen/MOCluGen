@@ -343,6 +343,29 @@ function test_rand_vector_at_angle
     assertTrue(tests_any_done);
 end
 
+% Test the angle_btw() function
+function test_angle_btw
+
+    % Commonly used function for determining the angle between two vectors
+    common_angle_btw = @(v1, v2) acos(dot(v1, v2) / (norm(v1) * norm(v2)));
+
+    % 2D
+    u = [1.5, 0];
+    v = [0.1, -0.4];
+    assertElementsAlmostEqual(angle_btw(u, v), common_angle_btw(u, v))
+
+    % 3D
+    u = [-1.5, 10, 0];
+    v = [0.99, 4.4, -1.1];
+    assertElementsAlmostEqual(angle_btw(u, v), common_angle_btw(u, v))
+
+    % 8D
+    u = [1.5, 0, 0, 0, 0, 0, 0, -0.5];
+    v = [7.5, -0.4, 0, 0, 0, -16.4, 0.1, -0.01];
+    assertElementsAlmostEqual(angle_btw(u, v), common_angle_btw(u, v))
+
+end
+
 % Test the fix_empty() function
 function test_fix_empty
 
