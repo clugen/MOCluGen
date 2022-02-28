@@ -29,11 +29,12 @@ Open MATLAB or GNU Octave and `cd` into the project's folder, and run the
 `MOCluGen` can now be used, e.g:
 
 ```matlab
->> [points, point_clusters] = clugen(3, 4, 1000, [1; 0; 0], 0.1, [20; 15; 35], 12, 4, 0.5);
->> scatter3(points(:, 1), points(:, 2), points(:,3), 8, point_clusters);
+>> % Seed set to 123 in Octave for this example, see below
+>> [points, point_clusters] = clugen(3, 4, 1000, [1; 0; 0], pi / 8, [20; 15; 25], 16, 4, 3.5);
+>> scatter3(points(:, 1), points(:, 2), points(:,3), 36, point_clusters, 'filled', 'MarkerEdgeColor', 'k');
 ```
 
-![Example.](https://raw.githubusercontent.com/clugen/.github/main/images/MOCluGen/readme_example.svg)
+![Example.](https://raw.githubusercontent.com/clugen/.github/main/images/MOCluGen/example_clugen.svg)
 
 Note that running the code above will yield a different result each time, unless
 a seed is previously set, e.g. for MATLAB:
