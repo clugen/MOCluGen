@@ -14,6 +14,12 @@
 %
 % This function is stochastic. For reproducibility set the PRNG seed as
 % discussed in the [API](..).
+%
+% ## Examples
+%
+%     r = rand_unit_vector(4);
+%     norm(r)
+%     % ans = 1
 function r = rand_unit_vector(num_dims)
 
 r = rand(num_dims, 1) - 0.5;

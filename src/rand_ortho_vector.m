@@ -14,6 +14,14 @@
 %
 % This function is stochastic. For reproducibility set the PRNG seed as
 % discussed in the [API](..).
+%
+% ## Examples
+%
+%     r = rand(3, 1);           % Get a random 3D vector
+%     r = r / norm(r);          % Normalize it
+%     o = rand_ortho_vector(r); % Get a random unit vector orthogonal to r
+%     dot(r, o)    % Check that r and o are orthogonal (result should be ~0)
+%     % ans = 0
 function v = rand_ortho_vector(u)
 
     % Is vector 1D?

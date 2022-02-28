@@ -20,6 +20,18 @@
 %
 % This function is stochastic. For reproducibility set the PRNG seed as
 % discussed in the [API](..).
+%
+% ## Examples
+%
+%     % Seed set to 123 in Octave for this example
+%     sizes = clusizes(4, 1000, true)
+%     % sizes =
+%     %    268
+%     %    330
+%     %    128
+%     %    274
+%     sum(sizes)
+%     % ans = 1000
 function clu_num_points = clusizes(num_clusters, num_points, allow_empty)
 
     % Determine number of points in each cluster using the normal distribution

@@ -31,6 +31,16 @@
 %
 % This function is stochastic. For reproducibility set the PRNG seed as
 % discussed in the [API](..).
+%
+% ## Examples
+%
+%     % Seed set to 123 in Octave for this example
+%     clucenters(3, [30; 10], [-50; 50])
+%     % ans =
+%     %
+%     %   -90.287   38.231
+%     %   -87.153   62.036
+%     %   -58.348   36.145
 function clu_centers = clucenters(num_clusters, clu_sep, clu_offset)
 
     % Obtain a num_clusters x num_dims matrix of uniformly distributed values

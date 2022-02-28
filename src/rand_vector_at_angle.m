@@ -15,6 +15,15 @@
 %
 % This function is stochastic. For reproducibility set the PRNG seed as
 % discussed in the [API](..).
+%
+% ## Examples
+%
+%     u = [1.0; 0; 0.5; -0.5];             % Define a 4D vector
+%     u = u / norm(u);                     % Normalize the vector
+%     v = rand_vector_at_angle(u, pi / 4); % Get a vector at 45 degrees
+%     arad = acos(dot(u, v) / (norm(u) * norm(v))); % Get angle in radians
+%     rad2deg(arad) % Convert to degrees, should be close to 45 degrees
+%     % ans = 45.000
 function v = rand_vector_at_angle(u, angle)
 
     if abs(abs(angle) - pi/2) < eps && numel(u) > 1

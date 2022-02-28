@@ -26,6 +26,21 @@
 %
 % This function is stochastic. For reproducibility set the PRNG seed as
 % discussed in the [API](..).
+%
+% ## Examples
+%
+%     % Seed set to 123 in Octave for this example
+%     ctr = [0; 0];
+%     direc = [1; 0];
+%     pdist = [-0.5; -0.2; 0.1; 0.3];
+%     proj = points_on_line(ctr, direc, pdist);
+%     clupoints_n_1_template(proj, 10, direc, @(p, l) l * (rand(p, 1) .- 0.5))
+%     % ans =
+%     %
+%     %   -0.50000  -4.47636
+%     %   -0.20000  -4.12813
+%     %    0.10000  -0.92758
+%     %    0.30000  -3.92300
 function points = clupoints_n_1_template(projs, lat_disp, clu_dir, dist_fn)
 
     % Number of dimensions

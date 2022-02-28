@@ -108,9 +108,15 @@
 % possible that `num_points` may have a different value than what was specified in
 % `clugen`'s `num_points` parameter.
 %
+% ## Note
+%
+% This function is stochastic. For reproducibility set the PRNG seed as
+% discussed in the [API](..).
+%
 % ## Examples
 %
-%     [points, point_clusters] = clugen(3, 4, 1000, [1; 0; 0], 0.1, [20; 15; 35], 12, 4, 0.5, 'allow_empty', true);
+%     % Seed set to 123 in Octave for this example
+%     [points, point_clusters] = clugen(3, 4, 1000, [1; 0; 0], pi / 8, [20; 15; 25], 16, 4, 3.5);
 %
 % This creates 4 clusters in 3D space with a total of 1000 points, with a main
 % direction of [1; 0; 0] (i.e., along the x-axis), with an angle dispersion of
@@ -121,12 +127,9 @@
 %
 % The following command plots the generated clusters:
 %
-%     scatter3(points(:, 1), points(:, 2), points(:,3), 8, point_clusters);
+%     scatter3(points(:, 1), points(:, 2), points(:,3), 36, point_clusters, 'filled', 'MarkerEdgeColor', 'k');
 %
-% ## Note
-%
-% This function is stochastic. For reproducibility set the PRNG seed as
-% discussed in the [API](..).
+% ![clugen() example.](https://raw.githubusercontent.com/clugen/.github/main/images/MOCluGen/example_clugen.svg)
 function [points, point_clusters, point_projections, cluster_sizes, ...
     cluster_centers, cluster_directions, cluster_angles, cluster_lengths] = ...
     clugen( ...

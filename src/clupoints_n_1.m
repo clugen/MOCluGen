@@ -25,6 +25,21 @@
 %
 % This function is stochastic. For reproducibility set the PRNG seed as
 % discussed in the [API](..).
+%
+% ## Examples
+%
+%     % Seed set to 123 in Octave for this example
+%     ctr = [0; 0];
+%     direc = [1; 0];
+%     pdist = [-0.5; -0.2; 0.1; 0.3];
+%     proj = points_on_line(ctr, direc, pdist);
+%     clupoints_n_1(proj, 0.1, nan, direc, nan)
+%     % ans =
+%     %
+%     %   -0.500000  -0.019383
+%     %   -0.200000  -0.093462
+%     %    0.100000  -0.147967
+%     %    0.300000  -0.025630
 function points = clupoints_n_1(projs, lat_disp, line_len, clu_dir, clu_ctr)
 
     % Define function to get distances from points to their projections on the

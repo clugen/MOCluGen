@@ -17,6 +17,14 @@
 %
 % This function is stochastic. For reproducibility set the PRNG seed as
 % discussed in the [API](..).
+%
+% ## Examples
+%
+%     % Seed set to 123 in Octave for this example
+%     llengths(4, 20, 3.5)'
+%     % ans =
+%     %
+%     % 20.678   23.271   14.821   20.897
 function lengths = llengths(num_clusters, llength, llength_disp)
 
     lengths = abs(llength + llength_disp * randn(num_clusters, 1));

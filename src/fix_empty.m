@@ -13,14 +13,21 @@
 %
 % ## Arguments
 %
-% * `clu_num_points` - Number of points in each cluster ($c \times 1$ vector),
+% * `clu_num_points` - Number of points in each cluster (vector of size $c$),
 %   where $c$ is the number of clusters.
 % * `allow_empty` - Allow empty clusters?
 %
 % ## Return values
 %
 % * `num_points_fixed` - Number of points in each cluster, after being fixed by
-%   this function ($c \times 1$ vector).
+%   this function (vector of size $c$).
+%
+% ## Examples
+%
+%     clusters = [3, 4, 5, 0, 0];
+%     fix_empty(clusters, false)
+%     % ans =
+%     %    3   3   4   1   1
 function num_points_fixed = fix_empty(clu_num_points, allow_empty)
 
     num_points_fixed = clu_num_points;

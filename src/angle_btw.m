@@ -25,12 +25,10 @@
 %
 % ## Examples
 %
-% ```matlab
-% >> v1 = [1.0, 1.0, 1.0, 1.0];
-% >> v2 = [1.0, 0.0, 0.0, 0.0];
-% >> rad2deg(angle_btw(v1, v2)) % Should be 60 degrees
-% ans = 60.000
-% ```
+%     v1 = [1.0, 1.0, 1.0, 1.0];
+%     v2 = [1.0, 0.0, 0.0, 0.0];
+%     rad2deg(angle_btw(v1, v2)) % Should be 60 degrees
+%     % ans = 60.000
 function a = angle_btw(v1, v2)
 
     % Returns true if the value of the sign of x is negative, otherwise false.

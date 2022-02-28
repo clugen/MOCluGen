@@ -26,6 +26,23 @@
 % ## Return values
 %
 % * `points` - Coordinates of points on the specified line ($p \times n$ matrix).
+%
+% ## Examples
+%
+%     points_on_line([5; 5], [1; 0], (-4:2:4)') % 2D, 5 points
+%     % ans =
+%     %
+%     %    1   5
+%     %    3   5
+%     %    5   5
+%     %    7   5
+%     %    9   5
+%
+%     points_on_line([-2; 0; 0; 2], [0; 0; -1; 0], [10; -10]) % 4D, 2 points
+%     % ans =
+%     %
+%     %    -2    0  -10    2
+%     %    -2    0   10    2
 function points = points_on_line(center, direction, dist_center)
 
     points = center' + dist_center * direction';

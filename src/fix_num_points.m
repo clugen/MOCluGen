@@ -14,14 +14,22 @@
 %
 % ## Arguments
 %
-% * `clu_num_points` - Number of points in each cluster ($c \times 1$ vector),
+% * `clu_num_points` - Number of points in each cluster (vector of size $c$),
 %   where $c$ is the number of clusters.
 % * `num_points` - The expected total number of points.
 %
 % ## Return values
 %
 % * `num_points_fixed` - Number of points in each cluster, after being fixed by
-%   this function ($c \times 1$ vector).
+%   this function (vector of size $c$).
+%
+% ## Examples
+%
+%     clusters = [1, 6, 3];
+%     fix_num_points(clusters, 12)
+%     % ans =
+%     %
+%     %    3   6   3
 function num_points_fixed = fix_num_points(clu_num_points, num_points)
 
     num_points_fixed = clu_num_points;

@@ -18,6 +18,15 @@
 %
 % This function is stochastic. For reproducibility set the PRNG seed as
 % discussed in the [API](..).
+%
+% ## Examples
+%
+%     % Seed set to 123 in Octave for this example
+%     arad = angle_deltas(4, pi / 8); % Angle dispersion of 22.5 degrees
+%     rad2deg(arad')                  %  Show angle deltas in degrees
+%     % ans =
+%     %
+%     %     4.3613   21.0290  -33.2926    5.7669
 function angles = angle_deltas(num_clusters, angle_disp)
 
     % Get random angle differences using the normal distribution
