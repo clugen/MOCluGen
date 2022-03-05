@@ -1,5 +1,5 @@
 % Plot 2D examples
-function f = plot2d(tag, full_title, varargin)
+function f = plot2d(varargin)
 
     num_plots = floor(numel(varargin) / 2);
 
@@ -13,9 +13,12 @@ function f = plot2d(tag, full_title, varargin)
     ymax = -Inf;
     ymin = Inf;
 
+    filename = '';
+
     for i = 1:num_plots
 
-        points = varargin{i * 2 - 1};
+        filename = [filename varargin{i * 2}(1:3)];
+        points = varargin{i * 2 - 1}.points;
 
         if max(points(:, 1)) > xmax
             xmax = max(points(:, 1));
@@ -45,12 +48,12 @@ function f = plot2d(tag, full_title, varargin)
     for i = 1:num_plots
 
         subplot(nrows, ncols, i);
-        points = varargin{i * 2 - 1};
-        clusts = varargin{i * 2};
+        tag = varargin{i * 2};
+        cdata = varargin{i * 2 - 1};
 
-        scatter(points(:, 1), points(:, 2), 28, clusts, ...
+        scatter(cdata.points(:, 1), cdata.points(:, 2), 28, cdata.clusters, ...
             'filled', 'MarkerEdgeColor', 'black');
-        title([tag ': ' full_title], 'FontWeight', 'normal', 'FontSize', 9);
+        title(tag, 'FontWeight', 'normal', 'FontSize', 9);
         xlim([xmin xmax]);
         ylim([ymin ymax]);
         daspect([1 1 1]);
@@ -59,7 +62,7 @@ function f = plot2d(tag, full_title, varargin)
 
     set(f, 'Position', [100 100 1000 400]);
     set(f, 'PaperPositionMode', 'auto');
-    saveas(f, [tag '.svg']);
+    saveas(f, [filename '.svg']);
 
 end % function
 
