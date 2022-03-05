@@ -34,6 +34,10 @@
 %
 % ## Arguments (optional)
 %
+% - `seed`: Seed to initialize the PRNG, allowing for reproducible results;
+%   alternatively, the PRNG can be initialized with the `cluseed()` function, or
+%   directly setting the seed in MATLAB or Octave (each using its own specific
+%   approach).
 % - `allow_empty`: Allow empty clusters? `false` by default.
 % - `cluster_offset`: Offset to add to all cluster centers. By default the offset
 %   will be equal to `zeros(num_dims)`.
@@ -227,6 +231,10 @@ function cludata = clugen( ...
     % the angle_deltas() function as the default
     addParameter(p, 'angle_deltas_fn', @angle_deltas, @(x) isa(x, 'function_handle'));
 
+    % Check that the seed, if given, is a nonnegative integer
+    addParameter(p, 'seed', NaN, ...
+        @(x) isnumeric(x) && isscalar(x) && (x >= 0) && (mod(x, 1) == 0));
+
     % Perform input validation and parsing
     parse(p, num_dims, num_clusters, num_points, direction, angle_disp, ...
         cluster_sep, llength, llength_disp, lateral_disp, varargin{:});
@@ -277,6 +285,11 @@ function cludata = clugen( ...
     else
         % We should never get here
         error('Invalid program state');
+    end;
+
+    % If seed was given, set it
+    if ~isnan(p.Results.seed)
+        cluseed(p.Results.seed);
     end;
 
     % %%%%%%%%%%%%%%%%%%%%%%%%%%%% %

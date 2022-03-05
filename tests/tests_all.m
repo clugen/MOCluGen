@@ -134,16 +134,6 @@ function angd = angle_deltas_alt_zeros(nclu, astd)
     angd = zeros(nclu, 1);
 end
 
-% Reset random number generator with a given seed
-function set_seed(seed)
-    if moxunit_util_platform_is_octave()
-        rand('state', seed);
-        randn('state', seed);
-    else
-        rng(seed);
-    end;
-end
-
 % %%%%%%%%%%%%%%%% %
 % The actual tests %
 % %%%%%%%%%%%%%%%% %
@@ -168,7 +158,7 @@ function test_points_on_line
             for seed = seeds
 
                 % Set seed
-                set_seed(seed);
+                cluseed(seed);
 
                 for length = llengths_mus
                     for dir = get_unitvecs(ndirs, nd)
@@ -222,7 +212,7 @@ function test_rand_unit_vector
         for seed = seeds
 
             % Set seed
-            set_seed(seed);
+            cluseed(seed);
 
             % Function should run without warnings
             lastwarn('');
@@ -260,7 +250,7 @@ function test_rand_ortho_vector
         for seed = seeds
 
             % Set seed
-            set_seed(seed);
+            cluseed(seed);
 
             for uvec = get_unitvecs(nvec, nd)
 
@@ -311,7 +301,7 @@ function test_rand_vector_at_angle
         for seed = seeds
 
             % Set seed
-            set_seed(seed);
+            cluseed(seed);
 
             for uvec = get_unitvecs(nvec, nd)
                 for a = get_angles(nang)
@@ -476,7 +466,7 @@ function test_clupoints_n_1_template
             for seed = seeds
 
                 % Set seed
-                set_seed(seed);
+                cluseed(seed);
 
                 for lat_std = lat_stds
                     for length = llengths_mus
@@ -546,7 +536,7 @@ function test_angle_deltas
     for seed = seeds
 
         % Set seed
-        set_seed(seed);
+        cluseed(seed);
 
         for nclu = num_clusters
             for astd = angles_stds
@@ -586,7 +576,7 @@ function test_clucenters
         for seed = seeds
 
             % Set seed
-            set_seed(seed);
+            cluseed(seed);
 
             for nclu = num_clusters
                 for clu_sep = get_clu_seps(nd)'
@@ -624,7 +614,7 @@ function test_llengths
     for seed = seeds
 
         % Set seed
-        set_seed(seed);
+        cluseed(seed);
 
         for nclu = num_clusters
             for len = llengths_mus
@@ -664,7 +654,7 @@ function test_clusizes
     for seed = seeds
 
         % Set seed
-        set_seed(seed);
+        cluseed(seed);
 
         for nclu = num_clusters
             for tpts = num_points
@@ -724,7 +714,7 @@ function test_clupoints_n_1
             for seed = seeds
 
                 % Set seed
-                set_seed(seed);
+                cluseed(seed);
 
                 for lat_std = lat_stds
                     for length = llengths_mus
@@ -793,7 +783,7 @@ function test_clupoints_n
             for seed = seeds
 
                 % Set seed
-                set_seed(seed);
+                cluseed(seed);
 
                 for lat_std = lat_stds
                     for length = llengths_mus
@@ -844,7 +834,7 @@ function test_clugen_mandatory
     for seed = seeds(1:end-2) % Skip last two
 
         % Set seed
-        set_seed(seed);
+        cluseed(seed);
 
         for nd = num_dims(1:end-1) % Skip last
             for nclu = num_clusters(1:end-1) % Skip last
@@ -946,7 +936,7 @@ function test_clugen_optional
     for seed = seeds(1:end-1)
 
         % Set seed
-        set_seed(seed);
+        cluseed(seed);
 
         for nd = [2, 7]
 
@@ -974,7 +964,8 @@ function test_clugen_optional
                                             'clusizes_fn', csz_fn{:}, ...
                                             'clucenters_fn', cc_fn{:}, ...
                                             'llengths_fn', ll_fn{:}, ...
-                                            'angle_deltas_fn', angd_fn{:});
+                                            'angle_deltas_fn', angd_fn{:}, ...
+                                            'seed', seed);
                                         assertTrue(isempty(lastwarn));
 
                                         % Check expected sizes and types of return values
@@ -1031,6 +1022,7 @@ function test_clugen_exceptions
     % Valid arguments
     nd = 3;
     nclu = 5;
+    seed = 123;
     tpts = 1000;
     dir = [1; 0; 0];
     astd = pi/64;
@@ -1053,7 +1045,7 @@ function test_clugen_exceptions
         'allow_empty', ae, 'cluster_offset', clu_off, 'proj_dist_fn', pt_dist, ...
         'point_dist_fn', pt_off, 'clusizes_fn', csizes_fn, ...
         'clucenters_fn', ccenters_fn, 'llengths_fn', llengths_fn, ...
-        'angle_deltas_fn', langles_fn);
+        'angle_deltas_fn', langles_fn, 'seed', seed);
     assertTrue(isempty(lastwarn));
 
     % No warnings with zero points since allow_empty is set to true
@@ -1062,15 +1054,23 @@ function test_clugen_exceptions
         'allow_empty', ae, 'cluster_offset', clu_off, 'proj_dist_fn', pt_dist, ...
         'point_dist_fn', pt_off, 'clusizes_fn', csizes_fn, ...
         'clucenters_fn', ccenters_fn, 'llengths_fn', llengths_fn, ...
-        'angle_deltas_fn', langles_fn);
+        'angle_deltas_fn', langles_fn, 'seed', seed);
     assertTrue(isempty(lastwarn));
+
+    % Seed needs to be positive integer
+    fn = @() clugen(nd, nclu, tpts, dir, astd, clu_sep, len_mu, len_std, lat_std, ...
+        'allow_empty', ae, 'cluster_offset', clu_off, 'proj_dist_fn', pt_dist, ...
+        'point_dist_fn', pt_off, 'clusizes_fn', csizes_fn, ...
+        'clucenters_fn', ccenters_fn, 'llengths_fn', llengths_fn, ...
+        'angle_deltas_fn', langles_fn, 'seed', -123);
+        assertError(fn);
 
     % Invalid number of dimensions
     fn = @() clugen(0, nclu, tpts, dir, astd, clu_sep, len_mu, len_std, lat_std, ...
         'allow_empty', ae, 'cluster_offset', clu_off, 'proj_dist_fn', pt_dist, ...
         'point_dist_fn', pt_off, 'clusizes_fn', csizes_fn, ...
         'clucenters_fn', ccenters_fn, 'llengths_fn', llengths_fn, ...
-        'angle_deltas_fn', langles_fn);
+        'angle_deltas_fn', langles_fn, 'seed', seed);
     assertError(fn);
 
     % Invalid number of clusters
@@ -1078,7 +1078,7 @@ function test_clugen_exceptions
         'allow_empty', ae, 'cluster_offset', clu_off, 'proj_dist_fn', pt_dist, ...
         'point_dist_fn', pt_off, 'clusizes_fn', csizes_fn, ...
         'clucenters_fn', ccenters_fn, 'llengths_fn', llengths_fn, ...
-        'angle_deltas_fn', langles_fn);
+        'angle_deltas_fn', langles_fn, 'seed', seed);
     assertError(fn);
 
     % Direction needs to have magnitude > 0
@@ -1086,7 +1086,7 @@ function test_clugen_exceptions
         'allow_empty', ae, 'cluster_offset', clu_off, 'proj_dist_fn', pt_dist, ...
         'point_dist_fn', pt_off, 'clusizes_fn', csizes_fn, ...
         'clucenters_fn', ccenters_fn, 'llengths_fn', llengths_fn, ...
-        'angle_deltas_fn', langles_fn);
+        'angle_deltas_fn', langles_fn, 'seed', seed);
     assertError(fn);
 
     % Direction needs to have nd dims
@@ -1094,7 +1094,7 @@ function test_clugen_exceptions
         'allow_empty', ae, 'cluster_offset', clu_off, 'proj_dist_fn', pt_dist, ...
         'point_dist_fn', pt_off, 'clusizes_fn', csizes_fn, ...
         'clucenters_fn', ccenters_fn, 'llengths_fn', llengths_fn, ...
-        'angle_deltas_fn', langles_fn);
+        'angle_deltas_fn', langles_fn, 'seed', seed);
     assertError(fn);
 
     % cluster_sep needs to have nd dims
@@ -1102,7 +1102,7 @@ function test_clugen_exceptions
         'allow_empty', ae, 'cluster_offset', clu_off, 'proj_dist_fn', pt_dist, ...
         'point_dist_fn', pt_off, 'clusizes_fn', csizes_fn, ...
         'clucenters_fn', ccenters_fn, 'llengths_fn', llengths_fn, ...
-        'angle_deltas_fn', langles_fn);
+        'angle_deltas_fn', langles_fn, 'seed', seed);
     assertError(fn);
 
     % cluster_offset needs to have nd dims
@@ -1110,7 +1110,7 @@ function test_clugen_exceptions
         'allow_empty', ae, 'cluster_offset', -50, 'proj_dist_fn', pt_dist, ...
         'point_dist_fn', pt_off, 'clusizes_fn', csizes_fn, ...
         'clucenters_fn', ccenters_fn, 'llengths_fn', llengths_fn, ...
-        'angle_deltas_fn', langles_fn);
+        'angle_deltas_fn', langles_fn, 'seed', seed);
     assertError(fn);
 
     % Unknown proj_dist_fn given as string
@@ -1118,7 +1118,7 @@ function test_clugen_exceptions
         'allow_empty', ae, 'cluster_offset', clu_off, 'proj_dist_fn', 'bad_proj_dist', ...
         'point_dist_fn', pt_off, 'clusizes_fn', csizes_fn, ...
         'clucenters_fn', ccenters_fn, 'llengths_fn', llengths_fn, ...
-        'angle_deltas_fn', langles_fn);
+        'angle_deltas_fn', langles_fn, 'seed', seed);
     assertError(fn);
 
     % Invalid proj_dist_fn given as function
@@ -1126,7 +1126,7 @@ function test_clugen_exceptions
         'allow_empty', ae, 'cluster_offset', clu_off, 'proj_dist_fn', @(x) [x;x;x], ...
         'point_dist_fn', pt_off, 'clusizes_fn', csizes_fn, ...
         'clucenters_fn', ccenters_fn, 'llengths_fn', llengths_fn, ...
-        'angle_deltas_fn', langles_fn);
+        'angle_deltas_fn', langles_fn, 'seed', seed);
     assertError(fn);
 
     % Unknown point_dist_fn given as string
@@ -1134,7 +1134,7 @@ function test_clugen_exceptions
         'allow_empty', ae, 'cluster_offset', clu_off, 'proj_dist_fn', pt_dist, ...
         'point_dist_fn', 'n+1', 'clusizes_fn', csizes_fn, ...
         'clucenters_fn', ccenters_fn, 'llengths_fn', llengths_fn, ...
-        'angle_deltas_fn', langles_fn);
+        'angle_deltas_fn', langles_fn, 'seed', seed);
     assertError(fn);
 
     % Invalid point_dist_fn given as function
@@ -1142,7 +1142,7 @@ function test_clugen_exceptions
         'allow_empty', ae, 'cluster_offset', clu_off, 'proj_dist_fn', pt_dist, ...
         'point_dist_fn', @(x) [x;x;x], 'clusizes_fn', csizes_fn, ...
         'clucenters_fn', ccenters_fn, 'llengths_fn', llengths_fn, ...
-        'angle_deltas_fn', langles_fn);
+        'angle_deltas_fn', langles_fn, 'seed', seed);
     assertError(fn);
 
     % Invalid function given as clusizes_fn
@@ -1150,7 +1150,7 @@ function test_clugen_exceptions
         'allow_empty', ae, 'cluster_offset', clu_off, 'proj_dist_fn', pt_dist, ...
         'point_dist_fn', pt_off, 'clusizes_fn', @(x) [x;x;x], ...
         'clucenters_fn', ccenters_fn, 'llengths_fn', llengths_fn, ...
-        'angle_deltas_fn', langles_fn);
+        'angle_deltas_fn', langles_fn, 'seed', seed);
     assertError(fn);
 
     % Invalid function given as clucenters_fn
@@ -1158,7 +1158,7 @@ function test_clugen_exceptions
         'allow_empty', ae, 'cluster_offset', clu_off, 'proj_dist_fn', pt_dist, ...
         'point_dist_fn', pt_off, 'clusizes_fn', csizes_fn, ...
         'clucenters_fn', @(x) [x;x;x], 'llengths_fn', llengths_fn, ...
-        'angle_deltas_fn', langles_fn);
+        'angle_deltas_fn', langles_fn, 'seed', seed);
     assertError(fn);
 
     % Invalid function given as llengths_fn
@@ -1166,7 +1166,7 @@ function test_clugen_exceptions
         'allow_empty', ae, 'cluster_offset', clu_off, 'proj_dist_fn', pt_dist, ...
         'point_dist_fn', pt_off, 'clusizes_fn', csizes_fn, ...
         'clucenters_fn', ccenters_fn, 'llengths_fn', @(x) [x;x;x], ...
-        'angle_deltas_fn', langles_fn);
+        'angle_deltas_fn', langles_fn, 'seed', seed);
     assertError(fn);
 
     % Invalid function given as angle_deltas_fn
@@ -1174,7 +1174,7 @@ function test_clugen_exceptions
         'allow_empty', ae, 'cluster_offset', clu_off, 'proj_dist_fn', pt_dist, ...
         'point_dist_fn', pt_off, 'clusizes_fn', csizes_fn, ...
         'clucenters_fn', ccenters_fn, 'llengths_fn', llengths_fn, ...
-        'angle_deltas_fn', @(x) [x;x;x]);
+        'angle_deltas_fn', @(x) [x;x;x], 'seed', seed);
     assertError(fn);
 
 end

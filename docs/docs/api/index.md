@@ -4,17 +4,18 @@
 
 Functions marked with $^\star$ are stochastic. Thus, in order to obtain the same
 result on separate invocations of these functions, it is first necessary to
-define a seed for the pseudo-random number generator (PRNG). This can be
-accomplished in slightly different ways in MATLAB and Octave:
+define a seed for the pseudo-random number generator (PRNG). Since this is
+accomplished in slightly different ways in MATLAB and Octave, `MOCluGen`
+provides the [`cluseed`](cluseed) helper function for setting the PRNG seed
+regardless of the underlying platform. For example:
 
-```{.matlab title="MATLAB"}
-rng(123);
+```matlab
+cluseed(123);
+v = rand_unit_vector(3); % Given the same platform, will always return the same vector
 ```
 
-```{.matlab title="GNU Octave"}
-rand("state", 123);
-randn("state", 123);
-```
+Further, the main [`clugen`](clugen) function also provides a `seed`, which is
+passed directly to [`cluseed`](cluseed).
 
 ## Main function
 
@@ -40,5 +41,6 @@ randn("state", 123);
 
 * [`angle_btw`](angle_btw)
 * [`clupoints_n_1_template`](clupoints_n_1_template) $^\star$
+* [`cluseed`](cluseed)
 * [`fix_empty`](fix_empty)
 * [`fix_num_points`](fix_num_points)
