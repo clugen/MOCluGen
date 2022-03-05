@@ -1,8 +1,6 @@
 % Generate multidimensional clusters.
 %
-%     [points, point_clusters, point_projections, cluster_sizes, ...
-%         cluster_centers, cluster_directions, cluster_angles, cluster_lengths] = ...
-%         clugen( ...
+%     cludata = clugen( ...
 %             num_dims, ...
 %             num_clusters, ...
 %             num_points, ...
@@ -87,21 +85,23 @@
 %
 % ## Return values
 %
+% A `struct` with the following fields:
+%
 % - `points`: A `num_points` x `num_dims` matrix with the generated points for
-%    all clusters.
-% - `point_clusters`: A `num_points` x 1 vector indicating which cluster
-%   each point in `points` belongs to.
-% - `point_projections`: A `num_points` x `num_dims` matrix with the point
-%   projections on the cluster-supporting lines.
-% - `cluster_sizes`: A `num_clusters` x 1 vector with the number of
-%   points in each cluster.
-% - `cluster_centers`: A `num_clusters` x `num_dims` matrix with the coordinates
-%   of the cluster centers.
-% - `cluster_directions`: A `num_clusters` x `num_dims` matrix with the direction
-%   of each cluster-supporting line.
-% - `cluster_angles`: A `num_clusters` x 1 vector with the angles between the
+%   all clusters.
+% - `clusters`: A `num_points` x 1 vector indicating which cluster each point in
+%   `points` belongs to.
+% - `projections`: A `num_points` x `num_dims` matrix with the point projections
+%   on the cluster-supporting lines.
+% - `sizes`: A `num_clusters` x 1 vector with the number of points in each
+%   cluster.
+% - `centers`: A `num_clusters` x `num_dims` matrix with the coordinates of the
+%   cluster centers.
+% - `directions`: A `num_clusters` x `num_dims` matrix with the direction of
+%   each cluster-supporting line.
+% - `angles`: A `num_clusters` x 1 vector with the angles between the
 %   cluster-supporting lines and the main direction.
-% - `cluster_lengths`: A `num_clusters` x 1 vector with the lengths of the
+% - `lengths`: A `num_clusters` x 1 vector with the lengths of the
 %   cluster-supporting lines.
 %
 % Note that if a custom function was given in the `clusizes_fn` parameter, it is
@@ -116,7 +116,7 @@
 % ## Examples
 %
 %     % Seed set to 123 in Octave for this example
-%     [points, point_clusters] = clugen(3, 4, 1000, [1; 0; 0], pi / 8, [20; 15; 25], 16, 4, 3.5);
+%     o = clugen(3, 4, 1000, [1; 0; 0], pi / 8, [20; 15; 25], 16, 4, 3.5);
 %
 % This creates 4 clusters in 3D space with a total of 1000 points, with a main
 % direction of [1; 0; 0] (i.e., along the x-axis), with an angle dispersion of
@@ -127,12 +127,10 @@
 %
 % The following command plots the generated clusters:
 %
-%     scatter3(points(:, 1), points(:, 2), points(:,3), 36, point_clusters, 'filled', 'MarkerEdgeColor', 'k');
+%     scatter3(o.points(:, 1), o.points(:, 2), o.points(:,3), 36, o.clusters, 'filled', 'MarkerEdgeColor', 'k');
 %
 % ![clugen() example.](https://raw.githubusercontent.com/clugen/.github/main/images/MOCluGen/example_clugen.svg)
-function [points, point_clusters, point_projections, cluster_sizes, ...
-    cluster_centers, cluster_directions, cluster_angles, cluster_lengths] = ...
-    clugen( ...
+function cludata = clugen( ...
         num_dims, ...
         num_clusters, ...
         num_points, ...
@@ -349,6 +347,17 @@ function [points, point_clusters, point_projections, cluster_sizes, ...
             cluster_centers(i, :)');
 
     end;
+
+    cludata = struct(...
+        'points', points, ...
+        'clusters', point_clusters, ...
+        'projections', point_projections, ...
+        'sizes', cluster_sizes, ...
+        'centers', cluster_centers, ...
+        'directions', cluster_directions, ...
+        'angles', cluster_angles, ...
+        'lengths', cluster_lengths ...
+    );
 
 end % function
 
