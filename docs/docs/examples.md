@@ -1,5 +1,12 @@
 # Examples
 
+These examples can be exactly reproduced in GNU Octave 5.2.0 by setting the seed
+specified at the beginning of each code block before each call to the
+[`clugen()`](../api/clugen) function.
+
+The functions used to automatically plot these examples are available
+[here](https://github.com/clugen/MOCluGen/tree/master/docs/plot_funcs).
+
 ## Examples in 2D
 
 ### Manipulating the direction of cluster-supporting lines
