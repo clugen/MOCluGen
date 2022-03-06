@@ -13,7 +13,7 @@
 % ## Note
 %
 % This function is stochastic. For reproducibility set the PRNG seed as
-% discussed in the [API](..).
+% discussed in the [API](../).
 %
 % ## Examples
 %
