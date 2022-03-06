@@ -29,13 +29,13 @@
 %
 % ## Note
 %
-% This function is stochastic. For reproducibility set the PRNG seed as
-% discussed in the [API](../).
+% This function is stochastic. For reproducibility set the PRNG seed with
+% `cluseed()` as discussed in the [API](../).
 %
 % ## Examples
 %
-%     % Seed set to 123 in Octave for this example
-%     clucenters(3, [30; 10], [-50; 50])
+%     cluseed(123);                      % Seed set to 123
+%     clucenters(3, [30; 10], [-50; 50]) % Get centers for 3 clusters in 2D
 %     % ans =
 %     %
 %     %   -90.287   38.231

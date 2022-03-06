@@ -18,12 +18,12 @@
 %
 % ## Note
 %
-% This function is stochastic. For reproducibility set the PRNG seed as
-% discussed in the [API](../).
+% This function is stochastic. For reproducibility set the PRNG seed with
+% `cluseed()` as discussed in the [API](../).
 %
 % ## Examples
 %
-%     % Seed set to 123 in Octave for this example
+%     cluseed(123);
 %     sizes = clusizes(4, 1000, true)
 %     % sizes =
 %     %    268

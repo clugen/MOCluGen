@@ -16,14 +16,14 @@
 %
 % ## Note
 %
-% This function is stochastic. For reproducibility set the PRNG seed as
-% discussed in the [API](../).
+% This function is stochastic. For reproducibility set the PRNG seed with
+% `cluseed()` as discussed in the [API](../).
 %
 % ## Examples
 %
-%     % Seed set to 123 in Octave for this example
+%     cluseed(123);                   % Seed set to 123
 %     arad = angle_deltas(4, pi / 8); % Angle dispersion of 22.5 degrees
-%     rad2deg(arad')                  %  Show angle deltas in degrees
+%     rad2deg(arad')                  % Show angle deltas in degrees
 %     % ans =
 %     %
 %     %     4.3613   21.0290  -33.2926    5.7669

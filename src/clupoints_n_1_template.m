@@ -24,17 +24,17 @@
 %
 % ## Note
 %
-% This function is stochastic. For reproducibility set the PRNG seed as
-% discussed in the [API](../).
+% This function is stochastic. For reproducibility set the PRNG seed with
+% `cluseed()` as discussed in the [API](../).
 %
 % ## Examples
 %
-%     % Seed set to 123 in Octave for this example
+%     cluseed(123);
 %     ctr = [0; 0];
 %     direc = [1; 0];
 %     pdist = [-0.5; -0.2; 0.1; 0.3];
 %     proj = points_on_line(ctr, direc, pdist);
-%     clupoints_n_1_template(proj, 10, direc, @(p, l) l * (rand(p, 1) .- 0.5))
+%     clupoints_n_1_template(proj, 10, direc, @(p, l) l * (rand(p, 1) - 0.5))
 %     % ans =
 %     %
 %     %   -0.50000  -4.47636

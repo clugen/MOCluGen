@@ -14,8 +14,8 @@ cluseed(123);
 v = rand_unit_vector(3); % Given the same platform, will always return the same vector
 ```
 
-Further, the main [`clugen`](clugen) function also provides a `seed`, which is
-passed directly to [`cluseed`](cluseed).
+Further, the main [`clugen`](clugen) function also provides a `seed` parameter,
+which is passed directly to [`cluseed`](cluseed).
 
 ## Main function
 

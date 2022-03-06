@@ -43,25 +43,25 @@
 %   will be equal to `zeros(num_dims)`.
 % - `proj_dist_fn`: Distribution of point projections along cluster-supporting lines,
 %   with three possible values:
-%   - `"norm"` (default): Distribute point projections along lines using a normal
-%     distribution (μ=_line center_, σ=`llength/6`).
-%   - `"unif"`: Distribute points uniformly along the line.
-%   - User-defined function, which accepts two parameters, line length (float) and
-%     number of points (integer), and returns an array containing the distance of
-%     each point projection to the center of the line. For example, the `"norm"`
-%     option roughly corresponds to `@(len, n) len * randn(n, 1) / 6`.
+%     - `'norm'` (default): Distribute point projections along lines using a normal
+%       distribution (μ=_line center_, σ=`llength/6`).
+%     - `'unif'`: Distribute points uniformly along the line.
+%     - User-defined function, which accepts two parameters, line length (float) and
+%       number of points (integer), and returns an array containing the distance of
+%       each point projection to the center of the line. For example, the `"norm"`
+%       option roughly corresponds to `@(len, n) len * randn(n, 1) / 6`.
 % - `point_dist_fn`: Controls how the final points are created from their projections
 %   on the cluster-supporting lines, with three possible values:
-%   - `"n-1"` (default): Final points are placed on a hyperplane orthogonal to
-%     the cluster-supporting line, centered at each point's projection, using the
-%     normal distribution (μ=0, σ=`lateral_disp`). This is done by the
-%     `clupoints_n_1()` function.
-%   - `"n"`: Final points are placed around their projection on the cluster-supporting
-%     line using the normal distribution (μ=0, σ=`lateral_disp`). This is done by the
-%     `clupoints_n()` function.
-%   - User-defined function: The user can specify a custom point placement strategy
-%     by passing a function with the same signature as `clupoints_n_1()`and
-%     `clupoints_n().
+%     - `'n-1'` (default): Final points are placed on a hyperplane orthogonal to
+%       the cluster-supporting line, centered at each point's projection, using the
+%       normal distribution (μ=0, σ=`lateral_disp`). This is done by the
+%       `clupoints_n_1()` function.
+%     - `'n'`: Final points are placed around their projection on the cluster-supporting
+%       line using the normal distribution (μ=0, σ=`lateral_disp`). This is done by the
+%       `clupoints_n()` function.
+%     - User-defined function: The user can specify a custom point placement strategy
+%       by passing a function with the same signature as `clupoints_n_1()`and
+%       `clupoints_n().
 % - `clusizes_fn`: Distribution of cluster sizes. By default, cluster sizes are
 %   determined by the `clusizes()` function, which uses the normaldistribution
 %   (μ=`num_points`/`num_clusters`, σ=μ/3), and assures that the finalcluster
@@ -114,20 +114,19 @@
 %
 % ## Note
 %
-% This function is stochastic. For reproducibility set the PRNG seed as
-% discussed in the [API](../).
+% This function is stochastic. For reproducibility use the `seed` parameter or
+% set the PRNG seed as discussed in the [API](../).
 %
 % ## Examples
 %
-%     % Seed set to 123 in Octave for this example
-%     o = clugen(3, 4, 1000, [1; 0; 0], pi / 8, [20; 15; 25], 16, 4, 3.5);
+%     o = clugen(3, 4, 1000, [1; 0; 0], pi / 8, [20; 15; 25], 16, 4, 3.5, 'seed', 123);
 %
 % This creates 4 clusters in 3D space with a total of 1000 points, with a main
 % direction of [1; 0; 0] (i.e., along the x-axis), with an angle dispersion of
-% 0.1, average cluster separation of [20; 15; 35], average length of
-% cluster-supporting lines of 12 (dispersion of 4 units), and lateral_disp of
-% 0.5. The `allow_empty` parameter is set to `true`, demonstrating how to use
-% the optional arguments.
+% pi / 8, average cluster separation of [20; 15; 25], average length of
+% cluster-supporting lines of 16 (dispersion of 4 units), and lateral_disp of
+% 3.5. The `seed` parameter is set to 123, demonstrating how to use the optional
+% arguments.
 %
 % The following command plots the generated clusters:
 %

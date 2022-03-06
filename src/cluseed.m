@@ -10,11 +10,13 @@
 % ## Note
 %
 % This function works in both MATLAB or Octave and simplifies reproducible
-% executions of the different stochastic functions in this package.
+% executions of the different stochastic functions in this package. Note that
+% reproducibility is only guaranteed within the same version of either MATLAB or
+% Octave.
 %
 % ## Examples
 %
-%     % Seed set to 123
+%     % Set seed to 123
 %     cluseed(123);
 function cluseed(seed)
     if moxunit_util_platform_is_octave()
