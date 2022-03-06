@@ -6,8 +6,6 @@ function f = plot2d(varargin)
     ncols = 3;
     nrows = max(1, floor(num_plots / ncols));
 
-    pmargin = 0.1;
-
     xmax = -Inf;
     xmin = Inf;
     ymax = -Inf;
@@ -35,13 +33,14 @@ function f = plot2d(varargin)
 
     end;
 
-    xd = pmargin * abs(xmax - xmin);
-    yd = pmargin * abs(ymax - ymin);
+    xcenter = (xmax + xmin) / 2;
+    ycenter = (ymax + ymin) / 2;
+    sidespan = 1.1 * max(abs(xmax - xmin), abs(ymax - ymin)) / 2;
 
-    xmax = xmax + xd;
-    xmin = xmin - xd;
-    ymax = ymax + yd;
-    ymin = ymin - yd;
+    xmax = xcenter + sidespan;
+    xmin = xcenter - sidespan;
+    ymax = ycenter + sidespan;
+    ymin = ycenter - sidespan;
 
     f = figure();
 
@@ -60,7 +59,7 @@ function f = plot2d(varargin)
         grid on;
     end;
 
-    set(f, 'Position', [100 100 1000 400]);
+    set(f, 'Position', [0 0 300 * ncols 300 * nrows]);
     set(f, 'PaperPositionMode', 'auto');
     saveas(f, [filename '.svg']);
 
