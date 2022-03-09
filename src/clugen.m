@@ -34,10 +34,6 @@
 %
 % ## Arguments (optional)
 %
-% - `seed`: Seed to initialize the PRNG, allowing for reproducible results;
-%   alternatively, the PRNG can be initialized with the `cluseed()` function, or
-%   directly setting the seed in MATLAB or Octave (each using its own specific
-%   approach).
 % - `allow_empty`: Allow empty clusters? `false` by default.
 % - `cluster_offset`: Offset to add to all cluster centers. By default the offset
 %   will be equal to `zeros(num_dims)`.
@@ -86,6 +82,10 @@
 %   normal distribution (μ=0, σ=`angle_disp`) with support in the interval
 %   [-π/2, π/2]. This parameter allows the user to specify a custom function for this
 %   purpose, which must follow `angle_deltas()` signature.
+% - `seed`: Non-negative integer for initializing the PRNG, allowing for
+%   reproducible results; alternatively, the PRNG can be initialized with the
+%   `cluseed()` function, or by directly setting the seed in MATLAB or Octave
+%   (each using its own specific approach).
 %
 % ## Return values
 %
