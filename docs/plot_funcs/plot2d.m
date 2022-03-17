@@ -4,7 +4,7 @@ function f = plot2d(varargin)
     num_plots = floor(numel(varargin) / 2);
 
     ncols = 3;
-    nrows = max(1, floor(num_plots / ncols));
+    nrows = max(1, ceil(num_plots / ncols));
 
     xmax = -Inf;
     xmin = Inf;
