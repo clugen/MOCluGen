@@ -20,9 +20,11 @@
 % - `num_dims`: Number of dimensions.
 % - `num_clusters`: Number of clusters to generate.
 % - `num_points`: Total number of points to generate.
-% - `direction`: Average direction of the cluster-supporting lines (`num_dims` x 1).
+% - `direction`: Average direction of the cluster-supporting lines (vector of
+%   `num_dims` elements).
 % - `angle_disp`: Angle dispersion of cluster-supporting lines (radians).
-% - `cluster_sep`: Average cluster separation in each dimension (`num_dims` x 1).
+% - `cluster_sep`: Average cluster separation in each dimension (vector of
+%   `num_dims` elements).
 % - `llength`: Average length of cluster-supporting lines.
 % - `llength_disp`: Length dispersion of cluster-supporting lines.
 % - `lateral_disp`: Cluster lateral dispersion, i.e., dispersion of points from their
@@ -36,7 +38,7 @@
 %
 % - `allow_empty`: Allow empty clusters? `false` by default.
 % - `cluster_offset`: Offset to add to all cluster centers. By default the offset
-%   will be equal to `zeros(num_dims)`.
+%   will be equal to `zeros(num_dims, 1)`.
 % - `proj_dist_fn`: Distribution of point projections along cluster-supporting lines,
 %   with three possible values:
 %     - `'norm'` (default): Distribute point projections along lines using a normal
@@ -119,7 +121,7 @@
 %
 % ## Examples
 %
-%     o = clugen(3, 4, 1000, [1; 0; 0], pi / 8, [20; 15; 25], 16, 4, 3.5, 'seed', 123);
+%     o = clugen(3, 4, 1000, [1 0 0], pi / 8, [20 15 25], 16, 4, 3.5, 'seed', 123);
 %
 % This creates 4 clusters in 3D space with a total of 1000 points, with a main
 % direction of [1; 0; 0] (i.e., along the x-axis), with an angle dispersion of
@@ -171,7 +173,7 @@ function cludata = clugen( ...
 
     % Check that direction has num_dims dimensions and magnitude > 0
     addRequired(p, 'direction', ...
-        @(x) isnumeric(x) && all(size(x) == [num_dims 1]) && norm(x) > eps);
+        @(x) isnumeric(x) && numel(x) == num_dims && norm(x) > eps);
 
     % Check that angle_disp is a scalar
     addRequired(p, 'angle_disp', ...
@@ -179,7 +181,7 @@ function cludata = clugen( ...
 
     % Check that cluster_sep has num_dims dimensions
     addRequired(p, 'cluster_sep', ...
-        @(x) isnumeric(x) && all(size(x) == [num_dims 1]));
+        @(x) isnumeric(x) && numel(x) == num_dims);
 
     % Check that llength is a scalar
     addRequired(p, 'llength', ...
@@ -200,7 +202,7 @@ function cludata = clugen( ...
     % If given, cluster_offset must have the correct number of dimensions,
     % if not given then it will be a num_dims x 1 vector of zeros
     addParameter(p, 'cluster_offset', zeros(num_dims, 1), ...
-        @(x) isnumeric(x) && all(size(x) == [num_dims 1]));
+        @(x) isnumeric(x) && numel(x) == num_dims);
 
     % Check that proj_dist_fn specifies a valid way for projecting points along
     % cluster-supporting lines, i.e., either 'norm' (default), 'unif' or a
@@ -237,6 +239,11 @@ function cludata = clugen( ...
     % Perform input validation and parsing
     parse(p, num_dims, num_clusters, num_points, direction, angle_disp, ...
         cluster_sep, llength, llength_disp, lateral_disp, varargin{:});
+
+    % Convert input vectors to column vectors if necessary
+    direction = reshape(direction, [num_dims 1]);
+    cluster_sep = reshape(cluster_sep, [num_dims 1]);
+    cluster_offset = reshape(p.Results.cluster_offset, [num_dims 1]);
 
     % If allow_empty is false, make sure there are enough points to distribute
     % by the clusters
@@ -306,7 +313,7 @@ function cludata = clugen( ...
     num_points = sum(cluster_sizes);
 
     % Determine cluster centers
-    cluster_centers = p.Results.clucenters_fn(num_clusters, cluster_sep, p.Results.cluster_offset);
+    cluster_centers = p.Results.clucenters_fn(num_clusters, cluster_sep, cluster_offset);
 
     % Determine length of lines supporting clusters
     cluster_lengths = p.Results.llengths_fn(num_clusters, llength, llength_disp);
