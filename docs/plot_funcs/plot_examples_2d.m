@@ -1,65 +1,50 @@
 % Plot 2D examples
 function f = plot_examples_2d(varargin)
 
-    num_plots = floor(numel(varargin) / 2);
-
+    % Assume number of columns is always 3
     ncols = 3;
+    % Assume side with 300px
+    side = 300;
+
+    % Get examples
+    ex = varargin(1:2:end);
+    % Get titles
+    et = varargin(2:2:end);
+
+    % Number of plots and number of rows in combined plot
+    num_plots = floor(numel(varargin) / 2);
     nrows = max(1, ceil(num_plots / ncols));
 
-    xmax = -Inf;
-    xmin = Inf;
-    ymax = -Inf;
-    ymin = Inf;
+    % Get limits in each dimension
+    [xmaxs, xmins] = get_plot_lims(ex{:});
 
-    filename = '';
+    % Determine name of file where to save plot
+    filename = cell2mat(cellfun(@(s) s(1:3), et, 'UniformOutput', false));
 
-    for i = 1:num_plots
-
-        filename = [filename varargin{i * 2}(1:3)];
-        points = varargin{i * 2 - 1}.points;
-
-        if max(points(:, 1)) > xmax
-            xmax = max(points(:, 1));
-        end;
-        if min(points(:, 1)) < xmin
-            xmin = min(points(:, 1));
-        end;
-        if max(points(:, 2)) > ymax
-            ymax = max(points(:, 2));
-        end;
-        if min(points(:, 2)) < ymin
-            ymin = min(points(:, 2));
-        end;
-
-    end;
-
-    xcenter = (xmax + xmin) / 2;
-    ycenter = (ymax + ymin) / 2;
-    sidespan = 1.1 * max(abs(xmax - xmin), abs(ymax - ymin)) / 2;
-
-    xmax = xcenter + sidespan;
-    xmin = xcenter - sidespan;
-    ymax = ycenter + sidespan;
-    ymin = ycenter - sidespan;
-
+    % Create new figure
     f = figure();
 
+    % Generate individual subplots
     for i = 1:num_plots
 
+        % Position current subplot
         subplot(nrows, ncols, i);
-        tag = varargin{i * 2};
-        cdata = varargin{i * 2 - 1};
 
-        scatter(cdata.points(:, 1), cdata.points(:, 2), 28, cdata.clusters, ...
+        % Draw current subplot...
+        scatter(ex{i}.points(:, 1), ex{i}.points(:, 2), 28, ex{i}.clusters, ...
             'filled', 'MarkerEdgeColor', 'black');
-        title(tag, 'FontWeight', 'normal', 'FontSize', 9);
-        xlim([xmin xmax]);
-        ylim([ymin ymax]);
+
+        % ...and set the remaining properites
+        title(et{i}, 'FontWeight', 'normal', 'FontSize', 9);
+        xlim([xmins(1) xmaxs(1)]);
+        ylim([xmins(2) xmaxs(2)]);
         daspect([1 1 1]);
         grid on;
+
     end;
 
-    set(f, 'Position', [0 0 300 * ncols 300 * nrows]);
+    % Define plot size and save it to a file
+    set(f, 'Position', [0 0 side * ncols side * nrows]);
     set(f, 'PaperPositionMode', 'auto');
     saveas(f, [filename '.svg']);
 
