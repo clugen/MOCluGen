@@ -46,7 +46,7 @@ function f = plot_examples_2d(varargin)
     % Define plot size and save it to a file
     set(f, 'Position', [0 0 side * ncols side * nrows]);
     set(f, 'PaperPositionMode', 'auto');
-    saveas(f, [filename '.svg']);
+    saveas(f, [filename '.png']);
 
 end % function
 
