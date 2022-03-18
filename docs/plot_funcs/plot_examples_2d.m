@@ -1,5 +1,5 @@
 % Plot 2D examples
-function f = plot2d(varargin)
+function f = plot_examples_2d(varargin)
 
     num_plots = floor(numel(varargin) / 2);
 
