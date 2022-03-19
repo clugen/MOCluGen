@@ -32,3 +32,6 @@ addpath([pwd() filesep '..' filesep 'src']);
 addpath([pwd() filesep 'plot_funcs']);
 $(./md2moc.py $1)
 close all hidden" | octave
+
+# Move the generated images to docs/img
+mv *.png docs/img
