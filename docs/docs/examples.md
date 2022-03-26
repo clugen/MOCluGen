@@ -650,3 +650,43 @@ plot_examples_3d(...
 ```
 
 [![](img/e76e77e78.png)](img/e76e77e78.png)
+
+## Examples in other dimensions
+
+### Basic 1D example with density plot
+
+_TO DO_
+
+### 5D example with default optional arguments
+
+These examples were plotted with the `plot_examples_nd()` helper function available
+[here](https://github.com/clugen/MOCluGen/tree/master/docs/plot_funcs/plot_examples_nd.m).
+
+```matlab
+nd = 5;
+seed = 123;
+
+e82 = clugen(nd, 6, 1500, [1 1 0.5 0 0], pi / 16, 30 * ones(nd, 1), 30, 4, 3, 'seed', seed);
+```
+
+```matlab
+plot_examples_nd(e82, 'e82: 5D with optional parameters set to defaults');
+```
+
+[![](img/e82.png)](img/e82.png)
+
+### 5D example with `proj_dist_fn = "unif"` and `point_dist_fn = "n"`
+
+```matlab
+nd = 5;
+seed = 321;
+
+e83 = clugen(nd, 6, 1500, [0.1 0.3 0.5 0.3 0.1], pi / 12, 30 * ones(nd, 1), 35, 5, 3.5, 'seed', seed, ...
+    'proj_dist_fn', 'unif', 'point_dist_fn', 'n');
+```
+
+```matlab
+plt = plot_examples_nd(e83, 'e83: 5D with proj\_dist\_fn="unif" and point\_dist\_fn="n"');
+```
+
+[![](img/e83.png)](img/e83.png)
