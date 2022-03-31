@@ -655,7 +655,28 @@ plot_examples_3d(...
 
 ### Basic 1D example with density plot
 
-_TO DO_
+These examples was plotted with the `plot_examples_1d()` helper function available
+[here](https://github.com/clugen/MOCluGen/tree/master/docs/plot_funcs/plot_examples_1d.m).
+
+```matlab
+% Custom proj_dist_fn: point projections placed using the Weibull distribution
+% (requires MATLAB or Octave statistics toolbox)
+proj_wbull = @(len, n) wblrnd(len / 2, 1.5, [n 1]) - len / 2;
+
+
+e79 = clugen(1, 3, 2000, 1, 0, 10, 6, 1.5, 0, 'seed', 45);
+e80 = clugen(1, 3, 2000, 1, 0, 10, 6, 1.5, 0, 'seed', 45, 'proj_dist_fn', 'unif');
+e81 = clugen(1, 3, 2000, 1, 0, 10, 6, 1.5, 0, 'seed', 45, 'proj_dist_fn', proj_wbull);
+```
+
+```matlab
+plot_examples_1d(...
+    e79, 'e79: proj\_dist\_fn = "norm" (default)', ...
+    e80, 'e80: proj\_dist\_fn = "unif"', ...
+    e81, 'e81: custom proj\_dist\_fn (Weibull)');
+```
+
+[![](img/e79e80e81.png)](img/e79e80e81.png)
 
 ### 5D example with default optional arguments
 
