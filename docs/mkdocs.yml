@@ -13,8 +13,9 @@ theme:
   favicon: https://raw.githubusercontent.com/clugen/.github/main/logos/favicon.ico
   icon:
     repo: fontawesome/brands/github
-#  palette:
-#    scheme: slate
+  palette:
+    primary: blue grey
+    accent: deep purple
   features:
   - navigation.instant
   - navigation.expand
