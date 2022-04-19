@@ -330,7 +330,7 @@ plot_examples_2d(...
 
 [![](img/e37e38e39.png)](img/e37e38e39.png)
 
-## 3D examples
+## Examples in 3D
 
 These examples were plotted with the `plot_examples_3d()` helper function available
 [here](https://github.com/clugen/MOCluGen/tree/master/docs/plot_funcs/plot_examples_3d.m).
