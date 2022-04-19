@@ -6,7 +6,9 @@ Clone the project with following command in the terminal:
 $ git clone https://github.com/clugen/MOCluGen.git
 ```
 
-Alternatively, download the project from its GitHub page.
+Alternatively,
+[download](https://github.com/clugen/MOCluGen/archive/refs/heads/master.zip) the
+package from its [GitHub](https://github.com/clugen/MOCluGen/) page.
 
 Open MATLAB or GNU Octave and `cd` into the project's folder, and run the
 `startup.m` script:
@@ -56,3 +58,12 @@ $ mkdocs serve
 [MOxUnit]: https://github.com/MOxUnit/MOxUnit
 [Python]: https://www.python.org/downloads/
 [mkdocs-material]: https://pypi.org/project/mkdocs-material/
+
+## Code style
+
+To contribute to MOCluGen, follow this code style:
+
+* Encoding: UTF-8
+* Indentation: 4 spaces (no tabs)
+* Line size limit: 100 chars
+* Newlines: Unix style, i.e. LF or `\n`
