@@ -5,65 +5,65 @@ edit_uri: https://github.com/clugen/MOCluGen/edit/master/docs/docs/
 site_description: Documentation for the MOCluGen MATLAB/Octave cluster
   generation toolbox
 site_author: Nuno Fachada
-#copyright: <a rel="license" href="http://creativecommons.org/licenses/by/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by/4.0/80x15.png" /></a>
+copyright: <a rel="license" href="http://creativecommons.org/licenses/by/4.0/"><img alt="CC-BY License" style="border-width:0" src="https://i.creativecommons.org/l/by/4.0/80x15.png" /></a>
 
 theme:
   name: material
-  custom_dir: overrides
-  logo: assets/logo.svg
-  favicon: assets/logo.svg
+  logo: https://github.com/clugen/.github/blob/main/logos/apple-touch-icon-120x120.png?raw=true
+  favicon: https://raw.githubusercontent.com/clugen/.github/main/logos/favicon.ico
   icon:
     repo: fontawesome/brands/github
 #  palette:
 #    scheme: slate
   features:
-    - navigation.instant
-    - navigation.expand
-    - navigation.indexes
-    - navigation.tabs
-    - navigation.tabs.sticky
-    - toc.integrate
+  - navigation.instant
+  - navigation.expand
+  - navigation.indexes
+  - navigation.tabs
+  - navigation.tabs.sticky
+  - toc.integrate
 
 markdown_extensions:
-  - attr_list
-  - pymdownx.highlight:
-      anchor_linenums: true
-  - pymdownx.inlinehilite
-  - pymdownx.snippets
-  - pymdownx.superfences
-  - pymdownx.arithmatex:
-      generic: true
-  - toc:
-      toc_depth: 3
+- attr_list
+- pymdownx.highlight:
+    anchor_linenums: true
+- pymdownx.inlinehilite
+- pymdownx.snippets
+- pymdownx.superfences
+- pymdownx.arithmatex:
+    generic: true
+- toc:
+    toc_depth: 3
+    permalink: true
 
 extra_javascript:
-  - javascripts/mathjax.js
-  - https://polyfill.io/v3/polyfill.min.js?features=es6
-  - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
+- javascripts/mathjax.js
+- https://polyfill.io/v3/polyfill.min.js?features=es6
+- https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
 
 # extra:
 #   generator: false
 
 nav:
-  - Home: 'index.md'
-  - Theory: 'theory.md'
-  - Examples: 'examples.md'
-  - API:
-    - api/index.md
-    - angle_btw: 'api/angle_btw.md'
-    - angle_deltas: 'api/angle_deltas.md'
-    - clucenters: 'api/clucenters.md'
-    - clugen: 'api/clugen.md'
-    - clupoints_n: 'api/clupoints_n.md'
-    - clupoints_n_1: 'api/clupoints_n_1.md'
-    - clupoints_n_1_template: 'api/clupoints_n_1_template.md'
-    - cluseed: 'api/cluseed.md'
-    - clusizes: 'api/clusizes.md'
-    - fix_empty: 'api/fix_empty.md'
-    - fix_num_points: 'api/fix_num_points.md'
-    - llengths: 'api/llengths.md'
-    - points_on_line: 'api/points_on_line.md'
-    - rand_ortho_vector: 'api/rand_ortho_vector.md'
-    - rand_unit_vector: 'api/rand_unit_vector.md'
-    - rand_vector_at_angle: 'api/rand_vector_at_angle.md'
-  - Development: 'dev.md'
+- Home: 'index.md'
+- Theory: 'theory.md'
+- Examples: 'examples.md'
+- API:
+  - api/index.md
+  - angle_btw: 'api/angle_btw.md'
+  - angle_deltas: 'api/angle_deltas.md'
+  - clucenters: 'api/clucenters.md'
+  - clugen: 'api/clugen.md'
+  - clupoints_n: 'api/clupoints_n.md'
+  - clupoints_n_1: 'api/clupoints_n_1.md'
+  - clupoints_n_1_template: 'api/clupoints_n_1_template.md'
+  - cluseed: 'api/cluseed.md'
+  - clusizes: 'api/clusizes.md'
+  - fix_empty: 'api/fix_empty.md'
+  - fix_num_points: 'api/fix_num_points.md'
+  - llengths: 'api/llengths.md'
+  - points_on_line: 'api/points_on_line.md'
+  - rand_ortho_vector: 'api/rand_ortho_vector.md'
+  - rand_unit_vector: 'api/rand_unit_vector.md'
+  - rand_vector_at_angle: 'api/rand_vector_at_angle.md'
+- Development: 'dev.md'
