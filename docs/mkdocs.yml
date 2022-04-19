@@ -23,6 +23,9 @@ theme:
   - navigation.tabs.sticky
   - toc.integrate
 
+plugins:
+- search
+
 markdown_extensions:
 - attr_list
 - pymdownx.highlight:
