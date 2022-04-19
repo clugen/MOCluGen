@@ -12,7 +12,7 @@
 %             lateral_disp, ...
 %             varargin)
 %
-% This is the main function of the MOCluGen package, and possibly the only
+% This is the main function of the **MOCluGen** package, and possibly the only
 % function most users will need.
 %
 % ## Arguments (mandatory)
@@ -134,7 +134,7 @@
 %
 %     scatter3(o.points(:, 1), o.points(:, 2), o.points(:,3), 36, o.clusters, 'filled', 'MarkerEdgeColor', 'k');
 %
-% ![clugen() example.](https://raw.githubusercontent.com/clugen/.github/main/images/MOCluGen/example_clugen.svg)
+% ![clugen() example.](https://github.com/clugen/.github/blob/main/images/example3d_moc.png?raw=true)
 function cludata = clugen( ...
         num_dims, ...
         num_clusters, ...
