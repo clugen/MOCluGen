@@ -2,12 +2,10 @@
 
 ## Summary
 
-MOCluGen is a MATLAB/Octave package for generating multidimensional clusters
-using the CluGen algorithm. It provides the `clugen` function for
-this purpose, as well as a number of auxiliary functions, used internally and
-modularly by `clugen`. Users can swap these auxiliary functions by
-their own customized versions, fine-tuning their cluster generation strategies,
-or even use them as the basis for their own generation algorithms.
+**MOCluGen** is a MATLAB/Octave implementation of the *clugen* algorithm for
+generating multidimensional clusters. Each cluster is supported by a line
+segment, the position, orientation and length of which guide where the
+respective points are placed.
 
 ## Install and use
 
@@ -54,7 +52,10 @@ For GNU Octave, use the following instructions instead:
 
 ## Reference
 
-TODO
+If you use this software, please cite the following reference:
+
+* Fachada, N. & de Andrade, D. (2023). Generating Multidimensional Clusters With
+  Support Lines. *Under review*.
 
 ## License
 
