@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 
-# Script for stripping doccomments from MATLAB functions and convert them into
+# Script for stripping docstrings from MATLAB functions and convert them into
 # separate Markdown source files. The script converts indented code blocks to
 # Markdown code fences (MATLAB) and replaces mentions to functions with links
 # to their documentation.
 #
-# Copyright (c) 2021-2022 Nuno Fachada
+# Copyright (c) 2021-2023 Nuno Fachada
 # Distributed under the MIT License (See accompanying file LICENSE or copy
 # at http://opensource.org/licenses/MIT)
 

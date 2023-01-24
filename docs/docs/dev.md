@@ -7,7 +7,7 @@ $ git clone https://github.com/clugen/MOCluGen.git
 ```
 
 Alternatively,
-[download](https://github.com/clugen/MOCluGen/archive/refs/heads/master.zip) the
+[download](https://github.com/clugen/MOCluGen/archive/refs/heads/main.zip) the
 package from its [GitHub](https://github.com/clugen/MOCluGen/) page.
 
 Open MATLAB or GNU Octave and `cd` into the project's folder, and run the

@@ -9,7 +9,7 @@ strategies, or even use them as the basis for their own generation algorithms.
 
 ## How to install
 
-[Download](https://github.com/clugen/MOCluGen/archive/refs/heads/master.zip) the
+[Download](https://github.com/clugen/MOCluGen/archive/refs/heads/main.zip) the
 package from its [GitHub](https://github.com/clugen/MOCluGen/) page or clone it
 with following command in the terminal:
 

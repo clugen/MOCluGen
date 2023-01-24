@@ -6,7 +6,7 @@ specified at the beginning of each code block.
 ## Examples in 2D
 
 These examples were plotted with the `plot_examples_2d()` helper function available
-[here](https://github.com/clugen/MOCluGen/tree/master/docs/plot_funcs/plot_examples_2d.m).
+[here](https://github.com/clugen/MOCluGen/tree/main/docs/plot_funcs/plot_examples_2d.m).
 
 ### Manipulating the direction of cluster-supporting lines
 
@@ -333,7 +333,7 @@ plot_examples_2d(...
 ## Examples in 3D
 
 These examples were plotted with the `plot_examples_3d()` helper function available
-[here](https://github.com/clugen/MOCluGen/tree/master/docs/plot_funcs/plot_examples_3d.m).
+[here](https://github.com/clugen/MOCluGen/tree/main/docs/plot_funcs/plot_examples_3d.m).
 
 ### Manipulating the direction of cluster-supporting lines
 
@@ -656,7 +656,7 @@ plot_examples_3d(...
 ### Basic 1D example with density plot
 
 These examples was plotted with the `plot_examples_1d()` helper function available
-[here](https://github.com/clugen/MOCluGen/tree/master/docs/plot_funcs/plot_examples_1d.m).
+[here](https://github.com/clugen/MOCluGen/tree/main/docs/plot_funcs/plot_examples_1d.m).
 
 ```matlab
 % Custom proj_dist_fn: point projections placed using the Weibull distribution
@@ -681,7 +681,7 @@ plot_examples_1d(...
 ### 5D example with default optional arguments
 
 These examples were plotted with the `plot_examples_nd()` helper function available
-[here](https://github.com/clugen/MOCluGen/tree/master/docs/plot_funcs/plot_examples_nd.m).
+[here](https://github.com/clugen/MOCluGen/tree/main/docs/plot_funcs/plot_examples_nd.m).
 
 ```matlab
 nd = 5;
