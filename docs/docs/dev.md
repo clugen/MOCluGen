@@ -44,7 +44,7 @@ following commands:
 
 ```text
 $ cd docs
-$ python3 mocdoc.py                   # Get doc-comments from MATLAB source files
+$ python mocdoc.py                    # Get doc-comments from MATLAB source files
 $ ./run_moc_in_md.sh docs/examples.md # Run examples code and generate images
 $ mkdocs build                        # Build docs
 ```

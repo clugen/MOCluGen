@@ -1,4 +1,4 @@
-# API
+# Reference
 
 ## Note on reproducibility
 

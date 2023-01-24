@@ -13,7 +13,7 @@
 % ## Note
 %
 % This function is stochastic. For reproducibility set the PRNG seed with
-% `cluseed()` as discussed in the [API](../).
+% `cluseed()` as discussed in the [Reference](../).
 %
 % ## Examples
 %
@@ -55,6 +55,6 @@ function v = rand_ortho_vector(u)
 
 end % function
 
-% Copyright (c) 2012-2021 Nuno Fachada
+% Copyright (c) 2012-2023 Nuno Fachada
 % Distributed under the MIT License (See accompanying file LICENSE or copy
 % at http://opensource.org/licenses/MIT)

@@ -117,7 +117,7 @@
 % ## Note
 %
 % This function is stochastic. For reproducibility use the `seed` parameter or
-% set the PRNG seed as discussed in the [API](../).
+% set the PRNG seed as discussed in the [Reference](../).
 %
 % ## Examples
 %
@@ -380,6 +380,6 @@ function cludata = clugen( ...
 
 end % function
 
-% Copyright (c) 2012-2021 Nuno Fachada
+% Copyright (c) 2012-2023 Nuno Fachada
 % Distributed under the MIT License (See accompanying file LICENSE or copy
 % at http://opensource.org/licenses/MIT)

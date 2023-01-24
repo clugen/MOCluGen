@@ -14,12 +14,12 @@ from pathlib import Path
 # Get input files, assuming each file contains a MATLAB function
 input_filepaths = sorted(Path("..", "src").glob("*.m"))
 
-# Docs and API folders
+# Docs and Reference folders
 docs_dir = "docs"
-api_dir = "api"
+ref_dir = "reference"
 
 # Output folder
-output_dir = Path(docs_dir, api_dir)
+output_dir = Path(docs_dir, ref_dir)
 
 # Total files
 n = len(input_filepaths)

@@ -30,7 +30,7 @@
 % ## Note
 %
 % This function is stochastic. For reproducibility set the PRNG seed with
-% `cluseed()` as discussed in the [API](../).
+% `cluseed()` as discussed in the [Reference](../).
 %
 % ## Examples
 %
@@ -51,6 +51,6 @@ function clu_centers = clucenters(num_clusters, clu_sep, clu_offset)
 
 end % function
 
-% Copyright (c) 2012-2022 Nuno Fachada
+% Copyright (c) 2012-2023 Nuno Fachada
 % Distributed under the MIT License (See accompanying file LICENSE or copy
 % at http://opensource.org/licenses/MIT)
