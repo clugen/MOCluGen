@@ -50,6 +50,15 @@ For GNU Octave, use the following instructions instead:
 >> randn("state", 123);
 ```
 
+## See also
+
+* [pyclugen](https://github.com/clugen/pyclugen/), a Python implementation of
+  the *clugen* algorithm.
+* [CluGen.jl](https://github.com/clugen/CluGen.jl/), a Julia implementation of
+  the *clugen* algorithm.
+* [clugenr](https://github.com/clugen/clugenr/), an R implementation
+  of the *clugen* algorithm.
+
 ## Reference
 
 If you use this software, please cite the following reference:
@@ -59,4 +68,4 @@ If you use this software, please cite the following reference:
 
 ## License
 
-This script is made available under the [MIT License](LICENSE).
+[MIT License](LICENSE)
