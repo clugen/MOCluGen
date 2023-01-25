@@ -41,4 +41,4 @@ jobs:
         if: matrix.config.moc == 'matlab'
         run: |
           export MOXUNIT_PATH=${{ github.workspace }}/MOxUnit/MOxUnit
-          cat tests/run_headless.m | matlab -nodesktop -nodisplay
+          matlab -batch "addpath('tests');run_headless"
