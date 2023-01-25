@@ -73,14 +73,14 @@ function init_data
         disp('Testing MOCluGen in `ci` mode');
 
         % Mandatory parameters to test
-        seeds = [0, 123];
+        seeds = 123;
         num_dims = [1, 3];
-        num_points = [1, 10, 500];
-        num_clusters = [1, 5, 30];
+        num_points = [1, 200];
+        num_clusters = [1, 10];
         lat_stds = [0.0, 5.0];
         llengths_mus = [0, 10];
         llengths_sigmas = [0, 15];
-        angles_stds = [pi/256, pi/2, pi];
+        angles_stds = [pi/256, pi/2];
 
         % Optional parameters to test
         aes = [true, false];
@@ -110,7 +110,7 @@ function init_data
         seeds = [0, 123, 9999];
         num_dims = [1, 2, 3, 30];
         num_points = [1, 10, 500];
-        num_clusters = [1, 5, 10, 100];
+        num_clusters = [1, 5, 30, 100];
         lat_stds = [0.0, 5.0];
         llengths_mus = [0, 10];
         llengths_sigmas = [0, 15];
@@ -1152,6 +1152,14 @@ function test_clugen_exceptions
         'clucenters_fn', ccenters_fn, 'llengths_fn', llengths_fn, ...
         'angle_deltas_fn', langles_fn, 'seed', seed);
     assertTrue(isempty(lastwarn));
+
+    % When allow_empty is false, num_points must be >= num_clusters
+    fn = @() clugen(nd, nclu, 0, dir, astd, clu_sep, len_mu, len_std, lat_std, ...
+        'allow_empty', false, 'cluster_offset', clu_off, 'proj_dist_fn', pt_dist, ...
+        'point_dist_fn', pt_off, 'clusizes_fn', csizes_fn, ...
+        'clucenters_fn', ccenters_fn, 'llengths_fn', llengths_fn, ...
+        'angle_deltas_fn', langles_fn, 'seed', seed);
+    assertError(fn);
 
     % Seed needs to be positive integer
     fn = @() clugen(nd, nclu, tpts, dir, astd, clu_sep, len_mu, len_std, lat_std, ...
