@@ -38,7 +38,7 @@ jobs:
           export MOXUNIT_PATH=${{ github.workspace }}/MOxUnit/MOxUnit
           octave --no-gui tests/run_headless.m
       - name: Run tests on MATLAB
-        if: matrix.config.moc == 'octave'
+        if: matrix.config.moc == 'matlab'
         run: |
           export MOXUNIT_PATH=${{ github.workspace }}/MOxUnit/MOxUnit
           cat tests/run_headless.m | matlab -nodesktop -nodisplay
