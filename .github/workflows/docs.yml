@@ -12,8 +12,8 @@ jobs:
       - uses: actions/checkout@v3.3.0
         with:
           lfs: true
-      - name: Install Octave
-        run: sudo apt install octave octave-statistics
+      - name: Install Octave and xvfb
+        run: sudo apt install octave octave-statistics xvfb
       - name: Build docs
         run: |
           pip3 install --user --upgrade pip
