@@ -275,8 +275,6 @@ function test_points_on_line
 
     global seeds num_dims num_points llengths_mus ndirs ncts;
 
-    assertTrue(false);
-
     % Any tests performed?
     tests_any_done = false;
 
