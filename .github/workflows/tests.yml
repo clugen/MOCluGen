@@ -1,0 +1,35 @@
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+name: Tests
+
+jobs:
+  tests:
+    runs-on: ${{ matrix.config.os }}
+
+    name: ${{ matrix.config.os }} (${{ matrix.config.moc }})
+
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+          #- {os: macOS-latest,   moc: 'octave'}
+          #- {os: windows-latest, moc: 'octave'}
+          - {os: ubuntu-latest,  moc: 'octave'}
+          - {os: ubuntu-20.04,   moc: 'octave'}
+    steps:
+      - name: Install Octave
+        run: sudo apt install octave octave-statistics
+      - name: Install MOxUnit
+        uses: actions/checkout@v3
+        with:
+          repository: 'MOxUnit/MOxUnit'
+          #path: 'MOxUnit'
+      - uses: actions/checkout@v3
+      - name: Run tests
+        run: |
+          echo "MOXUNIT_PATH=${{ github.workspace }}/MOxUnit/MOxUnit" >> $GITHUB_ENV
+          octave --no-gui tests/run_headless.m
