@@ -27,28 +27,18 @@ Open MATLAB or GNU Octave and `cd` into the project's folder, and run the
 `MOCluGen` can now be used, e.g:
 
 ```matlab
->> % Seed set to 123 in Octave for this example, see below
->> [points, point_clusters] = clugen(3, 4, 1000, [1; 0; 0], pi / 8, [20; 15; 25], 16, 4, 3.5);
->> scatter3(points(:, 1), points(:, 2), points(:,3), 36, point_clusters, 'filled', 'MarkerEdgeColor', 'k');
+>> o = clugen(2, 4, 400, [1 0], pi / 8, [50, 10], 20, 1, 2, 'seed', 123);
+>> scatter(o.points(:, 1), o.points(:, 2), 36, o.clusters, 'filled', 'MarkerEdgeColor', 'k');
 ```
 
-![Example.](https://raw.githubusercontent.com/clugen/.github/main/images/MOCluGen/example_clugen.svg)
-
-Note that running the code above will yield a different result each time, unless
-a seed is previously set, e.g. for MATLAB:
+![Example 2D](https://github.com/clugen/.github/blob/main/images/example2d_moc.png?raw=true)
 
 ```matlab
->> % Sets seed to 123 in MATLAB
->> rng(123);
+>> o = clugen(3, 4, 1000, [1 0 0], pi / 8, [20 15 25], 16, 4, 3.5, 'seed', 123);
+>> scatter3(o.points(:, 1), o.points(:, 2), o.points(:,3), 36, o.clusters, 'filled', 'MarkerEdgeColor', 'k');
 ```
 
-For GNU Octave, use the following instructions instead:
-
-```matlab
->> % Sets seed to 123 in GNU Octave
->> rand("state", 123);
->> randn("state", 123);
-```
+![Example 3D](https://github.com/clugen/.github/blob/main/images/example3d_moc.png?raw=true)
 
 ## See also
 
