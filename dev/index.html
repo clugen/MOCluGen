@@ -753,19 +753,37 @@ instructions to run the tests:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="nb">startup</span>
 <a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="n">moxunit_runtests</span><span class="w"> </span><span class="s">tests</span>
 </code></pre></div>
+<p>By default, the tests will run in <code>normal</code> mode, which can take quite a few
+minutes. The test mode can be changed by setting the <code>moclugen_test_mode</code>
+variable to the following values:</p>
+<ul>
+<li><code>minimal</code>: Run a few quick tests, just to check if basic functionality is OK.
+  Incomplete coverage. Takes a few seconds.</li>
+<li><code>ci</code>: The default mode in CI environments. Runs a comprehensive set of tests,
+  with full coverage, but doesn't check for that many parameter combinations.
+  Takes around one minute.</li>
+<li><code>normal</code>: The default mode. Like <code>ci</code>, but tests more parameter combinations.
+  Takes between 5 to 30 minutes.</li>
+<li><code>full</code>: Like <code>normal</code>, but tests many parameter combinations, with some
+  extreme values. Can take one or more hours.</li>
+</ul>
+<p>For example, to test in <code>minimal</code> mode, one would do:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="n">moclugen_test_mode</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">&#39;minimal&#39;</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="n">moxunit_runtests</span><span class="w"> </span><span class="s">tests</span>
+</code></pre></div>
 <h2 id="build-docs">Build docs<a class="headerlink" href="#build-docs" title="Permanent link">&para;</a></h2>
 <p>Building the documentation requires <a href="https://octave.org/">Octave</a>, <a href="https://www.python.org/downloads/">Python</a> and <a href="https://pypi.org/project/mkdocs-material/">mkdocs-material</a> and
 must be performed on a <a href="https://en.wikipedia.org/wiki/Bash_(Unix_shell)">Bash</a> shell. A physical or virtual display (e.g.,
 <a href="https://en.wikipedia.org/wiki/Xvfb">xvfb</a>) are required for generating good looking plots. After these requirements
 are met, and considering we're in the <code>MOCluGen</code> folder, run the following
 commands:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>$ cd docs
-<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>$ python mocdoc.py                    # Get doc-comments from MATLAB source files
-<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>$ ./run_moc_in_md.sh docs/examples.md # Run examples code and generate images
-<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>$ mkdocs build                        # Build docs
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>$ cd docs
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>$ python mocdoc.py                    # Get doc-comments from MATLAB source files
+<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>$ ./run_moc_in_md.sh docs/examples.md # Run examples code and generate images
+<a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>$ mkdocs build                        # Build docs
 </code></pre></div>
 <p>The documentation can be served locally with:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>$ mkdocs serve
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>$ mkdocs serve
 </code></pre></div>
 <h2 id="code-style">Code style<a class="headerlink" href="#code-style" title="Permanent link">&para;</a></h2>
 <p>To contribute to MOCluGen, follow this code style:</p>
