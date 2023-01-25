@@ -10,11 +10,12 @@ jobs:
   coverage:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: joergbrech/moxunit-action@v1
         with:
           tests: tests/tests_all.m
           src: src
+          pkg: statistics
           with_coverage: true
           cover_xml_file: coverage.xml
       - uses: codecov/codecov-action@v2
