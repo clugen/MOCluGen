@@ -1,3 +1,7 @@
+[![Checks](https://github.com/clugen/MOCluGen/actions/workflows/tests.yml/badge.svg)](https://github.com/clugen/MOCluGen/actions/workflows/tests.yml)
+[![docs](https://img.shields.io/badge/docs-latest-blue.svg)](https://clugen.github.io/MOCluGen/)
+[![MIT](https://img.shields.io/badge/license-MIT-yellowgreen.svg)](https://tldrlegal.com/license/mit-license)
+
 # MOCluGen
 
 ## Summary
