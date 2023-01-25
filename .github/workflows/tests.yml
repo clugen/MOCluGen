@@ -22,14 +22,15 @@ jobs:
           #- {os: ubuntu-20.04,   moc: 'octave'}
     steps:
       - name: Install Octave
-        run: sudo apt install octave octave-statistics
+        run: sudo apt install octave octave-statistics tree
       - name: Install MOxUnit
         uses: actions/checkout@v3
         with:
           repository: 'MOxUnit/MOxUnit'
-          #path: 'MOxUnit'
+          path: 'MOxUnit'
       - uses: actions/checkout@v3
       - name: Run tests
         run: |
+          tree
           export MOXUNIT_PATH=${{ github.workspace }}/MOxUnit/MOxUnit
           octave --no-gui tests/run_headless.m
