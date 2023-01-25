@@ -19,7 +19,7 @@
 %     % Set seed to 123
 %     cluseed(123);
 function cluseed(seed)
-    if moxunit_util_platform_is_octave()
+    if is_octave()
         rand('state', seed);
         randn('state', seed);
         rande('state', seed);
