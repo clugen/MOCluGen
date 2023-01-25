@@ -754,9 +754,11 @@ instructions to run the tests:</p>
 <a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="n">moxunit_runtests</span><span class="w"> </span><span class="s">tests</span>
 </code></pre></div>
 <h2 id="build-docs">Build docs<a class="headerlink" href="#build-docs" title="Permanent link">&para;</a></h2>
-<p>Building the documentation requires <a href="https://www.python.org/downloads/">Python</a> and <a href="https://pypi.org/project/mkdocs-material/">mkdocs-material</a>. After these
-packages are installed, and considering we're in the <code>MOCluGen</code> folder, run the
-following commands:</p>
+<p>Building the documentation requires <a href="https://octave.org/">Octave</a>, <a href="https://www.python.org/downloads/">Python</a> and <a href="https://pypi.org/project/mkdocs-material/">mkdocs-material</a> and
+must be performed on a <a href="https://en.wikipedia.org/wiki/Bash_(Unix_shell)">Bash</a> shell. A physical or virtual display (e.g.,
+<a href="https://en.wikipedia.org/wiki/Xvfb">xvfb</a>) are required for generating good looking plots. After these requirements
+are met, and considering we're in the <code>MOCluGen</code> folder, run the following
+commands:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>$ cd docs
 <a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>$ python mocdoc.py                    # Get doc-comments from MATLAB source files
 <a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>$ ./run_moc_in_md.sh docs/examples.md # Run examples code and generate images
