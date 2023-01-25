@@ -10,27 +10,35 @@ jobs:
   tests:
     runs-on: ${{ matrix.config.os }}
 
-    name: ${{ matrix.config.os }} (${{ matrix.config.moc }})
+    name: Test on ${{ matrix.config.os }} / (${{ matrix.config.moc }})
 
     strategy:
       fail-fast: false
       matrix:
         config:
-          #- {os: macOS-latest,   moc: 'octave'}
-          #- {os: windows-latest, moc: 'octave'}
-          - {os: ubuntu-latest,  moc: 'octave'}
-          #- {os: ubuntu-20.04,   moc: 'octave'}
+          - {os: ubuntu-latest, moc: 'octave'}
+          - {os: ubuntu-latest, moc: 'matlab'}
     steps:
       - name: Install Octave
-        run: sudo apt install octave octave-statistics tree
-      - uses: actions/checkout@v3
+        if: matrix.config.moc == 'octave'
+        run: sudo apt install octave octave-statistics
+      - name: Install MATLAB
+        if: matrix.config.moc == 'matlab'
+        uses: matlab-actions/setup-matlab@v1
+      - name: Clone MOCluGen
+        uses: actions/checkout@v3
       - name: Install MOxUnit
         uses: actions/checkout@v3
         with:
           repository: 'MOxUnit/MOxUnit'
           path: 'MOxUnit'
-      - name: Run tests
+      - name: Run tests on Octave
+        if: matrix.config.moc == 'octave'
         run: |
-          tree
           export MOXUNIT_PATH=${{ github.workspace }}/MOxUnit/MOxUnit
           octave --no-gui tests/run_headless.m
+      - name: Run tests on MATLAB
+        if: matrix.config.moc == 'octave'
+        run: |
+          export MOXUNIT_PATH=${{ github.workspace }}/MOxUnit/MOxUnit
+          cat tests/run_headless.m | matlab -nodesktop -nodisplay
