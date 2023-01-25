@@ -1,4 +1,5 @@
 [![Checks](https://github.com/clugen/MOCluGen/actions/workflows/tests.yml/badge.svg)](https://github.com/clugen/MOCluGen/actions/workflows/tests.yml)
+[![codecov](https://codecov.io/gh/clugen/MOCluGen/branch/main/graph/badge.svg?token=5EWC7L6J3T)](https://codecov.io/gh/clugen/MOCluGen)
 [![docs](https://img.shields.io/badge/docs-latest-blue.svg)](https://clugen.github.io/MOCluGen/)
 [![MIT](https://img.shields.io/badge/license-MIT-yellowgreen.svg)](https://tldrlegal.com/license/mit-license)
 
