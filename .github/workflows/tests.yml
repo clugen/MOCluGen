@@ -23,12 +23,12 @@ jobs:
     steps:
       - name: Install Octave
         run: sudo apt install octave octave-statistics tree
+      - uses: actions/checkout@v3
       - name: Install MOxUnit
         uses: actions/checkout@v3
         with:
           repository: 'MOxUnit/MOxUnit'
           path: 'MOxUnit'
-      - uses: actions/checkout@v3
       - name: Run tests
         run: |
           tree
