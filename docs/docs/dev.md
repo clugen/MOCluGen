@@ -36,6 +36,27 @@ startup
 moxunit_runtests tests
 ```
 
+By default, the tests will run in `normal` mode, which can take quite a few
+minutes. The test mode can be changed by setting the `moclugen_test_mode`
+variable to the following values:
+
+- `minimal`: Run a few quick tests, just to check if basic functionality is OK.
+  Incomplete coverage. Takes a few seconds.
+- `ci`: The default mode in CI environments. Runs a comprehensive set of tests,
+  with full coverage, but doesn't check for that many parameter combinations.
+  Takes around one minute.
+- `normal`: The default mode. Like `ci`, but tests more parameter combinations.
+  Takes between 5 to 30 minutes.
+- `full`: Like `normal`, but tests many parameter combinations, with some
+  extreme values. Can take one or more hours.
+
+For example, to test in `minimal` mode, one would do:
+
+```matlab
+moclugen_test_mode = 'minimal'
+moxunit_runtests tests
+```
+
 ## Build docs
 
 Building the documentation requires [Octave], [Python] and [mkdocs-material] and
