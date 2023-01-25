@@ -13,7 +13,7 @@ if is_octave()
 end;
 moxunit_path = getenv('MOXUNIT_PATH');
 if numel(moxunit_path) == 0 || ~exist([moxunit_path filesep 'moxunit_set_path.m'], 'file')
-    warning('MOxUnit not found!');
+    warning(['MOxUnit not found! on ' moxunit_path]);
     exit(2)
 else
     addpath(moxunit_path);
