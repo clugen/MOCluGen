@@ -19,6 +19,6 @@ if numel(moxunit_path) == 0 || ~exist([moxunit_path filesep 'moxunit_set_path.m'
 else
     addpath(moxunit_path);
     moxunit_set_path;
-    test_results = ~moxunit_runtests('tests');
+    test_results = ~moxunit_runtests('tests/tests_all.m', '-verbose');
     exit(test_results);
 end
