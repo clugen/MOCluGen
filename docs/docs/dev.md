@@ -38,9 +38,11 @@ moxunit_runtests tests
 
 ## Build docs
 
-Building the documentation requires [Python] and [mkdocs-material]. After these
-packages are installed, and considering we're in the `MOCluGen` folder, run the
-following commands:
+Building the documentation requires [Octave], [Python] and [mkdocs-material] and
+must be performed on a [Bash] shell. A physical or virtual display (e.g.,
+[xvfb]) are required for generating good looking plots. After these requirements
+are met, and considering we're in the `MOCluGen` folder, run the following
+commands:
 
 ```text
 $ cd docs
@@ -55,10 +57,6 @@ The documentation can be served locally with:
 $ mkdocs serve
 ```
 
-[MOxUnit]: https://github.com/MOxUnit/MOxUnit
-[Python]: https://www.python.org/downloads/
-[mkdocs-material]: https://pypi.org/project/mkdocs-material/
-
 ## Code style
 
 To contribute to MOCluGen, follow this code style:
@@ -67,3 +65,10 @@ To contribute to MOCluGen, follow this code style:
 * Indentation: 4 spaces (no tabs)
 * Line size limit: 100 chars
 * Newlines: Unix style, i.e. LF or `\n`
+
+[MOxUnit]: https://github.com/MOxUnit/MOxUnit
+[Python]: https://www.python.org/downloads/
+[mkdocs-material]: https://pypi.org/project/mkdocs-material/
+[Octave]: https://octave.org/
+[Bash]: https://en.wikipedia.org/wiki/Bash_(Unix_shell)
+[xvfb]: https://en.wikipedia.org/wiki/Xvfb
