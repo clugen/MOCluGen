@@ -10,7 +10,7 @@
 % 3 - cd into the tests folder
 % 4 - Invoke the moxunit_runtests script
 %
-% Copyright (c) 2021 Nuno Fachada
+% Copyright (c) 2021-2023 Nuno Fachada
 % Distributed under the MIT License (See accompanying file LICENSE or copy
 % at http://opensource.org/licenses/MIT)
 %
@@ -32,17 +32,149 @@ end
 
 function init_data
     global seeds num_dims num_points num_clusters lat_stds llengths_mus ...
-        llengths_sigmas angles_stds;
+        llengths_sigmas angles_stds aes proj_fns ptd_fns csz_fns cc_fns ...
+        ll_fns angd_fns ndirs ncts nvec nang moclugen_test_mode;
 
-    seeds = [0, 123, 9999, 9876543];
-    num_dims = [1, 2, 3, 4, 30];
-    num_points = [1, 10, 500, 10000];
-    num_clusters = [1, 2, 5, 10, 100];
-    lat_stds = [0.0, 5.0, 500];
-    llengths_mus = [0, 10];
-    llengths_sigmas = [0, 15];
-    angles_stds = [0, pi/256, pi/4, pi/2, pi, 2*pi];
+    if strcmpi(moclugen_test_mode, 'minimal')
+        disp('Testing MOCluGen in `minimal` mode');
 
+        % Mandatory parameters to test
+        seeds = 123;
+        num_dims = 2;
+        num_points = 100;
+        num_clusters = 5;
+        lat_stds = 5.0;
+        llengths_mus = 10;
+        llengths_sigmas = 2;
+        angles_stds = pi/256;
+
+        % Optional parameters to test
+        aes = true;
+        proj_fns = {'unif'};
+        ptd_fns = {'n'};
+        csz_fns = {@clusizes};
+        cc_fns = {@clucenters};
+        ll_fns = {@llengths};
+        angd_fns = {@angle_deltas};
+
+        % Number of line directions to test
+        ndirs = 1;
+
+        % Number of line centers to test
+        ncts = 1;
+
+        % How many vectors to test?
+        nvec = 1;
+
+        % How many angles to test?
+        nang = 1;
+
+    elseif strcmpi(moclugen_test_mode, 'ci')
+        disp('Testing MOCluGen in `ci` mode');
+
+        % Mandatory parameters to test
+        seeds = [0, 123];
+        num_dims = [1, 3];
+        num_points = [1, 10, 500];
+        num_clusters = [1, 5, 30];
+        lat_stds = [0.0, 5.0];
+        llengths_mus = [0, 10];
+        llengths_sigmas = [0, 15];
+        angles_stds = [pi/256, pi/2, pi];
+
+        % Optional parameters to test
+        aes = [true, false];
+        proj_fns = {'unif', @proj_dist_alt_equidist};
+        ptd_fns = {'n', @point_dist_alt_plus1};
+        csz_fns = {@clusizes, @clusizes_alt_equi};
+        cc_fns = {@clucenters, @clucenters_alt_diag};
+        ll_fns = {@llengths, @llengths_alt_unif_btw_10_20};
+        angd_fns = {@angle_deltas, @angle_deltas_alt_zeros};
+
+        % Number of line directions to test
+        ndirs = 2;
+
+        % Number of line centers to test
+        ncts = 2;
+
+        % How many vectors to test?
+        nvec = 2;
+
+        % How many angles to test?
+        nang = 2;
+
+    elseif strcmpi(moclugen_test_mode, 'normal')
+        disp('Testing MOCluGen in `normal` mode');
+
+        % Mandatory parameters to test
+        seeds = [0, 123, 9999];
+        num_dims = [1, 2, 3, 30];
+        num_points = [1, 10, 500];
+        num_clusters = [1, 5, 10, 100];
+        lat_stds = [0.0, 5.0];
+        llengths_mus = [0, 10];
+        llengths_sigmas = [0, 15];
+        angles_stds = [0, pi/256, pi/2, pi, 2*pi];
+
+        % Optional parameters to test
+        aes = [true, false];
+        proj_fns = {'unif', @proj_dist_alt_equidist};
+        ptd_fns = {'n', @point_dist_alt_plus1};
+        csz_fns = {@clusizes, @clusizes_alt_equi};
+        cc_fns = {@clucenters, @clucenters_alt_diag};
+        ll_fns = {@llengths, @llengths_alt_unif_btw_10_20};
+        angd_fns = {@angle_deltas, @angle_deltas_alt_zeros};
+
+        % Number of line directions to test
+        ndirs = 3;
+
+        % Number of line centers to test
+        ncts = 3;
+
+        % How many vectors to test?
+        nvec = 8;
+
+        % How many angles to test?
+        nang = 8;
+
+    elseif strcmpi(moclugen_test_mode, 'full')
+        disp('Testing MOCluGen in `full` mode (slow!)');
+
+        % Mandatory parameters to test
+        seeds = [0, 123, 9999, 9876543];
+        num_dims = [1, 2, 3, 4, 30];
+        num_points = [1, 10, 500, 10000];
+        num_clusters = [1, 2, 5, 10, 100];
+        lat_stds = [0.0, 5.0, 500];
+        llengths_mus = [0, 10];
+        llengths_sigmas = [0, 15];
+        angles_stds = [0, pi/256, pi/4, pi/2, pi, 2*pi];
+
+        % Optional parameters to test
+        aes = [true, false];
+        proj_fns = {'unif', @proj_dist_alt_equidist};
+        ptd_fns = {'n', @point_dist_alt_plus1};
+        csz_fns = {@clusizes, @clusizes_alt_equi};
+        cc_fns = {@clucenters, @clucenters_alt_diag};
+        ll_fns = {@llengths, @llengths_alt_unif_btw_10_20};
+        angd_fns = {@angle_deltas, @angle_deltas_alt_zeros};
+
+        % Number of line directions to test
+        ndirs = 5;
+
+        % Number of line centers to test
+        ncts = 5;
+
+        % How many vectors to test?
+        nvec = 15;
+
+        % How many angles to test?
+        nang = 15;
+
+    else
+        error(['Unknown test mode `' moclugen_test_mode '`. Valid options '...
+            ' are `minimal`, `ci`, `normal` or `full`.']);
+    end
 end
 
 % %%%%%%%%%%%%%%%%%%%%%%%% %
@@ -141,20 +273,14 @@ end
 % Test the points_on_line() function
 function test_points_on_line
 
-    global seeds num_dims num_points llengths_mus;
+    global seeds num_dims num_points llengths_mus ndirs ncts;
 
     % Any tests performed?
     tests_any_done = false;
 
-    % Number of line directions to test
-    ndirs = 3;
-
-    % Number of line centers to test
-    ncts = 3;
-
     % Cycle through all test parameters
     for nd = num_dims
-        for tpts = num_points(num_points < 1000)
+        for tpts = num_points
             for seed = seeds
 
                 % Set seed
@@ -237,13 +363,10 @@ end
 % Test the rand_ortho_vector() function
 function test_rand_ortho_vector
 
-    global seeds num_dims;
+    global seeds num_dims nvec;
 
     % Any tests performed?
     tests_any_done = false;
-
-    % How many vectors to test?
-    nvec = 10;
 
     % Cycle through all test parameters
     for nd = num_dims
@@ -285,16 +408,10 @@ end
 % Test the rand_vector_at_angle() function
 function test_rand_vector_at_angle
 
-    global seeds num_dims;
+    global seeds num_dims nvec nang;
 
     % Any tests performed?
     tests_any_done = false;
-
-    % How many vectors to test?
-    nvec = 10;
-
-    % How many angles to test?
-    nang = 10;
 
     % Cycle through all test parameters
     for nd = num_dims
@@ -446,23 +563,17 @@ end
 % Test the clupoints_n_1_template function
 function test_clupoints_n_1_template
 
-    global seeds num_dims num_points lat_stds llengths_mus;
+    global seeds num_dims num_points lat_stds llengths_mus ndirs ncts;
 
     % Any tests performed?
     tests_any_done = false;
-
-    % Number of line directions to test
-    ndirs = 3;
-
-    % Number of line centers to test
-    ncts = 3;
 
     % Distance from points to projections will be 10
     dist_pt = 10;
 
     % Cycle through all test parameters
     for nd = num_dims
-        for tpts = num_points(num_points < 1000)
+        for tpts = num_points
             for seed = seeds
 
                 % Set seed
@@ -605,7 +716,7 @@ end
 % Test the llengths function
 function test_llengths
 
-    global num_dims seeds num_clusters llengths_mus llengths_sigmas;
+    global seeds num_clusters llengths_mus llengths_sigmas;
 
     % Any tests performed?
     tests_any_done = false;
@@ -697,20 +808,14 @@ end
 % Test the clupoints_n_1 function
 function test_clupoints_n_1
 
-    global seeds num_dims num_points lat_stds llengths_mus;
+    global seeds num_dims num_points lat_stds llengths_mus ndirs ncts;
 
     % Any tests performed?
     tests_any_done = false;
 
-    % Number of line directions to test
-    ndirs = 3;
-
-    % Number of line centers to test
-    ncts = 3;
-
     % Cycle through all test parameters
     for nd = num_dims
-        for tpts = num_points(num_points < 1000)
+        for tpts = num_points
             for seed = seeds
 
                 % Set seed
@@ -766,16 +871,10 @@ end
 % Test the clupoints_n function
 function test_clupoints_n
 
-    global seeds num_dims num_points lat_stds llengths_mus;
+    global seeds num_dims num_points lat_stds llengths_mus ndirs ncts;
 
     % Any tests performed?
     tests_any_done = false;
-
-    % Number of line directions to test
-    ndirs = 3;
-
-    % Number of line centers to test
-    ncts = 3;
 
     % Cycle through all test parameters
     for nd = num_dims
@@ -822,29 +921,26 @@ end
 function test_clugen_mandatory
 
     global seeds num_dims num_clusters num_points angles_stds llengths_mus ...
-        llengths_sigmas lat_stds;
+        llengths_sigmas lat_stds ndirs;
 
     % Any tests performed?
     tests_any_done = false;
 
-    % Number of line directions to test
-    ndirs = 2;
-
     % Cycle through all test parameters
-    for seed = seeds(1:end-2) % Skip last two
+    for seed = seeds
 
         % Set seed
         cluseed(seed);
 
-        for nd = num_dims(1:end-1) % Skip last
-            for nclu = num_clusters(1:end-1) % Skip last
-                for tpts = num_points(1:end-1) % Skip last
+        for nd = num_dims
+            for nclu = num_clusters
+                for tpts = num_points
                     for dir = get_vecs(ndirs, nd)
-                        for astd = angles_stds(1:end-1)
+                        for astd = angles_stds
                             for clu_sep = get_clu_seps(nd)'
                                 for len_mu = llengths_mus
                                     for len_std = llengths_sigmas
-                                        for lat_std = lat_stds(1:end-1)
+                                        for lat_std = lat_stds
 
                                             % By default, allow_empty is false, so clugen() must be
                                             % given more points than clusters...
@@ -919,7 +1015,7 @@ end
 % Test the clugen function optional parameters
 function test_clugen_optional
 
-    global seeds;
+    global seeds aes proj_fns ptd_fns csz_fns cc_fns ll_fns angd_fns;
 
     % Any tests performed?
     tests_any_done = false;
@@ -933,7 +1029,7 @@ function test_clugen_optional
     lat_std = 2;
 
     % Cycle through all test parameters
-    for seed = seeds(1:end-1)
+    for seed = seeds
 
         % Set seed
         cluseed(seed);
@@ -944,13 +1040,13 @@ function test_clugen_optional
             clu_off = rand(nd, 1);
             dir = rand(nd, 1);
 
-            for ae = [true, false]
-                for projd_fn = {'unif', @proj_dist_alt_equidist}
-                    for ptd_fn = {'n', @point_dist_alt_plus1}
-                        for csz_fn = {@clusizes, @clusizes_alt_equi}
-                            for cc_fn = {@clucenters, @clucenters_alt_diag}
-                                for ll_fn = {@llengths, @llengths_alt_unif_btw_10_20}
-                                    for angd_fn = {@angle_deltas, @angle_deltas_alt_zeros}
+            for ae = aes %[true, false]
+                for projd_fn = proj_fns %{'unif', @proj_dist_alt_equidist}
+                    for ptd_fn = ptd_fns %{'n', @point_dist_alt_plus1}
+                        for csz_fn = csz_fns %{@clusizes, @clusizes_alt_equi}
+                            for cc_fn = cc_fns %{@clucenters, @clucenters_alt_diag}
+                                for ll_fn = ll_fns %{@llengths, @llengths_alt_unif_btw_10_20}
+                                    for angd_fn = angd_fns %{@angle_deltas, @angle_deltas_alt_zeros}
 
                                         % Function must execute without warnings
                                         lastwarn('');
@@ -1063,7 +1159,7 @@ function test_clugen_exceptions
         'point_dist_fn', pt_off, 'clusizes_fn', csizes_fn, ...
         'clucenters_fn', ccenters_fn, 'llengths_fn', llengths_fn, ...
         'angle_deltas_fn', langles_fn, 'seed', -123);
-        assertError(fn);
+    assertError(fn);
 
     % Invalid number of dimensions
     fn = @() clugen(0, nclu, tpts, dir, astd, clu_sep, len_mu, len_std, lat_std, ...
