@@ -9,13 +9,13 @@ respective points are placed.
 
 ## Install and use
 
-Clone the project with following command in the terminal:
+[Download](https://github.com/clugen/MOCluGen/archive/refs/heads/main.zip) the
+package from its [GitHub](https://github.com/clugen/MOCluGen/) page or clone it
+with following command in the terminal:
 
 ```text
 $ git clone https://github.com/clugen/MOCluGen.git
 ```
-
-Alternatively, download the project from its GitHub page.
 
 Open MATLAB or GNU Octave and `cd` into the project's folder, and run the
 `startup.m` script:
