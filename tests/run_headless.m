@@ -2,9 +2,10 @@
 %
 % $ octave --no-gui tests/run_headless.m
 %
-% or
+% or, for MATLAB:
 %
-% $ cat tests/run_headless.m | matlab -nodesktop -nodisplay
+% $ cat tests/run_headless.m | matlab -nodesktop -nodisplay # Old MATLABs
+% $ matlab -batch "addpath('tests');run_headless"           # Newer MATLABs
 %
 % The MOXUNIT_PATH environment variable must contain the path to MOxUnit's
 % source code.
