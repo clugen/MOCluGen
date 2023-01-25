@@ -442,6 +442,15 @@ function test_rand_vector_at_angle
                     % Some tests done
                     tests_any_done = true;
                 end;
+
+                % Check corner case where angle == pi / 2 and vector length > 1
+                if nd > 1
+                    v = 100 * rand(1) * uvec{:};
+                    lastwarn('');
+                    r = rand_vector_at_angle(v, pi / 2);
+                    assertTrue(isempty(lastwarn));
+                    assertElementsAlmostEqual(angle_btw(v, r), pi / 2);
+                end;
             end;
         end;
     end;
