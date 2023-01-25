@@ -265,9 +265,6 @@ function cludata = clugen( ...
         % lines, mean equal to line center, standard deviation equal to 1/6 of line length
         % such that the line length contains ≈99.73% of the points
         pointproj_fn = @(len, n) len * randn(n, 1) / 6;
-    else
-        % We should never get here
-        error('Invalid program state');
     end;
 
     % What distribution to use for placing points from their projections?
@@ -288,9 +285,6 @@ function cludata = clugen( ...
         % Points will be placed using a multivariate normal distribution
         % centered at the point projection
         pt_from_proj_fn = @clupoints_n;
-    else
-        % We should never get here
-        error('Invalid program state');
     end;
 
     % If seed was given, set it
