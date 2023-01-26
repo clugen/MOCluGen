@@ -59,7 +59,7 @@ Open MATLAB or GNU Octave and `cd` into the project's folder, and run the
 If you use this software, please cite the following reference:
 
 * Fachada, N. & de Andrade, D. (2023). Generating Multidimensional Clusters With
-  Support Lines. *Under review*.
+  Support Lines. <https://doi.org/10.48550/arXiv.2301.10327>.
 
 ## License
 
