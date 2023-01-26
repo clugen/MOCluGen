@@ -2,6 +2,7 @@
 [![codecov](https://codecov.io/gh/clugen/MOCluGen/branch/main/graph/badge.svg?token=5EWC7L6J3T)](https://codecov.io/gh/clugen/MOCluGen)
 [![docs](https://img.shields.io/badge/docs-latest-blue.svg)](https://clugen.github.io/MOCluGen/)
 [![MIT](https://img.shields.io/badge/license-MIT-yellowgreen.svg)](https://tldrlegal.com/license/mit-license)
+[![View MOCluGen on File Exchange](https://www.mathworks.com/matlabcentral/images/matlab-file-exchange.svg)](https://www.mathworks.com/matlabcentral/fileexchange/123960-moclugen)
 
 # MOCluGen
 
