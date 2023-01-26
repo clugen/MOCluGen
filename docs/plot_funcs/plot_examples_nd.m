@@ -21,7 +21,7 @@ function f = plot_examples_nd(e, plt_title)
         for j = 1:nd
 
             % Position current subplot
-            subplot(nd, nd, (i - 1) * nd + j);%, 'parent', p);
+            subplot(nd, nd, (j - 1) * nd + i);
 
             if (i == j)
                 % No axis...
