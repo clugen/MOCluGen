@@ -61,7 +61,7 @@ moxunit_runtests tests
 
 Building the documentation requires [Octave], [Python] and [mkdocs-material] and
 must be performed on a [Bash] shell. A physical or virtual display (e.g.,
-[xvfb]) are required for generating good looking plots. After these requirements
+[xvfb]) is required for generating good looking plots. After these requirements
 are met, and considering we're in the `MOCluGen` folder, run the following
 commands:
 
