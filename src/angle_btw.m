@@ -31,27 +31,16 @@
 %     % ans = 60.000
 function a = angle_btw(v1, v2)
 
-    % Returns true if the value of the sign of x is negative, otherwise false.
-    signbit = @(x) x < 0;
-
     u1 = v1 / norm(v1);
     u2 = v2 / norm(v2);
 
     y = u1 - u2;
     x = u1 + u2;
 
-    a0 = 2 * atan(norm(y) / norm(x));
-
-    if not(signbit(a0) || signbit(pi - a0))
-        a = a0;
-    elseif signbit(a0)
-        a = 0.0;
-    else
-        a = pi;
-    end;
+    a = 2 * atan(norm(y) / norm(x));
 
 end
 
-% Copyright (c) 2012-2022 Nuno Fachada
+% Copyright (c) 2012-2023 Nuno Fachada
 % Distributed under the MIT License (See accompanying file LICENSE or copy
 % at http://opensource.org/licenses/MIT)
