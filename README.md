@@ -13,6 +13,8 @@ generating multidimensional clusters. Each cluster is supported by a line
 segment, the position, orientation and length of which guide where the
 respective points are placed.
 
+See the [documentation](https://clugen.github.io/MOCluGen/) for more details.
+
 ## Install and use
 
 [Download](https://github.com/clugen/MOCluGen/archive/refs/heads/main.zip) the
