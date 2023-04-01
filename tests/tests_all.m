@@ -1065,13 +1065,13 @@ function test_clugen_optional
             clu_off = rand(nd, 1);
             dir = rand(nd, 1);
 
-            for ae = aes %[true, false]
-                for projd_fn = proj_fns %{'unif', @proj_dist_alt_equidist}
-                    for ptd_fn = ptd_fns %{'n', @point_dist_alt_plus1}
-                        for csz_fn = csz_fns %{@clusizes, @clusizes_alt_equi}
-                            for cc_fn = cc_fns %{@clucenters, @clucenters_alt_diag}
-                                for ll_fn = ll_fns %{@llengths, @llengths_alt_unif_btw_10_20}
-                                    for angd_fn = angd_fns %{@angle_deltas, @angle_deltas_alt_zeros}
+            for ae = aes % true, false
+                for projd_fn = proj_fns % 'unif', etc.
+                    for ptd_fn = ptd_fns % 'n', etc.
+                        for csz_fn = csz_fns % clusizes, etc.
+                            for cc_fn = cc_fns % clucenters, etc.
+                                for ll_fn = ll_fns % llengths, etc.
+                                    for angd_fn = angd_fns % angle_deltas, etc.
 
                                         % Function must execute without warnings
                                         lastwarn('');
