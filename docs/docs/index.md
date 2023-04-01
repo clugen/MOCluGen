@@ -10,9 +10,9 @@ algorithms.
 
 ## How to install
 
-[Download](https://github.com/clugen/MOCluGen/archive/refs/heads/main.zip) the
-package from its [GitHub](https://github.com/clugen/MOCluGen/) page or clone it
-with following command in the terminal:
+Download the most recent version from the
+[releases](https://github.com/clugen/MOCluGen/releases/latest) page or clone the
+development version with following command:
 
 ```text
 $ git clone https://github.com/clugen/MOCluGen.git
