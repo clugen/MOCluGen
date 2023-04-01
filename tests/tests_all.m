@@ -1137,6 +1137,61 @@ function test_clugen_optional
     assertTrue(tests_any_done);
 end
 
+% Test that the clugen function provides reproducible results
+function test_clugen_reproducibility
+
+    global seeds num_dims;
+
+    % Any tests performed?
+    tests_any_done = false;
+
+    % Cycle through all test parameters
+    for seed = seeds
+
+        for nd = num_dims
+
+            % First run
+            % Set seed
+            cluseed(seed);
+            lastwarn('');
+            nclu = randi([3 10], 1);
+            o1 = clugen(nd, nclu, ...
+                randi([20 2000], 1), ... % Total points
+                rand(nclu, nd), ...      % Average main direction per cluster
+                pi * rand(1), ...        % Angle dispersion
+                rand(1, nd), ...         % Average cluster separation
+                rand(1), ...             % Average line length
+                rand(1), ...             % Line length dispersion
+                rand(1));                % Lateral dispersion
+            assertTrue(isempty(lastwarn));
+
+            % Second run
+            % Set seed
+            cluseed(seed);
+            lastwarn('');
+            nclu = randi([3 10], 1);
+            o2 = clugen(nd, nclu, ...
+                randi([20 2000], 1), ... % Total points
+                rand(nclu, nd), ...      % Average main direction per cluster
+                pi * rand(1), ...        % Angle dispersion
+                rand(1, nd), ...         % Average cluster separation
+                rand(1), ...             % Average line length
+                rand(1), ...             % Line length dispersion
+                rand(1));                % Lateral dispersion
+            assertTrue(isempty(lastwarn));
+
+            % Check that results are equal
+            assertEqual(o1, o2);
+
+            % Some tests done
+            tests_any_done = true;
+        end;
+
+    end;
+    % Make sure some tests were performed
+    assertTrue(tests_any_done);
+end
+
 % Test the clugen function exceptions / errors
 function test_clugen_exceptions
 
