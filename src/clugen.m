@@ -20,8 +20,9 @@
 % - `num_dims`: Number of dimensions.
 % - `num_clusters`: Number of clusters to generate.
 % - `num_points`: Total number of points to generate.
-% - `direction`: Average direction of the cluster-supporting lines (vector of
-%   `num_dims` elements).
+% - `direction`: Average direction of the cluster-supporting lines. Can be a
+%    vector of length `num_dims` (same direction for all clusters) or a matrix
+%    of size `num_clusters` x `num_dims` (one direction per cluster).
 % - `angle_disp`: Angle dispersion of cluster-supporting lines (radians).
 % - `cluster_sep`: Average cluster separation in each dimension (vector of
 %   `num_dims` elements).
@@ -171,9 +172,14 @@ function cludata = clugen( ...
     addRequired(p, 'num_points', ...
         @(x) isnumeric(x) && isscalar(x) && (x >= 0) && (mod(x, 1) == 0));
 
-    % Check that direction has num_dims dimensions and magnitude > 0
+    % Check that direction has num_dims elements and magnitude > 0
+    % or has num_clusters x num_dims, and each row has magnitude > 0
     addRequired(p, 'direction', ...
-        @(x) isnumeric(x) && numel(x) == num_dims && norm(x) > eps);
+        @(x) isnumeric(x) && ( ...
+            (numel(x) == num_dims && norm(x) > eps) ...
+            || ...
+            (all(size(x) == [num_clusters num_dims]) && all(sqrt(sum(x.^2, 2)) > eps)) ...
+        ));
 
     % Check that angle_disp is a scalar
     addRequired(p, 'angle_disp', ...
@@ -240,8 +246,12 @@ function cludata = clugen( ...
     parse(p, num_dims, num_clusters, num_points, direction, angle_disp, ...
         cluster_sep, llength, llength_disp, lateral_disp, varargin{:});
 
+    % Convert direction to row vector if necessary
+    if numel(direction) == num_dims
+        direction = reshape(direction, [1 num_dims]);
+    end;
+
     % Convert input vectors to column vectors if necessary
-    direction = reshape(direction, [num_dims 1]);
     cluster_sep = reshape(cluster_sep, [num_dims 1]);
     cluster_offset = reshape(p.Results.cluster_offset, [num_dims 1]);
 
@@ -297,7 +307,12 @@ function cludata = clugen( ...
     % %%%%%%%%%%%%%%%%%%%%%%%%%%%% %
 
     % Normalize direction
-    direction = direction / norm(direction);
+    direction = direction ./ sqrt(sum(direction.^2, 2));
+
+    % If only one main direction was given, expand it for all clusters
+    if numel(direction) == num_dims
+        direction = repmat(direction, num_clusters, 1);
+    end;
 
     % Determine cluster sizes
     cluster_sizes = p.Results.clusizes_fn(num_clusters, num_points, p.Results.allow_empty);
@@ -318,7 +333,7 @@ function cludata = clugen( ...
     % Determine normalized cluster direction
     cluster_directions = zeros(num_clusters, num_dims);
     for i = 1:num_clusters
-        cluster_directions(i, :) = rand_vector_at_angle(direction, cluster_angles(i));
+        cluster_directions(i, :) = rand_vector_at_angle(direction(i, :)', cluster_angles(i));
     end;
 
     % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% %
