@@ -92,7 +92,7 @@ function init_data
         angd_fns = {@angle_deltas, @angle_deltas_alt_zeros};
 
         % Number of line directions to test
-        ndirs = 2;
+        ndirs = 1;
 
         % Number of line centers to test
         ncts = 2;
@@ -126,7 +126,7 @@ function init_data
         angd_fns = {@angle_deltas, @angle_deltas_alt_zeros};
 
         % Number of line directions to test
-        ndirs = 3;
+        ndirs = 2;
 
         % Number of line centers to test
         ncts = 3;
@@ -160,7 +160,7 @@ function init_data
         angd_fns = {@angle_deltas, @angle_deltas_alt_zeros};
 
         % Number of line directions to test
-        ndirs = 5;
+        ndirs = 3;
 
         % Number of line centers to test
         ncts = 5;
@@ -195,6 +195,17 @@ function uvecs = get_unitvecs(n, nd)
     for i = 1:n
         v = rand(nd, 1);
         uvecs{i} = v ./ norm(v);
+    end
+end
+
+% Get n direction sets, each direction set containing three direction formats:
+% 1) column vector; 2) row vector; 3) matrix (one direction per cluster)
+function dirs = get_dirs(n, nd, nc)
+    dirs = cell(1, 3 * n);
+    for i = 1:n
+        dirs{(i - 1) * 3 + 1} = rand(nd, 1);
+        dirs{(i - 1) * 3 + 2} = rand(1, nd);
+        dirs{(i - 1) * 3 + 3} = rand(nc, nd);
     end
 end
 
@@ -944,7 +955,7 @@ function test_clugen_mandatory
         for nd = num_dims
             for nclu = num_clusters
                 for tpts = num_points
-                    for dir = get_vecs(ndirs, nd)
+                    for dir = get_dirs(ndirs, nd, nclu)
                         for astd = angles_stds
                             for clu_sep = get_clu_seps(nd)'
                                 for len_mu = llengths_mus
@@ -997,9 +1008,14 @@ function test_clugen_mandatory
                                             % Check that cluster directions have the correct angles
                                             % with the main direction
                                             if nd > 1
+                                                d = dir{:};
+                                                if numel(d) == nd
+                                                    d = reshape(d, [1 nd]);
+                                                    d = repmat(d, nclu, 1);
+                                                end;
                                                 for i = 1:nclu
                                                     assertElementsAlmostEqual(...
-                                                        angle_btw(dir{:}, cdata.directions(i, :)'), ...
+                                                        angle_btw(d(i, :)', cdata.directions(i, :)'), ...
                                                         abs(cdata.angles(i)));
                                                 end;
                                             end;
