@@ -3,7 +3,7 @@
 # Runs the MATLAB/Octave code embedded in a Markdown file.
 # Code is executed in Octave.
 #
-# Copyright (c) 2022 Nuno Fachada
+# Copyright (c) 2022-2023 Nuno Fachada
 # Distributed under the MIT License (See accompanying file LICENSE or copy
 # at http://opensource.org/licenses/MIT)
 

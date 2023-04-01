@@ -19,7 +19,7 @@ function f = plot_examples_3d(varargin)
     [xmaxs, xmins] = get_plot_lims(ex{:});
 
     % Determine name of file where to save plot
-    filename = cell2mat(cellfun(@(s) s(1:3), et, 'UniformOutput', false));
+    filename = cell2mat(cellfun(@(s) s(1:4), et, 'UniformOutput', false));
 
     % Create new figure
     f = figure();
@@ -55,6 +55,6 @@ function f = plot_examples_3d(varargin)
 
 end % function
 
-% Copyright (c) 2012-2022 Nuno Fachada
+% Copyright (c) 2012-2023 Nuno Fachada
 % Distributed under the MIT License (See accompanying file LICENSE or copy
 % at http://opensource.org/licenses/MIT)

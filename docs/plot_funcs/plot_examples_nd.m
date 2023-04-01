@@ -11,7 +11,7 @@ function f = plot_examples_nd(e, plt_title)
     [xmaxs, xmins] = get_plot_lims(e);
 
     % Determine name of file where to save plot
-    filename = plt_title(1:3);
+    filename = plt_title(1:4);
 
     % Create new figure and set main title
     f = figure();
@@ -58,6 +58,6 @@ function f = plot_examples_nd(e, plt_title)
 
 end % function
 
-% Copyright (c) 2012-2022 Nuno Fachada
+% Copyright (c) 2012-2023 Nuno Fachada
 % Distributed under the MIT License (See accompanying file LICENSE or copy
 % at http://opensource.org/licenses/MIT)
