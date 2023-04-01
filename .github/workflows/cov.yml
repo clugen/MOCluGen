@@ -3,10 +3,10 @@ name: Coverage
 on:
   push:
     branches: [ main ]
-    paths: [ 'src/**', 'tests/tests_all.m' ]
+    paths: [ 'src/**', 'tests/tests_all.m', '.github/workflows/cov.yml' ]
   pull_request:
     branches: [ main ]
-    paths: [ 'src/**', 'tests/tests_all.m' ]
+    paths: [ 'src/**', 'tests/tests_all.m', '.github/workflows/cov.yml' ]
 
 jobs:
   coverage:
