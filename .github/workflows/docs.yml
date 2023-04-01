@@ -13,7 +13,9 @@ jobs:
         with:
           lfs: true
       - name: Install Octave and xvfb
-        run: sudo apt install octave octave-statistics xvfb
+        run: |
+          sudo apt update
+          sudo apt install -y octave octave-statistics xvfb
       - name: Build docs
         run: |
           pip3 install --user --upgrade pip

@@ -23,7 +23,9 @@ jobs:
     steps:
       - name: Install Octave
         if: matrix.config.moc == 'octave'
-        run: sudo apt install octave octave-statistics
+        run: |
+          sudo apt update
+          sudo apt install -y octave octave-statistics
       - name: Install MATLAB
         if: matrix.config.moc == 'matlab'
         uses: matlab-actions/setup-matlab@v1
