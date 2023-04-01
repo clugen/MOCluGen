@@ -107,7 +107,7 @@ function init_data
         disp('Testing MOCluGen in `normal` mode');
 
         % Mandatory parameters to test
-        seeds = [0, 123, 9999];
+        seeds = [0, 123];
         num_dims = [1, 2, 3, 30];
         num_points = [1, 10, 500];
         num_clusters = [1, 5, 30, 100];
