@@ -32,7 +32,7 @@ Open MATLAB or GNU Octave and `cd` into the project's folder, and run the
 >> startup
 ```
 
-`MOCluGen` can now be used, e.g:
+**MOCluGen** can now be used, e.g:
 
 ```matlab
 >> o = clugen(2, 4, 400, [1 0], pi / 8, [50, 10], 20, 1, 2, 'seed', 123);
