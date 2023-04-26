@@ -38,7 +38,7 @@ scatter(o.points(:, 1), o.points(:, 2), 36, o.clusters, 'filled', 'MarkerEdgeCol
 
 ```matlab
 o = clugen(3, 4, 1000, [1 0 0], pi / 8, [20 15 25], 16, 4, 3.5, 'seed', 123);
-scatter3(o.points(:, 1), o.points(:, 2), o.points(:,3), 36, o.clusters, 'filled', 'MarkerEdgeColor', 'k');
+scatter3(o.points(:, 1), o.points(:, 2), o.points(:, 3), 36, o.clusters, 'filled', 'MarkerEdgeColor', 'k');
 ```
 
 ![3D example.](https://github.com/clugen/.github/blob/main/images/example3d_moc.png?raw=true)
