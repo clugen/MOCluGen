@@ -67,24 +67,27 @@
 %   sizes add up to `num_points`. This parameter allows the user to specify a
 %   custom function for this purpose, which must follow `clusizes()`signature.
 %   Note that custom functions are not required to strictly obey the `num_points`
-%   parameter.
+%   parameter. Alternatively, the user can specify a vector of cluster sizes directly.
 % - `clucenters_fn`: Distribution of cluster centers. By default, cluster centers
 %   are determined by the `clucenters()` function, which uses the uniform
 %   distribution, and takes into account the `num_clusters` and `cluster_sep`
 %   parameters for generating well-distributed cluster centers. This parameter allows
 %   the user to specify a custom function for this purpose, which must follow
-%   `clucenters()` signature.
+%   `clucenters()` signature. Alternatively, the user can specify a matrix of size
+%   `num_clusters` x `num_dims` with the exact cluster centers.
 % - `llengths_fn`: Distribution of line lengths. By default, the lengths of
 %   cluster-supporting lines are determined by the `llengths()` function, which
 %   uses the folded normal distribution (μ=`llength`, σ=`llength_disp`). This
 %   parameter allows the user to specify a custom function for this purpose, which
-%   must follow `llengths()` signature.
+%   must follow `llengths()` signature. Alternatively, the user can specify a vector
+%   of line lengths directly.
 % - `angle_deltas_fn`: Distribution of line angle differences with respect to `direction`.
 %   By default, the angles between `direction` and the direction of cluster-supporting
 %   lines are determined by the `angle_deltas()` function, which uses the wrapped
 %   normal distribution (μ=0, σ=`angle_disp`) with support in the interval
 %   [-π/2, π/2]. This parameter allows the user to specify a custom function for this
-%   purpose, which must follow `angle_deltas()` signature.
+%   purpose, which must follow `angle_deltas()` signature. Alternatively, the user can
+%   specify a vector of angle deltas directly.
 % - `seed`: Non-negative integer for initializing the PRNG, allowing for
 %   reproducible results; alternatively, the PRNG can be initialized with the
 %   `cluseed()` function, or by directly setting the seed in MATLAB or Octave
@@ -222,21 +225,25 @@ function cludata = clugen( ...
     addParameter(p, 'point_dist_fn', point_dist_fns{1}, ...
         @(x) isa(x, 'function_handle') || any(validatestring(x, point_dist_fns)));
 
-    % Check that clusizes_fn is a function, and if it was not given, assign the
-    % clusizes() function as the default
-    addParameter(p, 'clusizes_fn', @clusizes, @(x) isa(x, 'function_handle'));
+    % Check that clusizes_fn is a function or a vector, and if it was not given, assign
+    % the clusizes() function as the default
+    addParameter(p, 'clusizes_fn', @clusizes, ...
+        @(x) isa(x, 'function_handle') || (isnumeric(x) && numel(x) == num_clusters));
 
-    % Check that clucenters_fn is a function, and if it was not given, assign
-    % the clucenters() function as the default
-    addParameter(p, 'clucenters_fn', @clucenters, @(x) isa(x, 'function_handle'));
+    % Check that clucenters_fn is a function or a matrix, and if it was not given,
+    % assign the clucenters() function as the default
+    addParameter(p, 'clucenters_fn', @clucenters, ...
+        @(x) isa(x, 'function_handle') || (isnumeric(x) && all(size(x) == [num_clusters num_dims])));
 
-    % Check that llengths_fn is a function, and if it was not given, assign the
-    % llengths() function as the default
-    addParameter(p, 'llengths_fn', @llengths, @(x) isa(x, 'function_handle'));
+    % Check that llengths_fn is a function or a vector, and if it was not given, assign
+    % the llengths() function as the default
+    addParameter(p, 'llengths_fn', @llengths, ...
+        @(x) isa(x, 'function_handle') || (isnumeric(x) && numel(x) == num_clusters));
 
-    % Check that angle_deltas_fn is a function, and if it was not given, assign
-    % the angle_deltas() function as the default
-    addParameter(p, 'angle_deltas_fn', @angle_deltas, @(x) isa(x, 'function_handle'));
+    % Check that angle_deltas_fn is a function or a vector, and if it was not given,
+    % assign the angle_deltas() function as the default
+    addParameter(p, 'angle_deltas_fn', @angle_deltas, ...
+        @(x) isa(x, 'function_handle') || (isnumeric(x) && numel(x) == num_clusters));
 
     % Check that the seed, if given, is a nonnegative integer
     addParameter(p, 'seed', NaN, ...
@@ -315,20 +322,36 @@ function cludata = clugen( ...
     end;
 
     % Determine cluster sizes
-    cluster_sizes = p.Results.clusizes_fn(num_clusters, num_points, p.Results.allow_empty);
+    if isa(p.Results.clusizes_fn, 'function_handle')
+        cluster_sizes = p.Results.clusizes_fn(num_clusters, num_points, p.Results.allow_empty);
+    else
+        cluster_sizes = reshape(p.Results.clusizes_fn, [num_clusters, 1]);
+    end;
 
     % Custom clusizes_fn's are not required to obey num_points, so we update
     % it here just in case it's different from what the user specified
     num_points = sum(cluster_sizes);
 
     % Determine cluster centers
-    cluster_centers = p.Results.clucenters_fn(num_clusters, cluster_sep, cluster_offset);
+    if isa(p.Results.clucenters_fn, 'function_handle')
+        cluster_centers = p.Results.clucenters_fn(num_clusters, cluster_sep, cluster_offset);
+    else
+        cluster_centers = p.Results.clucenters_fn;
+    end;
 
     % Determine length of lines supporting clusters
-    cluster_lengths = p.Results.llengths_fn(num_clusters, llength, llength_disp);
+    if isa(p.Results.llengths_fn, 'function_handle')
+        cluster_lengths = p.Results.llengths_fn(num_clusters, llength, llength_disp);
+    else
+        cluster_lengths = reshape(p.Results.llengths_fn, [num_clusters, 1]);
+    end;
 
     % Obtain angles between main direction and cluster-supporting lines
-    cluster_angles = p.Results.angle_deltas_fn(num_clusters, angle_disp);
+    if isa(p.Results.angle_deltas_fn, 'function_handle')
+        cluster_angles = p.Results.angle_deltas_fn(num_clusters, angle_disp);
+    else
+        cluster_angles = reshape(p.Results.angle_deltas_fn, [num_clusters, 1]);
+    end;
 
     % Determine normalized cluster direction
     cluster_directions = zeros(num_clusters, num_dims);
