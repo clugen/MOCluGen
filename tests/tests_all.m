@@ -1137,6 +1137,90 @@ function test_clugen_optional
     assertTrue(tests_any_done);
 end
 
+% Test the clugen function optional parameters specified as direct coordinates
+function test_clugen_optional_direct
+
+    global seeds;
+
+    % Any tests performed?
+    tests_any_done = false;
+
+    % Valid arguments
+    astd = pi / 333;
+    len_mu = 9;
+    len_std = 1.2;
+    lat_std = 2;
+
+    % Cycle through all test parameters
+    for seed = seeds
+
+        % Set seed
+        cluseed(seed);
+
+        for nd = [1, 5]
+
+            clu_sep = len_mu * 3 * rand(nd, 1);
+            dir = rand(nd, 1);
+
+            for nclu = [1, 6] % Number of clusters
+
+                % Direct parameters
+                csz_direct = randi(100, nclu, 1);
+                cctr_direct = randn(nclu, nd);
+                llen_direct = 20 * rand(nclu, 1);
+                lang_direct = pi * rand(nclu, 1) - pi / 2;
+
+                % Number of points
+                tpts = sum(csz_direct);
+
+                % Function must execute without warnings
+                lastwarn('');
+                cdata = clugen( ...
+                    nd, nclu, tpts, dir, astd, clu_sep, len_mu, len_std, lat_std, ...
+                    'clusizes_fn', csz_direct, ...
+                    'clucenters_fn', cctr_direct, ...
+                    'llengths_fn', llen_direct, ...
+                    'angle_deltas_fn', lang_direct, ...
+                    'seed', seed);
+
+                assertTrue(isempty(lastwarn));
+
+                % Check expected sizes and types of return values
+                assertEqual(size(cdata.points), [tpts nd]);
+                assertTrue(isnumeric(cdata.points));
+                assertEqual(size(cdata.clusters), [tpts 1]);
+                assertTrue(isnumeric(cdata.clusters));
+                assertTrue(all(rem(cdata.clusters, 1) == 0));
+                assertEqual(size(cdata.projections), [tpts nd]);
+                assertTrue(isnumeric(cdata.projections));
+                assertEqual(size(cdata.sizes), [nclu 1]);
+                assertTrue(isnumeric(cdata.sizes));
+                assertTrue(all(rem(cdata.sizes, 1) == 0));
+                assertEqual(size(cdata.centers), [nclu nd]);
+                assertTrue(isnumeric(cdata.centers));
+                assertEqual(size(cdata.directions), [nclu nd]);
+                assertTrue(isnumeric(cdata.directions));
+                assertEqual(size(cdata.angles), [nclu 1]);
+                assertTrue(isnumeric(cdata.angles));
+                assertEqual(size(cdata.lengths), [nclu 1]);
+                assertTrue(isnumeric(cdata.lengths));
+
+                % Check point cluster indexes
+                assertEqual(unique(cdata.clusters), (1:nclu)');
+
+                % Check total points
+                assertEqual(sum(cdata.sizes), tpts);
+
+                % Some tests done
+                tests_any_done = true;
+            end;
+        end;
+    end;
+
+    % Make sure some tests were performed
+    assertTrue(tests_any_done);
+end
+
 % Test that the clugen function provides reproducible results
 function test_clugen_reproducibility
 
