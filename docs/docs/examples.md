@@ -330,6 +330,33 @@ plot_examples_2d(...
 
 [![](img/e037e038e039.png)](img/e037e038e039.png)
 
+### Direct specification of optional parameters
+
+```matlab
+seed = 123;
+
+e040 = clugen(2, 4, 1000, [-1 1], 0, [0 0], 0, 0, 0.2, ...
+    'seed', seed, 'proj_dist_fn', 'unif', 'point_dist_fn', 'n', ...
+    'clusizes_fn', [50 200 500 500], 'llengths_fn', [0 2 4 6], ...
+    'clucenters_fn', [-5 -5; -2.5 -2.5; 0 0; 2.5 2.5]);
+e041 = clugen(2, 5, 1000, [1 1; 1 0; 1 0; 0 1; 0 1], 0, [0 0], 0, 0, 0.2, ...
+    'seed', seed, 'proj_dist_fn', 'unif', 'point_dist_fn', 'n', ...
+    'clusizes_fn', [200 500 500 500 500], 'llengths_fn', [0, 5, 5, 5, 5], ...
+    'clucenters_fn', [0 0; 0 5; 0 -5; 5 0; -5 0]);
+e042 = clugen(2, 5, 1000, [0 1; 0.25 0.75; 0.5 0.5; 0.75 0.25; 1 0], 0, [0 0], 5, 0, 0.2, ...
+    'seed', seed, 'proj_dist_fn', 'unif', 'point_dist_fn', 'n', ...
+    'clusizes_fn', 500 * ones(5, 1), 'clucenters_fn', [-5 0; -3 -0.3; -1 -0.8; 1 -1.6; 3 -2.5]);
+```
+
+```matlab
+plot_examples_2d(...
+    e040, 'e040: direct params 1', ...
+    e041, 'e041: direct params 2', ...
+    e042, 'e042: direct params 3');
+```
+
+[![](img/e040e041e042.png)](img/e040e041e042.png)
+
 ## Examples in 3D
 
 These examples were plotted with the `plot_examples_3d()` helper function available
@@ -342,19 +369,19 @@ These examples were plotted with the `plot_examples_3d()` helper function availa
 ```matlab
 seed = 1;
 
-e040 = clugen(3, 4, 500, [1 0 0], 0, [10 10 10], 15, 1.5, 0.5, 'seed', seed);
-e041 = clugen(3, 4, 500, [1 1 1], 0, [10 10 10], 15, 1.5, 0.5, 'seed', seed);
-e042 = clugen(3, 4, 500, [0 0 1], 0, [10 10 10], 15, 1.5, 0.5, 'seed', seed);
+e043 = clugen(3, 4, 500, [1 0 0], 0, [10 10 10], 15, 1.5, 0.5, 'seed', seed);
+e044 = clugen(3, 4, 500, [1 1 1], 0, [10 10 10], 15, 1.5, 0.5, 'seed', seed);
+e045 = clugen(3, 4, 500, [0 0 1], 0, [10 10 10], 15, 1.5, 0.5, 'seed', seed);
 ```
 
 ```matlab
 plot_examples_3d(...
-    e040, 'e040: direction = [1, 0, 0]', ...
-    e041, 'e041: direction = [1, 1, 1]', ...
-    e042, 'e042: direction = [0, 0, 1]');
+    e043, 'e043: direction = [1, 0, 0]', ...
+    e044, 'e044: direction = [1, 1, 1]', ...
+    e045, 'e045: direction = [0, 0, 1]');
 ```
 
-[![](img/e040e041e042.png)](img/e040e041e042.png)
+[![](img/e043e044e045.png)](img/e043e044e045.png)
 
 #### Changing the `angle_disp` parameter and using a custom `angle_deltas_fn` function
 
@@ -365,19 +392,19 @@ seed = 9876;
 % Requires the statistics toolbox in either Octave or MATLAB
 angdel_90 = @(nclu, astd) randsample([0 pi/2], nclu, true);
 
-e043 = clugen(3, 6, 1000, [1 0 0], 0, [10 10 10], 15, 1.5, 0.5, 'seed', seed);
-e044 = clugen(3, 6, 1000, [1 0 0], pi / 8, [10 10 10], 15, 1.5, 0.5, 'seed', seed);
-e045 = clugen(3, 6, 1000, [1 0 0], 0, [10 10 10], 15, 1.5, 0.5, 'seed', seed, 'angle_deltas_fn', angdel_90);
+e046 = clugen(3, 6, 1000, [1 0 0], 0, [10 10 10], 15, 1.5, 0.5, 'seed', seed);
+e047 = clugen(3, 6, 1000, [1 0 0], pi / 8, [10 10 10], 15, 1.5, 0.5, 'seed', seed);
+e048 = clugen(3, 6, 1000, [1 0 0], 0, [10 10 10], 15, 1.5, 0.5, 'seed', seed, 'angle_deltas_fn', angdel_90);
 ```
 
 ```matlab
 plot_examples_3d(...
-    e043, 'e043: angle\_disp = 0', ...
-    e044, 'e044: angle\_disp = π / 8', ...
-    e045, 'e045: custom angle\_deltas function');
+    e046, 'e046: angle\_disp = 0', ...
+    e047, 'e047: angle\_disp = π / 8', ...
+    e048, 'e048: custom angle\_deltas function');
 ```
 
-[![](img/e043e044e045.png)](img/e043e044e045.png)
+[![](img/e046e047e048.png)](img/e046e047e048.png)
 
 #### Specifying a main `direction` for each cluster and changing `angle_disp`
 
@@ -387,19 +414,19 @@ seed = 9876;
 % Define a main direction for each cluster
 dirs = [1 1 1; 0 0 1; 1 0 0; 0 1 0; -1 1 1];
 
-e046 = clugen(3, 5, 1000, dirs, 0, [0 0 0], 20, 0, 0.2, 'seed', seed);
-e047 = clugen(3, 5, 1000, dirs, pi / 12, [0 0 0], 20, 0, 0.2, 'seed', seed);
-e048 = clugen(3, 5, 1000, dirs, pi / 4, [0 0 0], 20, 0, 0.2, 'seed', seed);
+e049 = clugen(3, 5, 1000, dirs, 0, [0 0 0], 20, 0, 0.2, 'seed', seed);
+e050 = clugen(3, 5, 1000, dirs, pi / 12, [0 0 0], 20, 0, 0.2, 'seed', seed);
+e051 = clugen(3, 5, 1000, dirs, pi / 4, [0 0 0], 20, 0, 0.2, 'seed', seed);
 ```
 
 ```matlab
 plot_examples_3d(...
-    e046, 'e046: angle\_disp = 0', ...
-    e047, 'e047: angle\_disp = π / 12', ...
-    e048, 'e048: angle\_disp = π / 4');
+    e049, 'e049: angle\_disp = 0', ...
+    e050, 'e050: angle\_disp = π / 12', ...
+    e051, 'e051: angle\_disp = π / 4');
 ```
 
-[![](img/e046e047e048.png)](img/e046e047e048.png)
+[![](img/e049e050e051.png)](img/e049e050e051.png)
 
 ### Manipulating the length of cluster-supporting lines
 
@@ -408,19 +435,19 @@ plot_examples_3d(...
 ```matlab
 seed = 2;
 
-e049 = clugen(3, 5, 800, [1 0 0], pi / 10, [10 10 10], 0, 0, 0.5, 'seed', seed, 'point_dist_fn', 'n');
-e050 = clugen(3, 5, 800, [1 0 0], pi / 10, [10 10 10], 10, 0, 0.5, 'seed', seed, 'point_dist_fn', 'n');
-e051 = clugen(3, 5, 800, [1 0 0], pi / 10, [10 10 10], 30, 0, 0.5, 'seed', seed, 'point_dist_fn', 'n');
+e052 = clugen(3, 5, 800, [1 0 0], pi / 10, [10 10 10], 0, 0, 0.5, 'seed', seed, 'point_dist_fn', 'n');
+e053 = clugen(3, 5, 800, [1 0 0], pi / 10, [10 10 10], 10, 0, 0.5, 'seed', seed, 'point_dist_fn', 'n');
+e054 = clugen(3, 5, 800, [1 0 0], pi / 10, [10 10 10], 30, 0, 0.5, 'seed', seed, 'point_dist_fn', 'n');
 ```
 
 ```matlab
 plot_examples_3d(...
-    e049, 'e049: llength = 0', ...
-    e050, 'e050: llength = 10', ...
-    e051, 'e051: llength = 30');
+    e052, 'e052: llength = 0', ...
+    e053, 'e053: llength = 10', ...
+    e054, 'e054: llength = 30');
 ```
 
-[![](img/e049e050e051.png)](img/e049e050e051.png)
+[![](img/e052e053e054.png)](img/e052e053e054.png)
 
 #### Changing the `llength_disp` parameter and using a custom `llengths_fn` function
 
@@ -430,22 +457,22 @@ seed = 2;
 % Custom llengths function: line lengths tend to grow for each new cluster
 llen_grow = @(nclu, llen, llenstd) llen * (0:(nclu - 1))' + llenstd * randn(nclu, 1);
 
-e052 = clugen(3, 5, 800, [1 0 0], pi / 10, [10 10 10], 15,  0.0, 0.5, 'seed', seed, ...
+e055 = clugen(3, 5, 800, [1 0 0], pi / 10, [10 10 10], 15,  0.0, 0.5, 'seed', seed, ...
     'point_dist_fn', 'n');
-e053 = clugen(3, 5, 800, [1 0 0], pi / 10, [10 10 10], 15, 10.0, 0.5, 'seed', seed, ...
+e056 = clugen(3, 5, 800, [1 0 0], pi / 10, [10 10 10], 15, 10.0, 0.5, 'seed', seed, ...
     'point_dist_fn', 'n');
-e054 = clugen(3, 5, 800, [1 0 0], pi / 10, [10 10 10], 10,  0.1, 0.5, 'seed', seed, ...
+e057 = clugen(3, 5, 800, [1 0 0], pi / 10, [10 10 10], 10,  0.1, 0.5, 'seed', seed, ...
     'llengths_fn', llen_grow, 'point_dist_fn', 'n');
 ```
 
 ```matlab
 plot_examples_3d(...
-    e052, 'e052: llength\_disp = 0.0', ...
-    e053, 'e053: llength\_disp = 10.0', ...
-    e054, 'e054: custom llengths function');
+    e055, 'e055: llength\_disp = 0.0', ...
+    e056, 'e056: llength\_disp = 10.0', ...
+    e057, 'e057: custom llengths function');
 ```
 
-[![](img/e052e053e054.png)](img/e052e053e054.png)
+[![](img/e055e056e057.png)](img/e055e056e057.png)
 
 ### Manipulating relative cluster positions
 
@@ -454,19 +481,19 @@ plot_examples_3d(...
 ```matlab
 seed = 321;
 
-e055 = clugen(3, 8, 1000, [1 1 1], pi / 4, [30 10 10], 25, 4, 3, 'seed', seed);
-e056 = clugen(3, 8, 1000, [1 1 1], pi / 4, [10 30 10], 25, 4, 3, 'seed', seed);
-e057 = clugen(3, 8, 1000, [1 1 1], pi / 4, [10 10 30], 25, 4, 3, 'seed', seed);
+e058 = clugen(3, 8, 1000, [1 1 1], pi / 4, [30 10 10], 25, 4, 3, 'seed', seed);
+e059 = clugen(3, 8, 1000, [1 1 1], pi / 4, [10 30 10], 25, 4, 3, 'seed', seed);
+e060 = clugen(3, 8, 1000, [1 1 1], pi / 4, [10 10 30], 25, 4, 3, 'seed', seed);
 ```
 
 ```matlab
 plot_examples_3d(...
-    e055, 'e055: cluster\_sep = [30, 10, 10]', ...
-    e056, 'e056: cluster\_sep = [10, 30, 10]', ...
-    e057, 'e057: cluster\_sep = [10, 10, 30]');
+    e058, 'e058: cluster\_sep = [30, 10, 10]', ...
+    e059, 'e059: cluster\_sep = [10, 30, 10]', ...
+    e060, 'e060: cluster\_sep = [10, 10, 30]');
 ```
 
-[![](img/e055e056e057.png)](img/e055e056e057.png)
+[![](img/e058e059e060.png)](img/e058e059e060.png)
 
 #### Changing the `cluster_offset` parameter and using a custom `clucenters_fn` function
 
@@ -476,21 +503,21 @@ seed = 321;
 % Custom clucenters function: places clusters in a diagonal
 centers_diag = @(nclu, csep, coff) ones(nclu, numel(csep)) .* (1:nclu)' * max(csep) + coff';
 
-e058 = clugen(3, 8, 1000, [1 1 1], pi / 4, [10 10 10], 12, 3, 2.5, 'seed', seed);
-e059 = clugen(3, 8, 1000, [1 1 1], pi / 4, [10 10 10], 12, 3, 2.5, 'seed', seed, ...
+e061 = clugen(3, 8, 1000, [1 1 1], pi / 4, [10 10 10], 12, 3, 2.5, 'seed', seed);
+e062 = clugen(3, 8, 1000, [1 1 1], pi / 4, [10 10 10], 12, 3, 2.5, 'seed', seed, ...
     'cluster_offset', [20 -20 20]);
-e060 = clugen(3, 8, 1000, [1, 1, 1], pi / 4, [10, 10, 10], 12, 3, 2.5, 'seed', seed, ...
+e063 = clugen(3, 8, 1000, [1, 1, 1], pi / 4, [10, 10, 10], 12, 3, 2.5, 'seed', seed, ...
     'cluster_offset',  [-50 -50 -50], 'clucenters_fn', centers_diag);
 ```
 
 ```matlab
 plot_examples_3d(...
-    e058, 'e058: default', ...
-    e059, 'e059: cluster\_offset = [20, -20, 20]', ...
-    e060, 'e060: custom clucenters function');
+    e061, 'e061: default', ...
+    e062, 'e062: cluster\_offset = [20, -20, 20]', ...
+    e063, 'e063: custom clucenters function');
 ```
 
-[![](img/e058e059e060.png)](img/e058e059e060.png)
+[![](img/e061e062e063.png)](img/e061e062e063.png)
 
 ### Lateral dispersion and placement of point projections on the line
 
@@ -499,28 +526,9 @@ plot_examples_3d(...
 ```matlab
 seed = 456;
 
-e061 = clugen(3, 4, 1000, [1 0 0], pi / 2, [20 20 20], 13, 2, 0.0, 'seed', seed);
-e062 = clugen(3, 4, 1000, [1 0 0], pi / 2, [20 20 20], 13, 2, 1.0, 'seed', seed);
-e063 = clugen(3, 4, 1000, [1 0 0], pi / 2, [20 20 20], 13, 2, 3.0, 'seed', seed);
-```
-
-```matlab
-plot_examples_3d(...
-    e061, 'e061: lateral\_disp = 0', ...
-    e062, 'e062: lateral\_disp = 1', ...
-    e063, 'e063: lateral\_disp = 3');
-```
-
-[![](img/e061e062e063.png)](img/e061e062e063.png)
-
-#### Uniform projection placement: `proj_dist_fn = 'unif'`
-
-```matlab
-seed = 456;
-
-e064 = clugen(3, 4, 1000, [1 0 0], pi / 2, [20 20 20], 13, 2, 0.0, 'seed', seed, 'proj_dist_fn', 'unif');
-e065 = clugen(3, 4, 1000, [1 0 0], pi / 2, [20 20 20], 13, 2, 1.0, 'seed', seed, 'proj_dist_fn', 'unif');
-e066 = clugen(3, 4, 1000, [1 0 0], pi / 2, [20 20 20], 13, 2, 3.0, 'seed', seed, 'proj_dist_fn', 'unif');
+e064 = clugen(3, 4, 1000, [1 0 0], pi / 2, [20 20 20], 13, 2, 0.0, 'seed', seed);
+e065 = clugen(3, 4, 1000, [1 0 0], pi / 2, [20 20 20], 13, 2, 1.0, 'seed', seed);
+e066 = clugen(3, 4, 1000, [1 0 0], pi / 2, [20 20 20], 13, 2, 3.0, 'seed', seed);
 ```
 
 ```matlab
@@ -532,18 +540,14 @@ plot_examples_3d(...
 
 [![](img/e064e065e066.png)](img/e064e065e066.png)
 
-#### Custom projection placement using the Beta distribution
+#### Uniform projection placement: `proj_dist_fn = 'unif'`
 
 ```matlab
 seed = 456;
 
-% Custom proj_dist_fn: point projections placed using the Beta distribution
-% (requires MATLAB or Octave statistics toolbox)
-proj_beta = @(len, n) len * betarnd(0.1, 0.1, [n 1]) - len / 2;
-
-e067 = clugen(3, 4, 1000, [1 0 0], pi / 2, [20 20 20], 13, 2, 0.0, 'seed', seed, 'proj_dist_fn', proj_beta);
-e068 = clugen(3, 4, 1000, [1 0 0], pi / 2, [20 20 20], 13, 2, 1.0, 'seed', seed, 'proj_dist_fn', proj_beta);
-e069 = clugen(3, 4, 1000, [1 0 0], pi / 2, [20 20 20], 13, 2, 3.0, 'seed', seed, 'proj_dist_fn', proj_beta);
+e067 = clugen(3, 4, 1000, [1 0 0], pi / 2, [20 20 20], 13, 2, 0.0, 'seed', seed, 'proj_dist_fn', 'unif');
+e068 = clugen(3, 4, 1000, [1 0 0], pi / 2, [20 20 20], 13, 2, 1.0, 'seed', seed, 'proj_dist_fn', 'unif');
+e069 = clugen(3, 4, 1000, [1 0 0], pi / 2, [20 20 20], 13, 2, 3.0, 'seed', seed, 'proj_dist_fn', 'unif');
 ```
 
 ```matlab
@@ -554,6 +558,29 @@ plot_examples_3d(...
 ```
 
 [![](img/e067e068e069.png)](img/e067e068e069.png)
+
+#### Custom projection placement using the Beta distribution
+
+```matlab
+seed = 456;
+
+% Custom proj_dist_fn: point projections placed using the Beta distribution
+% (requires MATLAB or Octave statistics toolbox)
+proj_beta = @(len, n) len * betarnd(0.1, 0.1, [n 1]) - len / 2;
+
+e070 = clugen(3, 4, 1000, [1 0 0], pi / 2, [20 20 20], 13, 2, 0.0, 'seed', seed, 'proj_dist_fn', proj_beta);
+e071 = clugen(3, 4, 1000, [1 0 0], pi / 2, [20 20 20], 13, 2, 1.0, 'seed', seed, 'proj_dist_fn', proj_beta);
+e072 = clugen(3, 4, 1000, [1 0 0], pi / 2, [20 20 20], 13, 2, 3.0, 'seed', seed, 'proj_dist_fn', proj_beta);
+```
+
+```matlab
+plot_examples_3d(...
+    e070, 'e070: lateral\_disp = 0', ...
+    e071, 'e071: lateral\_disp = 1', ...
+    e072, 'e072: lateral\_disp = 3');
+```
+
+[![](img/e070e071e072.png)](img/e070e071e072.png)
 
 ### Controlling final point positions from their projections on the cluster-supporting line
 
@@ -566,35 +593,9 @@ seed = 34;
 % (requires MATLAB or Octave statistics toolbox)
 proj_beta = @(len, n) len * betarnd(0.1, 0.1, [n 1]) - len / 2;
 
-e070 = clugen(3, 5, 1500, [1 0 0], pi / 3, [20 20 20], 22, 3, 2, 'seed', seed);
-e071 = clugen(3, 5, 1500, [1 0 0], pi / 3, [20 20 20], 22, 3, 2, 'seed', seed, 'proj_dist_fn', 'unif');
-e072 = clugen(3, 5, 1500, [1 0 0], pi / 3, [20 20 20], 22, 3, 2, 'seed', seed, 'proj_dist_fn', proj_beta);
-```
-
-```matlab
-plot_examples_3d(...
-    e070, 'e070: proj\_dist\_fn = "norm" (default)', ...
-    e071, 'e071: proj\_dist\_fn = "unif"', ...
-    e072, 'e072: custom proj\_dist\_fn (Beta)');
-```
-
-[![](img/e070e071e072.png)](img/e070e071e072.png)
-
-#### Points around projection on cluster-supporting line: `point_dist_fn = "n"`
-
-```matlab
-seed = 34;
-
-% Custom proj_dist_fn: point projections placed using the Beta distribution
-% (requires MATLAB or Octave statistics toolbox)
-proj_beta = @(len, n) len * betarnd(0.1, 0.1, [n 1]) - len / 2;
-
-e073 = clugen(3, 5, 1500, [1 0 0], pi / 3, [20 20 20], 22, 3, 2, 'seed', seed, ...
-    'point_dist_fn', 'n');
-e074 = clugen(3, 5, 1500, [1 0 0], pi / 3, [20 20 20], 22, 3, 2, 'seed', seed, ...
-    'point_dist_fn', 'n', 'proj_dist_fn', 'unif');
-e075 = clugen(3, 5, 1500, [1 0 0], pi / 3, [20 20 20], 22, 3, 2, 'seed', seed, ...
-    'point_dist_fn', 'n', 'proj_dist_fn', proj_beta);
+e073 = clugen(3, 5, 1500, [1 0 0], pi / 3, [20 20 20], 22, 3, 2, 'seed', seed);
+e074 = clugen(3, 5, 1500, [1 0 0], pi / 3, [20 20 20], 22, 3, 2, 'seed', seed, 'proj_dist_fn', 'unif');
+e075 = clugen(3, 5, 1500, [1 0 0], pi / 3, [20 20 20], 22, 3, 2, 'seed', seed, 'proj_dist_fn', proj_beta);
 ```
 
 ```matlab
@@ -605,6 +606,32 @@ plot_examples_3d(...
 ```
 
 [![](img/e073e074e075.png)](img/e073e074e075.png)
+
+#### Points around projection on cluster-supporting line: `point_dist_fn = "n"`
+
+```matlab
+seed = 34;
+
+% Custom proj_dist_fn: point projections placed using the Beta distribution
+% (requires MATLAB or Octave statistics toolbox)
+proj_beta = @(len, n) len * betarnd(0.1, 0.1, [n 1]) - len / 2;
+
+e076 = clugen(3, 5, 1500, [1 0 0], pi / 3, [20 20 20], 22, 3, 2, 'seed', seed, ...
+    'point_dist_fn', 'n');
+e077 = clugen(3, 5, 1500, [1 0 0], pi / 3, [20 20 20], 22, 3, 2, 'seed', seed, ...
+    'point_dist_fn', 'n', 'proj_dist_fn', 'unif');
+e078 = clugen(3, 5, 1500, [1 0 0], pi / 3, [20 20 20], 22, 3, 2, 'seed', seed, ...
+    'point_dist_fn', 'n', 'proj_dist_fn', proj_beta);
+```
+
+```matlab
+plot_examples_3d(...
+    e076, 'e076: proj\_dist\_fn = "norm" (default)', ...
+    e077, 'e077: proj\_dist\_fn = "unif"', ...
+    e078, 'e078: custom proj\_dist\_fn (Beta)');
+```
+
+[![](img/e076e077e078.png)](img/e076e077e078.png)
 
 #### Custom point placement using the exponential distribution
 
@@ -621,33 +648,33 @@ clupoints_n_1_exp = @(projs, lat_std, len, clu_dir, clu_ctr) ...
 % (requires MATLAB or Octave statistics toolbox)
 proj_beta = @(len, n) len * betarnd(0.1, 0.1, [n 1]) - len / 2;
 
-e076 = clugen(3, 5, 1500, [1 0 0], pi / 3, [20 20, 20], 22, 3, 2, 'seed', seed, ...
+e079 = clugen(3, 5, 1500, [1 0 0], pi / 3, [20 20, 20], 22, 3, 2, 'seed', seed, ...
     'point_dist_fn', clupoints_n_1_exp);
-e077 = clugen(3, 5, 1500, [1 0 0], pi / 3, [20 20 20], 22, 3, 2, 'seed', seed, ...
+e080 = clugen(3, 5, 1500, [1 0 0], pi / 3, [20 20 20], 22, 3, 2, 'seed', seed, ...
     'point_dist_fn', clupoints_n_1_exp, 'proj_dist_fn', 'unif');
-e078 = clugen(3, 5, 1500, [1 0 0], pi / 3, [20 20 20], 22, 3, 2, 'seed', seed, ...
+e081 = clugen(3, 5, 1500, [1 0 0], pi / 3, [20 20 20], 22, 3, 2, 'seed', seed, ...
     'point_dist_fn', clupoints_n_1_exp, 'proj_dist_fn', proj_beta);
 ```
 
 ```matlab
 plot_examples_3d(...
-    e076, 'e076: proj\_dist\_fn = "norm" (default)', ...
-    e077, 'e077: proj\_dist\_fn = "unif"', ...
-    e078, 'e078: custom proj\_dist\_fn (Beta)');
+    e079, 'e079: proj\_dist\_fn = "norm" (default)', ...
+    e080, 'e080: proj\_dist\_fn = "unif"', ...
+    e081, 'e081: custom proj\_dist\_fn (Beta)');
 ```
 
-[![](img/e076e077e078.png)](img/e076e077e078.png)
+[![](img/e079e080e081.png)](img/e079e080e081.png)
 
 ### Manipulating cluster sizes
 
 ```matlab
 seed = 543210;
 
-% Custom clusizes_fn (e080): cluster sizes determined via the uniform distribution,
+% Custom clusizes_fn (e083): cluster sizes determined via the uniform distribution,
 % no correction for total points
 clusizes_unif = @(nclu, npts, ae) randi(2 * npts / nclu, nclu, 1);
 
-% Custom clusizes_fn (e081): clusters all have the same size, no correction for
+% Custom clusizes_fn (e084): clusters all have the same size, no correction for
 % total points
 clusizes_equal = @(nclu, npts, ae) floor(npts / nclu) * ones(nclu, 1);
 
@@ -656,22 +683,22 @@ centers_fixed = @(nclu, csep, coff) ...
     [-csep(1) -csep(2) -csep(3); csep(1) -csep(2) -csep(3); ...
      -csep(1)  csep(2)  csep(3); csep(1)  csep(2)  csep(3)];
 
-e079 = clugen(3, 4, 1500, [1 1 1], pi, [20 20 20], 0, 0, 5, 'seed', seed, ...
+e082 = clugen(3, 4, 1500, [1 1 1], pi, [20 20 20], 0, 0, 5, 'seed', seed, ...
     'clucenters_fn', centers_fixed, 'point_dist_fn', 'n');
-e080 = clugen(3, 4, 1500, [1 1 1], pi, [20 20 20], 0, 0, 5, 'seed', seed, ...
+e083 = clugen(3, 4, 1500, [1 1 1], pi, [20 20 20], 0, 0, 5, 'seed', seed, ...
     'clucenters_fn', centers_fixed, 'clusizes_fn', clusizes_unif, 'point_dist_fn', 'n');
-e081 = clugen(3, 4, 1500, [1 1 1], pi, [20 20 20], 0, 0, 5, 'seed', seed, ...
+e084 = clugen(3, 4, 1500, [1 1 1], pi, [20 20 20], 0, 0, 5, 'seed', seed, ...
     'clucenters_fn', centers_fixed, 'clusizes_fn', clusizes_equal, 'point_dist_fn', 'n');
 ```
 
 ```matlab
 plot_examples_3d(...
-    e079, 'e079: normal dist. (default)', ...
-    e080, 'e080: unif. dist. (custom)', ...
-    e081, 'e081: equal size (custom)');
+    e082, 'e082: normal dist. (default)', ...
+    e083, 'e083: unif. dist. (custom)', ...
+    e084, 'e084: equal size (custom)');
 ```
 
-[![](img/e079e080e081.png)](img/e079e080e081.png)
+[![](img/e082e083e084.png)](img/e082e083e084.png)
 
 ## Examples in other dimensions
 
@@ -686,19 +713,19 @@ These examples was plotted with the `plot_examples_1d()` helper function availab
 proj_wbull = @(len, n) wblrnd(len / 2, 1.5, [n 1]) - len / 2;
 
 
-e082 = clugen(1, 3, 2000, 1, 0, 10, 6, 1.5, 0, 'seed', 45);
-e083 = clugen(1, 3, 2000, 1, 0, 10, 6, 1.5, 0, 'seed', 45, 'proj_dist_fn', 'unif');
-e084 = clugen(1, 3, 2000, 1, 0, 10, 6, 1.5, 0, 'seed', 45, 'proj_dist_fn', proj_wbull);
+e085 = clugen(1, 3, 2000, 1, 0, 10, 6, 1.5, 0, 'seed', 45);
+e086 = clugen(1, 3, 2000, 1, 0, 10, 6, 1.5, 0, 'seed', 45, 'proj_dist_fn', 'unif');
+e087 = clugen(1, 3, 2000, 1, 0, 10, 6, 1.5, 0, 'seed', 45, 'proj_dist_fn', proj_wbull);
 ```
 
 ```matlab
 plot_examples_1d(...
-    e082, 'e082: proj\_dist\_fn = "norm" (default)', ...
-    e083, 'e083: proj\_dist\_fn = "unif"', ...
-    e084, 'e084: custom proj\_dist\_fn (Weibull)');
+    e085, 'e085: proj\_dist\_fn = "norm" (default)', ...
+    e086, 'e086: proj\_dist\_fn = "unif"', ...
+    e087, 'e087: custom proj\_dist\_fn (Weibull)');
 ```
 
-[![](img/e082e083e084.png)](img/e082e083e084.png)
+[![](img/e085e086e087.png)](img/e085e086e087.png)
 
 ### 5D example with default optional arguments
 
@@ -709,14 +736,14 @@ These examples were plotted with the `plot_examples_nd()` helper function availa
 nd = 5;
 seed = 123;
 
-e085 = clugen(nd, 6, 1500, [1 1 0.5 0 0], pi / 16, 30 * ones(nd, 1), 30, 4, 3, 'seed', seed);
+e088 = clugen(nd, 6, 1500, [1 1 0.5 0 0], pi / 16, 30 * ones(nd, 1), 30, 4, 3, 'seed', seed);
 ```
 
 ```matlab
-plot_examples_nd(e085, 'e085: 5D with optional parameters set to defaults');
+plot_examples_nd(e088, 'e088: 5D with optional parameters set to defaults');
 ```
 
-[![](img/e085.png)](img/e085.png)
+[![](img/e088.png)](img/e088.png)
 
 ### 5D example with `proj_dist_fn = "unif"` and `point_dist_fn = "n"`
 
@@ -724,12 +751,13 @@ plot_examples_nd(e085, 'e085: 5D with optional parameters set to defaults');
 nd = 5;
 seed = 321;
 
-e086 = clugen(nd, 6, 1500, [0.1 0.3 0.5 0.3 0.1], pi / 12, 30 * ones(nd, 1), 35, 5, 3.5, 'seed', seed, ...
+e089 = clugen(nd, 6, 1500, [0.1 0.3 0.5 0.3 0.1], pi / 12, 30 * ones(nd, 1), 35, 5, 3.5, 'seed', seed, ...
     'proj_dist_fn', 'unif', 'point_dist_fn', 'n');
 ```
 
 ```matlab
-plt = plot_examples_nd(e086, 'e086: 5D with proj\_dist\_fn="unif" and point\_dist\_fn="n"');
+plt = plot_examples_nd(e089, 'e089: 5D with proj\_dist\_fn="unif" and point\_dist\_fn="n"');
 ```
 
-[![](img/e086.png)](img/e086.png)
+[![](img/e089.png)](img/e089.png)
+
