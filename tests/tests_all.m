@@ -1000,7 +1000,7 @@ function test_clugen_mandatory
                                             assertTrue(isnumeric(cdata.lengths));
 
                                             % Check point cluster indexes
-                                            assertEqual(unique(cdata.clusters), (1:nclu)');
+                                            assertEqual(unique(cdata.clusters), int64(1:nclu)');
 
                                             % Check total points
                                             assertEqual(sum(cdata.sizes), tpts);
@@ -1111,7 +1111,7 @@ function test_clugen_optional
 
                                         % Check point cluster indexes
                                         if ~ae
-                                            assertEqual(unique(cdata.clusters), (1:nclu)');
+                                            assertEqual(unique(cdata.clusters), int64(1:nclu)');
                                         else
                                             assertTrue(all(cdata.clusters <= nclu));
                                         end;
@@ -1206,7 +1206,7 @@ function test_clugen_optional_direct
                 assertTrue(isnumeric(cdata.lengths));
 
                 % Check point cluster indexes
-                assertEqual(unique(cdata.clusters), (1:nclu)');
+                assertEqual(unique(cdata.clusters), int64(1:nclu)');
 
                 % Check total points
                 assertEqual(sum(cdata.sizes), tpts);
