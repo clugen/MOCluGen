@@ -1,4 +1,4 @@
-function mrgdata = clumerge(datasets, varargin)
+function output = clumerge(datasets, varargin)
 
     % Setup input validation
     p = inputParser;
@@ -87,7 +87,7 @@ function mrgdata = clumerge(datasets, varargin)
 
                 % If it's the first time this field appears, just get the info
                 fields_info.(fld{:}) = struct(...
-                    'type', typeof(value), ...
+                    'type', class(value), ...
                     'ncol', size(value, 2));
 
             else
@@ -102,7 +102,7 @@ function mrgdata = clumerge(datasets, varargin)
 
                 % Get the common supertype
                 fields_info.(fld{:}).type = common_supertype(...
-                    typeof(value), ...
+                    class(value), ...
                     fields_info.(fld{:}).type);
 
             end;
@@ -113,47 +113,35 @@ function mrgdata = clumerge(datasets, varargin)
         nelems = nelems + nelems_i;
 
     end;
-
+    
+    % Initialize output struct fields with room for all items
+    for fld = transpose(fieldnames(fields_info))
+        output.(fld{:}) = zeros(...
+            nelems, fields_info.(fld{:}).ncol, fields_info.(fld{:}).type);
+    end;
 
 end % function clumerge()
 
-function t = typeof(input)
-
-    if islogical(input)
-        t = 'logical';
-    elseif isinteger(input)
-        t = 'integer';
-    elseif isfloat(input)
-        t = 'float';
-    else
-        error(['Unsupported type in input: ', input]);
-    end;
-
-end % function typeof()
-
-function i = type_weight(type)
-
-    if strcmp(type, 'logical')
-        i = 1;
-    elseif strcmp(type, 'integer')
-        i = 2;
-    elseif strcmp(type, 'float')
-        i = 3;
-    else
-        error(['Unsupported type `', type, '`']);
-    end;
-
-end % function type_weight()
-
 function t = common_supertype(type1, type2)
-
-    t1w = type_weight(type1);
-    t2w = type_weight(type2);
-
-    if t1w >= t2w
+    
+    type_set = { type1, type2 };
+    validtypes = {'logical', 'int8', 'uint8', 'int16', 'uint16', ...
+        'int32', 'uint32', 'int64', 'uint64', 'char', 'single', 'double'};
+    
+    if all(type1 == type2)
         t = type1;
+    elseif ~validatestring(type1, validtypes)
+        error(['Unsupported type `', type1 ,'`']);
+    elseif ~validatestring(type2, validtypes)
+        error(['Unsupported type `', type2 ,'`']);        
+    elseif validatestring('char', type_set)
+        error('No common supertype between char and numerical type')
+    elseif validatestring('double', type_set)
+        t = 'double';
+    elseif validatestring('single', type_set)
+        t = 'single';
     else
-        t = type2;
+        t = 'int64';
     end;
 
 end % function common_supertype()
