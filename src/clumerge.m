@@ -1,3 +1,51 @@
+% Merges the fields of two or more datasets.
+%
+%     output = clumerge(datasets, varargin)
+%
+% Merges the fields (specified in `fields`) of two or more `datasets`
+% (cell of structs). The fields to be merged need to have the same number
+% of columns. The corresponding merged field will contain the rows of the
+% fields to be merged, and will have a common supertype.
+%
+% ## Arguments (mandatory)
+%
+% - `datasets`: Cell of structs, each struct containing a cluster data set
+%    whose `fields` are to be merged.
+%
+% ## Arguments (optional)
+%
+% - `fields`: Fields to be merged, which must exist in the given `datasets`
+%    (structs).
+% - `clusters_field`: Field containing the integer cluster labels. If
+%   specified, cluster assignments in individual datasets will be updated
+%   in the merged dataset so that clusters are considered separate.
+%
+% ## Return values
+%
+% A `struct`, the fields of which correspond to field names, and values to
+% the merged numerical arrays.
+%
+% ## Notes
+%
+% The `clusters_field` parameter specifies a field containing integers that
+% identify the cluster to which the respective points belongs to. If
+% `clusters_field` is specified (by default it's specified as `'clusters'`,
+% cluster assignments in individual datasets will be updated in the merged
+% dataset so that clusters are considered separate. This parameter can be
+% set to `''` (empty char array), in which case no field will be considered
+% as a special cluster assignments field.
+%
+% This function can be used to merge data sets (structs) generated with the
+% `clugen()` function, by default merging the `points` and `clusters`
+% fields in those data sets. It also works with arbitrary data by
+% specifying alternative fields in the `fields` parameter. It can be used,
+% for example, to merge third-party data with `clugen()`-generated data.
+%
+% ## Examples
+%
+%     o1 = clugen(2, 4, 400, [1 0], pi / 8, [50, 10], 20, 1, 2);
+%     o2 = clugen(2, 3, 200, [1 0.5], pi / 4, [50, 50], 10, 0.1, 2.1);
+%     om = clumerge({o1, o2});
 function output = clumerge(datasets, varargin)
 
     % Setup input validation

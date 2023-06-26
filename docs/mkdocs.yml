@@ -58,6 +58,7 @@ nav:
   - angle_deltas: 'reference/angle_deltas.md'
   - clucenters: 'reference/clucenters.md'
   - clugen: 'reference/clugen.md'
+  - clumerge: 'reference/clumerge.md'
   - clupoints_n: 'reference/clupoints_n.md'
   - clupoints_n_1: 'reference/clupoints_n_1.md'
   - clupoints_n_1_template: 'reference/clupoints_n_1_template.md'
