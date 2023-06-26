@@ -113,27 +113,64 @@ function output = clumerge(datasets, varargin)
         nelems = nelems + nelems_i;
 
     end;
-    
+
     % Initialize output struct fields with room for all items
     for fld = transpose(fieldnames(fields_info))
         output.(fld{:}) = zeros(...
             nelems, fields_info.(fld{:}).ncol, fields_info.(fld{:}).type);
     end;
 
+    % Copy items from input data to output dictionary, field-wise
+    copied = 0;
+    last_cluster = 0;
+
+    % Create merged output
+    for dtc = datasets
+
+        dt = dtc{:};
+
+        % How many elements to copy for the current data item?
+        tocopy = size(dt.(fields_set{1}), 1);
+
+        % Cycle through each field and its information
+        for fld = transpose(fieldnames(fields_info))
+
+            % Copy elements
+            if strcmp(fld{:}, clusters_field) == 0
+
+                % If this is a clusters field, update the cluster IDs
+                old_clusters = unique(dt.(clusters_field));
+                new_clusters = (last_cluster + 1):(last_cluster + numel(old_clusters));
+                mapping = containers.Map(old_clusters, new_clusters);
+                last_cluster = new_clusters(end);
+                output.(fld{:})((copied + 1):(copied + tocopy)) = ...
+                    arrayfun(@(x) mapping(x), dt.(clusters_field));
+            else
+
+                % Otherwise just copy the elements
+                output.(fld{:})((copied + 1):(copied + tocopy), :) = dt.(fld{:});
+            end;
+        end
+
+        % Update how many were copied so far
+        copied = copied + tocopy;
+
+    end;
+
 end % function clumerge()
 
 function t = common_supertype(type1, type2)
-    
+
     type_set = { type1, type2 };
     validtypes = {'logical', 'int8', 'uint8', 'int16', 'uint16', ...
         'int32', 'uint32', 'int64', 'uint64', 'char', 'single', 'double'};
-    
+
     if all(type1 == type2)
         t = type1;
     elseif ~validatestring(type1, validtypes)
         error(['Unsupported type `', type1 ,'`']);
     elseif ~validatestring(type2, validtypes)
-        error(['Unsupported type `', type2 ,'`']);        
+        error(['Unsupported type `', type2 ,'`']);
     elseif validatestring('char', type_set)
         error('No common supertype between char and numerical type')
     elseif validatestring('double', type_set)
