@@ -772,8 +772,8 @@ Therefore, we'll use the same `plot_examples_2d()` function used for the
 ### Merging two data sets generated with `clugen()`
 
 ```matlab
-seed1 = 444;
-seed2 = 555;
+seed1 = 222;
+seed2 = 111;
 
 e090 = clugen(2, 5, 1000, [1 1], pi / 12, [20 20], 14, 1.2, 1.5, 'seed', seed1, ...
     'proj_dist_fn', 'unif', 'point_dist_fn', 'n');
@@ -784,9 +784,26 @@ e092 = clumerge({e090, e091});
 
 ```matlab
 plot_examples_2d(...
-    e090, 'e090: data set 1', ...
-    e091, 'e091: data set 2', ...
-    e092, 'e092: merged data sets');
+    e090, 'e090: data set 1, 5 clusters', ...
+    e091, 'e091: data set 2, 3 clusters', ...
+    e092, 'e092: merged, 8 clusters');
 ```
 
 [![](img/e090e091e092.png)](img/e090e091e092.png)
+
+In the previous example, clusters from individual data sets remain as separate
+clusters in the merged data set. It's also possible to mantain the original
+cluster labels by setting the `clusters_field` parameter to an empty string:
+
+```matlab
+e093 = clumerge({e090, e091}, 'clusters_field', '');
+```
+
+```matlab
+plot_examples_2d(...
+    e090, 'e090: data set 1, 5 clusters', ...
+    e091, 'e091: data set 2, 3 clusters', ...
+    e093, 'e093: merged, 5 clusters');
+```
+
+[![](img/e090e091e093.png)](img/e090e091e093.png)
