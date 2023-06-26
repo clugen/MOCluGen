@@ -1,6 +1,6 @@
 # Examples
 
-These examples can be exactly reproduced in GNU Octave 5.2.0 by using the seed
+These examples can be exactly reproduced in GNU Octave 6.4.0 by using the seed
 specified at the beginning of each code block.
 
 ## Examples in 2D
@@ -761,3 +761,32 @@ plt = plot_examples_nd(e089, 'e089: 5D with proj\_dist\_fn="unif" and point\_dis
 
 [![](img/e089.png)](img/e089.png)
 
+## Merging and hierarchical cluster examples
+
+This section contains several examples on how to merge cluster data, either
+generated with **MOCluGen** or from other sources. Although it is possible to
+merge data in any dimension, these examples will focus on merging 2D data.
+Therefore, we'll use the same `plot_examples_2d()` function used for the
+[2D examples](#examples-in-2d).
+
+### Merging two data sets generated with `clugen()`
+
+```matlab
+seed1 = 444;
+seed2 = 555;
+
+e090 = clugen(2, 5, 1000, [1 1], pi / 12, [20 20], 14, 1.2, 1.5, 'seed', seed1, ...
+    'proj_dist_fn', 'unif', 'point_dist_fn', 'n');
+e091 = clugen(2, 3, 1500, [1 0], 0.05, [20 20], 0, 0, 4, 'seed', seed2, ...
+    'point_dist_fn', 'n', 'cluster_offset', [20 0]);
+e092 = clumerge({e090, e091});
+```
+
+```matlab
+plot_examples_2d(...
+    e090, 'e090: data set 1', ...
+    e091, 'e091: data set 2', ...
+    e092, 'e092: merged data sets');
+```
+
+[![](img/e090e091e092.png)](img/e090e091e092.png)
