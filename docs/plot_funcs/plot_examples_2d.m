@@ -32,7 +32,7 @@ function f = plot_examples_2d(varargin)
 
         % Draw current subplot...
         scatter(ex{i}.points(:, 1), ex{i}.points(:, 2), 28, ex{i}.clusters, ...
-            'filled', 'MarkerEdgeColor', 'black');
+            'filled', 'MarkerEdgeColor', 'black', 'linewidth', 0.1);
 
         % ...and set the remaining properites
         title(et{i}, 'FontWeight', 'normal', 'FontSize', 9);
