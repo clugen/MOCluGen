@@ -11,7 +11,7 @@ function output = clumerge(datasets, varargin)
         @(x) iscell(x) && numel(x) > 0);
 
     % Check that clusters_field is a string
-    addParameter(p, 'clusters_field', 'clusters', @(x) isstring(x));
+    addParameter(p, 'clusters_field', 'clusters', @(x) ischar(x));
 
     % Perform input validation and parsing
     parse(p, datasets, varargin{:});
@@ -78,7 +78,7 @@ function output = clumerge(datasets, varargin)
                 % Fields values after the first must have the same number of
                 % elements
                 error(['Data item contains fields with different sizes (', ...
-                    nelems_tmp, ' ~= ', nelems_i]);
+                    num2str(nelems_tmp), ' ~= ', num2str(nelems_i), ')']);
 
             end;
 
@@ -136,7 +136,7 @@ function output = clumerge(datasets, varargin)
         for fld = transpose(fieldnames(fields_info))
 
             % Copy elements
-            if strcmp(fld{:}, clusters_field) == 0
+            if strcmp(fld{:}, clusters_field)
 
                 % If this is a clusters field, update the cluster IDs
                 old_clusters = unique(dt.(clusters_field));
