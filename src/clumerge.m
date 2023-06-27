@@ -77,7 +77,7 @@ function output = clumerge(datasets, varargin)
     clusters_field = p.Results.clusters_field;
 
     % Set of fields
-    fields_set = p.Results.fields;
+    fields_set = reshape(p.Results.fields, [1 numel(p.Results.fields)]);
 
     % If the clusters_field parameter is given, make sure it exists in the
     % set of fields
