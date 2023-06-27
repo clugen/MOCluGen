@@ -807,3 +807,66 @@ plot_examples_2d(...
 ```
 
 [![](img/e090e091e093.png)](img/e090e091e093.png)
+
+### Adding noise to a `clugen()`-generated data set
+
+```matlab
+cluseed(333);
+
+e094 = struct('points', 120 * rand(200, 2) - 60, 'clusters', ones(200, 1, 'int64'));
+e095 = clumerge({e094, e091});
+```
+
+```matlab
+plot_examples_2d(...
+    e091, 'e091: original data set 2', ...
+    e094, 'e094: random uniform noise', ...
+    e095, 'e095: data set with noise');
+```
+
+[![](img/e091e094e095.png)](img/e091e094e095.png)
+
+### Merging with data not generated with `clugen()`
+
+Data generated with `clugen()` can be merged with other data sets, for example
+data created with one of [scikit-learn](https://scikit-learn.org/)'s generators:
+
+```matlab
+seed = 999;
+
+% Load data generated externally with make_moons() function from scikit-learn
+fid = fopen('docs/moons.csv');
+moons = textscan(fid, '%d,%f,%f');
+fclose(fid);
+
+e096 = struct('points', [moons{2} moons{3}], 'clusters', moons{1});
+e097 = clugen(2, 5, 200, [1 1], pi / 12, [1 1], 0.1, 0.01, 0.25, 'seed', seed, ...
+    'proj_dist_fn', 'unif', 'point_dist_fn', 'n');
+e098 = clumerge({e096, e097});
+```
+
+```matlab
+plot_examples_2d(...
+    e096, 'e096: generated externally', ...
+    e097, 'e097: generated with clugen()', ...
+    e098, 'e098: merged data');
+```
+
+[![](img/e096e097e098.png)](img/e096e097e098.png)
+
+We can also hierarchize clusters from different sources:
+
+```matlab
+e099 = struct('points', e096.points, 'clusters', ones(numel(e096.clusters), 1, 'int64'));
+e100 = struct('points', e097.points, 'clusters', ones(numel(e097.clusters), 1, 'int64'));
+e101 = clumerge({e099, e100});
+```
+
+```matlab
+plot_examples_2d(...
+    e099, 'e099: generated externally', ...
+    e100, 'e100: generated with clugen()', ...
+    e101, 'e101: merged data');
+```
+
+[![](img/e099e100e101.png)](img/e099e100e101.png)
