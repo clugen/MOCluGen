@@ -215,15 +215,9 @@ end % function clumerge()
 function t = common_supertype(type1, type2)
 
     type_set = { type1, type2 };
-    validtypes = {'logical', 'int8', 'uint8', 'int16', 'uint16', ...
-        'int32', 'uint32', 'int64', 'uint64', 'char', 'single', 'double'};
 
     if strcmp(type1, type2)
         t = type1;
-    elseif ~string_in(type1, validtypes)
-        error(['Unsupported type `', type1 ,'`']);
-    elseif ~string_in(type2, validtypes)
-        error(['Unsupported type `', type2 ,'`']);
     elseif string_in('char', type_set)
         error('No common supertype between char and numerical type')
     elseif string_in('double', type_set)
