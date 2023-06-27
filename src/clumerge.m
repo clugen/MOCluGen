@@ -86,6 +86,11 @@ function output = clumerge(datasets, varargin)
         fields_set = [fields_set, clusters_field];
     end;
 
+    % Make sure datasets cell array is a row vector
+    if size(datasets, 1) > 1
+        datasets = reshape(datasets, [1 numel(datasets)]);
+    end;
+
     % Cycle through data items
     for dtc = datasets
 
