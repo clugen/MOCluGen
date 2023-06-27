@@ -218,7 +218,7 @@ function t = common_supertype(type1, type2)
     validtypes = {'logical', 'int8', 'uint8', 'int16', 'uint16', ...
         'int32', 'uint32', 'int64', 'uint64', 'char', 'single', 'double'};
 
-    if all(type1 == type2)
+    if strcmp(type1, type2)
         t = type1;
     elseif ~string_in(type1, validtypes)
         error(['Unsupported type `', type1 ,'`']);
