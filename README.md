@@ -13,7 +13,8 @@ generating multidimensional clusters with arbitrary distributions. Each cluster
 is supported by a line segment, the position, orientation and length of which
 guide where the respective points are placed.
 
-See the [documentation](https://clugen.github.io/MOCluGen/) for more details.
+See the [documentation](https://clugen.github.io/MOCluGen/) and
+[examples](https://clugen.github.io/MOCluGen/examples/) for more details.
 
 ## Install and use
 
