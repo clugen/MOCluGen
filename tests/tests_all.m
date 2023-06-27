@@ -1716,3 +1716,61 @@ function test_clumerge_fiedls
     % Make sure some tests were performed
     assertTrue(tests_any_done);
 end
+
+% Test that clumerge() raises the expected exceptions.
+function test_clumerge_exceptions
+
+    global seeds;
+
+    % Any tests performed?
+    tests_any_done = false;
+
+    % Cycle through all test parameters
+    for seed = seeds
+
+        cluseed(seed);
+
+        % Data item does not contain required field `unknown`
+        nd = 3;
+        npts = randi([10 100]);
+        ds = struct(...
+            'points', rand(npts, nd), ...
+            'clusters', int64(randi(5, npts, 1)));
+
+        fn = @() clumerge({ds}, 'fields', {'clusters', 'unknown'});
+        assertError(fn);
+
+        % `clusters_field` must contain integer types
+        nd = 4;
+        npts = randi([10 100]);
+        ds = struct(...
+            'points', rand(npts, nd), ...
+            'clusters', randi(10, npts, 1));
+        fn = @() clumerge({ds});
+        assertError(fn);
+
+        % Data item contains fields with different sizes (npts != npts / 2)
+        nd = 2;
+        npts = randi([10 100]);
+        ds = struct(...
+            'points', rand(npts, nd), ...
+            'clusters', int64(randi(10, int64(npts) / int64(2), 1)));
+        fn = @() clumerge({ds});
+        assertError(fn);
+
+        % Dimension mismatch in field `points`
+        nd1 = 2;
+        nd2 = 3;
+        npts = randi([10 100]);
+        ds1 = struct(...
+            'points', rand(npts, nd1), ...
+            'clusters', int64(randi(10, npts, 1)));
+        ds2 = struct(...
+            'points', rand(npts, nd2), ...
+            'clusters', int64(randi(10, npts, 1)));
+        fn = @() clumerge({ds1, ds2});
+        assertError(fn);
+
+    end;
+
+end % test_clumerge_exceptions
