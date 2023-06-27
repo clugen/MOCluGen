@@ -33,7 +33,8 @@ end
 function init_data
     global seeds num_dims num_points num_clusters lat_stds llengths_mus ...
         llengths_sigmas angles_stds aes proj_fns ptd_fns csz_fns cc_fns ...
-        ll_fns angd_fns ndirs ncts nvec nang moclugen_test_mode;
+        ll_fns angd_fns ndirs ncts nvec nang t_ds_cg_n t_ds_ot_n ...
+        t_no_clusters_field moclugen_test_mode;
 
     if strcmpi(moclugen_test_mode, 'minimal')
         disp('Testing MOCluGen in `minimal` mode');
@@ -69,6 +70,11 @@ function init_data
         % How many angles to test?
         nang = 1;
 
+        % clumerge specific
+        t_ds_cg_n = 1;
+        t_ds_ot_n = 1;
+        t_no_clusters_field = false;
+
     elseif strcmpi(moclugen_test_mode, 'ci')
         disp('Testing MOCluGen in `ci` mode');
 
@@ -102,6 +108,11 @@ function init_data
 
         % How many angles to test?
         nang = 2;
+
+        % clumerge specific
+        t_ds_cg_n = 0:2;
+        t_ds_ot_n = 0:1;
+        t_no_clusters_field = [false true];
 
     elseif strcmpi(moclugen_test_mode, 'normal')
         disp('Testing MOCluGen in `normal` mode');
@@ -137,6 +148,11 @@ function init_data
         % How many angles to test?
         nang = 8;
 
+        % clumerge specific
+        t_ds_cg_n = 0:3;
+        t_ds_ot_n = 0:2;
+        t_no_clusters_field = [false true];
+
     elseif strcmpi(moclugen_test_mode, 'full')
         disp('Testing MOCluGen in `full` mode (slow!)');
 
@@ -170,6 +186,11 @@ function init_data
 
         % How many angles to test?
         nang = 15;
+
+        % clumerge specific
+        t_ds_cg_n = 0:4;
+        t_ds_ot_n = 0:3;
+        t_no_clusters_field = [false true];
 
     else
         error(['Unknown test mode `' moclugen_test_mode '`. Valid options '...
@@ -1504,4 +1525,113 @@ function test_clugen_exceptions
         'angle_deltas_fn', pi * rand(nclu + 1, 1) - pi / 2, 'seed', seed);
     assertError(fn);
 
+end
+
+
+% Test clumerge with several parameters and various data sources
+function test_clumerge_general
+
+    global seeds num_dims t_ds_cg_n t_ds_ot_n t_no_clusters_field;
+
+    % Any tests performed?
+    tests_any_done = false;
+
+    % Cycle through all test parameters
+    for seed = seeds
+
+        cluseed(seed);
+
+        for nd = num_dims
+
+            for ds_cg_n = t_ds_cg_n
+
+                for ds_ot_n = t_ds_ot_n
+
+                    for no_clusters_field = t_no_clusters_field
+
+                        % Only test if there are at least one data set to
+                        % merge (when there is only one, the function will
+                        % just use that one)
+                        if ds_cg_n + ds_ot_n == 0
+                            continue;
+                        end;
+
+                        datasets = cell(ds_cg_n + ds_ot_n, 1);
+                        tclu = 0;
+                        tpts = 0;
+
+                        % Create data sets with clugen()
+                        for i = 1:ds_cg_n
+
+                            lastwarn('');
+                            ds = clugen(nd, ...   % Number of dimensions
+                                randi(10), ...    % Number of clusters
+                                randi(100), ...   % Total points
+                                rand(1, nd), ...  % Average main direction per cluster
+                                rand(1), ...      % Angle dispersion
+                                rand(1, nd), ...  % Average cluster separation
+                                rand(1), ...      % Average line length
+                                rand(1), ...      % Line length dispersion
+                                rand(1), ...      % Lateral dispersion
+                                'allow_empty', true);
+                            assertTrue(isempty(lastwarn));
+
+                            if no_clusters_field
+                                tclu = max(tclu, max(ds.clusters));
+                            else
+                                tclu = tclu + numel(unique(ds.clusters));
+                            end;
+                            tpts = tpts + size(ds.points, 1);
+                            datasets{i, 1} = ds;
+
+                        end;
+
+                        % Create non-clugen() data sets
+                        for i = 1:ds_ot_n
+
+                            npts = randi(100);
+                            nclu = randi(min(3, npts));
+
+                            ds = struct(...
+                                'points', rand(npts, nd), ...
+                                'clusters', int64(randi(nclu, npts, 1)));
+
+                            if no_clusters_field
+                                tclu = max(tclu, max(ds.clusters));
+                            else
+                                tclu = tclu + numel(unique(ds.clusters));
+                            end;
+                            tpts = tpts + size(ds.points, 1);
+                            datasets{ds_cg_n + i, 1} = ds;
+
+                        end;
+
+                        if no_clusters_field
+                            clusters_field = '';
+                        else
+                            clusters_field = 'clusters';
+                        end;
+
+                        % Check that clumerge() is able to merge data sets
+                        % without warnings
+                        lastwarn('');
+                        mds = clumerge(datasets, ...
+                            'clusters_field', clusters_field);
+                        assertTrue(isempty(lastwarn));
+
+                        % Check that the number of points and clusters is correct
+                        assertEqual(size(mds.points), [tpts nd]);
+                        assertTrue(max(mds.clusters) == tclu);
+                        assertTrue(isinteger(mds.clusters));
+
+                        % Some tests done
+                        tests_any_done = true;
+                    end;
+                end;
+            end;
+        end;
+    end;
+
+    % Make sure some tests were performed
+    assertTrue(tests_any_done);
 end
