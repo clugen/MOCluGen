@@ -12,20 +12,20 @@
         <meta name="author" content="Nuno Fachada">
       
       
-        <link rel="canonical" href="https://clugen.github.io/MOCluGen/reference/clupoints_n_1/">
+        <link rel="canonical" href="https://clugen.github.io/MOCluGen/reference/clumerge/">
       
       
-        <link rel="prev" href="../clupoints_n/">
+        <link rel="prev" href="../clugen/">
       
       
-        <link rel="next" href="../clupoints_n_1_template/">
+        <link rel="next" href="../clupoints_n/">
       
       <link rel="icon" href="https://raw.githubusercontent.com/clugen/.github/main/logos/favicon.ico">
       <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.17">
     
     
       
-        <title>clupoints_n_1 - MOCluGen Documentation</title>
+        <title>clumerge - MOCluGen Documentation</title>
       
     
     
@@ -73,7 +73,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#clupoints_n_1" class="md-skip">
+        <a href="#clumerge" class="md-skip">
           Skip to content
         </a>
       
@@ -107,7 +107,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              clupoints_n_1
+              clumerge
             
           </span>
         </div>
@@ -473,11 +473,80 @@
               
   
   
+    
   
-    <li class="md-nav__item">
-      <a href="../clumerge/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          clumerge
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         clumerge
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#arguments-mandatory" class="md-nav__link">
+    Arguments (mandatory)
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#arguments-optional" class="md-nav__link">
+    Arguments (optional)
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#return-values" class="md-nav__link">
+    Return values
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#notes" class="md-nav__link">
+    Notes
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#examples" class="md-nav__link">
+    Examples
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -501,73 +570,11 @@
               
   
   
-    
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          clupoints_n_1
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../clupoints_n_1/" class="md-nav__link">
         clupoints_n_1
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#arguments" class="md-nav__link">
-    Arguments
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#return-values" class="md-nav__link">
-    Return values
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#note" class="md-nav__link">
-    Note
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#examples" class="md-nav__link">
-    Examples
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -752,44 +759,47 @@
   
 
 
-<h1 id="clupoints_n_1">clupoints_n_1<a class="headerlink" href="#clupoints_n_1" title="Permanent link">&para;</a></h1>
-<p>Generate points from their <em>n</em>-dimensional projections on a cluster-supporting
-line, placing each point on a hyperplane orthogonal to that line and centered
-at the point's projection, using the normal distribution (μ=0, σ=<code>lat_disp</code>).</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">points</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">clupoints_n_1</span><span class="p">(</span><span class="n">projs</span><span class="p">,</span><span class="w"> </span><span class="n">lat_disp</span><span class="p">,</span><span class="w"> </span><span class="n">line_len</span><span class="p">,</span><span class="w"> </span><span class="n">clu_dir</span><span class="p">,</span><span class="w"> </span><span class="n">clu_ctr</span><span class="p">)</span>
+<h1 id="clumerge">clumerge<a class="headerlink" href="#clumerge" title="Permanent link">&para;</a></h1>
+<p>Merges the fields of two or more datasets.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">output</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">clumerge</span><span class="p">(</span><span class="n">datasets</span><span class="p">,</span><span class="w"> </span><span class="nb">varargin</span><span class="p">)</span>
 </code></pre></div>
-<p>This function's main intended use is by the <a href="../clugen"><code>clugen()</code></a> function, generating
-the final points when the <code>point_dist_fn</code> parameter is set to <code>"n-1"</code>.</p>
-<h2 id="arguments">Arguments<a class="headerlink" href="#arguments" title="Permanent link">&para;</a></h2>
+<p>Merges the fields (specified in <code>fields</code>) of two or more <code>datasets</code>
+(cell of structs). The fields to be merged need to have the same number
+of columns. The corresponding merged field will contain the rows of the
+fields to be merged, and will have a common supertype.</p>
+<h2 id="arguments-mandatory">Arguments (mandatory)<a class="headerlink" href="#arguments-mandatory" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>projs</code>: Point projections on the cluster-supporting line (<span class="arithmatex">\(p \times n\)</span>
-  matrix).</li>
-<li><code>lat_disp</code>: Standard deviation for the normal distribution, i.e., cluster
-  lateral dispersion.</li>
-<li><code>line_len</code>: Length of cluster-supporting line (ignored).</li>
-<li><code>clu_dir</code>: Direction of the cluster-supporting line (unit vector).</li>
-<li><code>clu_ctr</code>: Center position of the cluster-supporting line (ignored).</li>
+<li><code>datasets</code>: Cell of structs, each struct containing a cluster data set
+   whose <code>fields</code> are to be merged.</li>
+</ul>
+<h2 id="arguments-optional">Arguments (optional)<a class="headerlink" href="#arguments-optional" title="Permanent link">&para;</a></h2>
+<ul>
+<li><code>fields</code>: Fields to be merged, which must exist in the given <code>datasets</code>
+   (structs).</li>
+<li><code>clusters_field</code>: Field containing the integer cluster labels. If
+  specified, cluster assignments in individual datasets will be updated
+  in the merged dataset so that clusters are considered separate.</li>
 </ul>
 <h2 id="return-values">Return values<a class="headerlink" href="#return-values" title="Permanent link">&para;</a></h2>
-<ul>
-<li><code>points</code>: Generated points (<span class="arithmatex">\(p \times n\)</span> matrix).</li>
-</ul>
-<h2 id="note">Note<a class="headerlink" href="#note" title="Permanent link">&para;</a></h2>
-<p>This function is stochastic. For reproducibility set the PRNG seed with
-<a href="../cluseed"><code>cluseed()</code></a> as discussed in the <a href="../">Reference</a>.</p>
+<p>A <code>struct</code>, the fields of which correspond to field names, and values to
+the merged numerical arrays.</p>
+<h2 id="notes">Notes<a class="headerlink" href="#notes" title="Permanent link">&para;</a></h2>
+<p>The <code>clusters_field</code> parameter specifies a field containing integers that
+identify the cluster to which the respective points belongs to. If
+<code>clusters_field</code> is specified (by default it's specified as <code>'clusters'</code>,
+cluster assignments in individual datasets will be updated in the merged
+dataset so that clusters are considered separate. This parameter can be
+set to <code>''</code> (empty char array), in which case no field will be considered
+as a special cluster assignments field.</p>
+<p>This function can be used to merge data sets (structs) generated with the
+<a href="../clugen"><code>clugen()</code></a> function, by default merging the <code>points</code> and <code>clusters</code>
+fields in those data sets. It also works with arbitrary data by
+specifying alternative fields in the <code>fields</code> parameter. It can be used,
+for example, to merge third-party data with <a href="../clugen"><code>clugen()</code></a>-generated data.</p>
 <h2 id="examples">Examples<a class="headerlink" href="#examples" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="n">cluseed</span><span class="p">(</span><span class="mi">123</span><span class="p">);</span>
-<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="n">ctr</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="p">[</span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="mi">0</span><span class="p">];</span>
-<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="n">direc</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="p">[</span><span class="mi">1</span><span class="p">;</span><span class="w"> </span><span class="mi">0</span><span class="p">];</span>
-<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="n">pdist</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="p">[</span><span class="o">-</span><span class="mf">0.5</span><span class="p">;</span><span class="w"> </span><span class="o">-</span><span class="mf">0.2</span><span class="p">;</span><span class="w"> </span><span class="mf">0.1</span><span class="p">;</span><span class="w"> </span><span class="mf">0.3</span><span class="p">];</span>
-<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="n">proj</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">points_on_line</span><span class="p">(</span><span class="n">ctr</span><span class="p">,</span><span class="w"> </span><span class="n">direc</span><span class="p">,</span><span class="w"> </span><span class="n">pdist</span><span class="p">);</span>
-<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="n">clupoints_n_1</span><span class="p">(</span><span class="n">proj</span><span class="p">,</span><span class="w"> </span><span class="mf">0.1</span><span class="p">,</span><span class="w"> </span><span class="n">nan</span><span class="p">,</span><span class="w"> </span><span class="n">direc</span><span class="p">,</span><span class="w"> </span><span class="n">nan</span><span class="p">)</span>
-<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="c">% ans =</span>
-<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="c">%</span>
-<a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="c">%   -0.500000  -0.019383</span>
-<a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="c">%   -0.200000  -0.093462</span>
-<a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a><span class="c">%    0.100000  -0.147967</span>
-<a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a><span class="c">%    0.300000  -0.025630</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="n">o1</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">clugen</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span><span class="w"> </span><span class="mi">400</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="mi">1</span><span class="w"> </span><span class="mi">0</span><span class="p">],</span><span class="w"> </span><span class="nb">pi</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mi">8</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="mi">50</span><span class="p">,</span><span class="w"> </span><span class="mi">10</span><span class="p">],</span><span class="w"> </span><span class="mi">20</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">);</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="n">o2</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">clugen</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="mi">200</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="mi">1</span><span class="w"> </span><span class="mf">0.5</span><span class="p">],</span><span class="w"> </span><span class="nb">pi</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="mi">50</span><span class="p">,</span><span class="w"> </span><span class="mi">50</span><span class="p">],</span><span class="w"> </span><span class="mi">10</span><span class="p">,</span><span class="w"> </span><span class="mf">0.1</span><span class="p">,</span><span class="w"> </span><span class="mf">2.1</span><span class="p">);</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="n">om</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">clumerge</span><span class="p">({</span><span class="n">o1</span><span class="p">,</span><span class="w"> </span><span class="n">o2</span><span class="p">});</span>
 </code></pre></div>
 
 

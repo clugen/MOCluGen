@@ -21,7 +21,7 @@
         <link rel="next" href="../reference/">
       
       <link rel="icon" href="https://raw.githubusercontent.com/clugen/.github/main/logos/favicon.ico">
-      <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.15">
+      <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.17">
     
     
       
@@ -511,6 +511,40 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#merging-and-hierarchical-cluster-examples" class="md-nav__link">
+    Merging and hierarchical cluster examples
+  </a>
+  
+    <nav class="md-nav" aria-label="Merging and hierarchical cluster examples">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#merging-two-data-sets-generated-with-clugen" class="md-nav__link">
+    Merging two data sets generated with clugen()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#adding-noise-to-a-clugen-generated-data-set" class="md-nav__link">
+    Adding noise to a clugen()-generated data set
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#merging-with-data-not-generated-with-clugen" class="md-nav__link">
+    Merging with data not generated with clugen()
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -540,6 +574,8 @@
         
           
             
+          
+        
           
         
           
@@ -646,6 +682,20 @@
     <li class="md-nav__item">
       <a href="../reference/clugen/" class="md-nav__link">
         clugen
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/clumerge/" class="md-nav__link">
+        clumerge
       </a>
     </li>
   
@@ -860,7 +910,7 @@
 
 
 <h1 id="examples">Examples<a class="headerlink" href="#examples" title="Permanent link">&para;</a></h1>
-<p>These examples can be exactly reproduced in GNU Octave 5.2.0 by using the seed
+<p>These examples can be exactly reproduced in GNU Octave 6.4.0 by using the seed
 specified at the beginning of each code block.</p>
 <h2 id="examples-in-2d">Examples in 2D<a class="headerlink" href="#examples-in-2d" title="Permanent link">&para;</a></h2>
 <p>These examples were plotted with the <code>plot_examples_2d()</code> helper function available
@@ -1417,6 +1467,83 @@ specified at the beginning of each code block.</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-61-1" name="__codelineno-61-1" href="#__codelineno-61-1"></a><span class="n">plt</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">plot_examples_nd</span><span class="p">(</span><span class="n">e089</span><span class="p">,</span><span class="w"> </span><span class="s">&#39;e089: 5D with proj\_dist\_fn=&quot;unif&quot; and point\_dist\_fn=&quot;n&quot;&#39;</span><span class="p">);</span>
 </code></pre></div>
 <p><a href="../img/e089.png"><img alt="" src="../img/e089.png" /></a></p>
+<h2 id="merging-and-hierarchical-cluster-examples">Merging and hierarchical cluster examples<a class="headerlink" href="#merging-and-hierarchical-cluster-examples" title="Permanent link">&para;</a></h2>
+<p>This section contains several examples on how to merge cluster data, either
+generated with <strong>MOCluGen</strong> or from other sources. Although it is possible to
+merge data in any dimension, these examples will focus on merging 2D data.
+Therefore, we'll use the same <code>plot_examples_2d()</code> function used for the
+<a href="#examples-in-2d">2D examples</a>.</p>
+<h3 id="merging-two-data-sets-generated-with-clugen">Merging two data sets generated with <code>clugen()</code><a class="headerlink" href="#merging-two-data-sets-generated-with-clugen" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-62-1" name="__codelineno-62-1" href="#__codelineno-62-1"></a><span class="n">seed1</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">222</span><span class="p">;</span>
+<a id="__codelineno-62-2" name="__codelineno-62-2" href="#__codelineno-62-2"></a><span class="n">seed2</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">111</span><span class="p">;</span>
+<a id="__codelineno-62-3" name="__codelineno-62-3" href="#__codelineno-62-3"></a>
+<a id="__codelineno-62-4" name="__codelineno-62-4" href="#__codelineno-62-4"></a><span class="n">e090</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">clugen</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span><span class="w"> </span><span class="mi">1000</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="mi">1</span><span class="w"> </span><span class="mi">1</span><span class="p">],</span><span class="w"> </span><span class="nb">pi</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mi">12</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="mi">20</span><span class="w"> </span><span class="mi">20</span><span class="p">],</span><span class="w"> </span><span class="mi">14</span><span class="p">,</span><span class="w"> </span><span class="mf">1.2</span><span class="p">,</span><span class="w"> </span><span class="mf">1.5</span><span class="p">,</span><span class="w"> </span><span class="s">&#39;seed&#39;</span><span class="p">,</span><span class="w"> </span><span class="n">seed1</span><span class="p">,</span><span class="w"> </span><span class="k">...</span>
+<a id="__codelineno-62-5" name="__codelineno-62-5" href="#__codelineno-62-5"></a><span class="w">    </span><span class="s">&#39;proj_dist_fn&#39;</span><span class="p">,</span><span class="w"> </span><span class="s">&#39;unif&#39;</span><span class="p">,</span><span class="w"> </span><span class="s">&#39;point_dist_fn&#39;</span><span class="p">,</span><span class="w"> </span><span class="s">&#39;n&#39;</span><span class="p">);</span>
+<a id="__codelineno-62-6" name="__codelineno-62-6" href="#__codelineno-62-6"></a><span class="n">e091</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">clugen</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="mi">1500</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="mi">1</span><span class="w"> </span><span class="mi">0</span><span class="p">],</span><span class="w"> </span><span class="mf">0.05</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="mi">20</span><span class="w"> </span><span class="mi">20</span><span class="p">],</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span><span class="w"> </span><span class="s">&#39;seed&#39;</span><span class="p">,</span><span class="w"> </span><span class="n">seed2</span><span class="p">,</span><span class="w"> </span><span class="k">...</span>
+<a id="__codelineno-62-7" name="__codelineno-62-7" href="#__codelineno-62-7"></a><span class="w">    </span><span class="s">&#39;point_dist_fn&#39;</span><span class="p">,</span><span class="w"> </span><span class="s">&#39;n&#39;</span><span class="p">,</span><span class="w"> </span><span class="s">&#39;cluster_offset&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="mi">20</span><span class="w"> </span><span class="mi">0</span><span class="p">]);</span>
+<a id="__codelineno-62-8" name="__codelineno-62-8" href="#__codelineno-62-8"></a><span class="n">e092</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">clumerge</span><span class="p">({</span><span class="n">e090</span><span class="p">,</span><span class="w"> </span><span class="n">e091</span><span class="p">});</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-63-1" name="__codelineno-63-1" href="#__codelineno-63-1"></a><span class="n">plot_examples_2d</span><span class="p">(</span><span class="k">...</span>
+<a id="__codelineno-63-2" name="__codelineno-63-2" href="#__codelineno-63-2"></a><span class="w">    </span><span class="n">e090</span><span class="p">,</span><span class="w"> </span><span class="s">&#39;e090: data set 1, 5 clusters&#39;</span><span class="p">,</span><span class="w"> </span><span class="k">...</span>
+<a id="__codelineno-63-3" name="__codelineno-63-3" href="#__codelineno-63-3"></a><span class="w">    </span><span class="n">e091</span><span class="p">,</span><span class="w"> </span><span class="s">&#39;e091: data set 2, 3 clusters&#39;</span><span class="p">,</span><span class="w"> </span><span class="k">...</span>
+<a id="__codelineno-63-4" name="__codelineno-63-4" href="#__codelineno-63-4"></a><span class="w">    </span><span class="n">e092</span><span class="p">,</span><span class="w"> </span><span class="s">&#39;e092: merged, 8 clusters&#39;</span><span class="p">);</span>
+</code></pre></div>
+<p><a href="../img/e090e091e092.png"><img alt="" src="../img/e090e091e092.png" /></a></p>
+<p>In the previous example, clusters from individual data sets remain as separate
+clusters in the merged data set. It's also possible to mantain the original
+cluster labels by setting the <code>clusters_field</code> parameter to an empty string:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-64-1" name="__codelineno-64-1" href="#__codelineno-64-1"></a><span class="n">e093</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">clumerge</span><span class="p">({</span><span class="n">e090</span><span class="p">,</span><span class="w"> </span><span class="n">e091</span><span class="p">},</span><span class="w"> </span><span class="s">&#39;clusters_field&#39;</span><span class="p">,</span><span class="w"> </span><span class="s">&#39;&#39;</span><span class="p">);</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-65-1" name="__codelineno-65-1" href="#__codelineno-65-1"></a><span class="n">plot_examples_2d</span><span class="p">(</span><span class="k">...</span>
+<a id="__codelineno-65-2" name="__codelineno-65-2" href="#__codelineno-65-2"></a><span class="w">    </span><span class="n">e090</span><span class="p">,</span><span class="w"> </span><span class="s">&#39;e090: data set 1, 5 clusters&#39;</span><span class="p">,</span><span class="w"> </span><span class="k">...</span>
+<a id="__codelineno-65-3" name="__codelineno-65-3" href="#__codelineno-65-3"></a><span class="w">    </span><span class="n">e091</span><span class="p">,</span><span class="w"> </span><span class="s">&#39;e091: data set 2, 3 clusters&#39;</span><span class="p">,</span><span class="w"> </span><span class="k">...</span>
+<a id="__codelineno-65-4" name="__codelineno-65-4" href="#__codelineno-65-4"></a><span class="w">    </span><span class="n">e093</span><span class="p">,</span><span class="w"> </span><span class="s">&#39;e093: merged, 5 clusters&#39;</span><span class="p">);</span>
+</code></pre></div>
+<p><a href="../img/e090e091e093.png"><img alt="" src="../img/e090e091e093.png" /></a></p>
+<h3 id="adding-noise-to-a-clugen-generated-data-set">Adding noise to a <code>clugen()</code>-generated data set<a class="headerlink" href="#adding-noise-to-a-clugen-generated-data-set" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-66-1" name="__codelineno-66-1" href="#__codelineno-66-1"></a><span class="n">cluseed</span><span class="p">(</span><span class="mi">333</span><span class="p">);</span>
+<a id="__codelineno-66-2" name="__codelineno-66-2" href="#__codelineno-66-2"></a>
+<a id="__codelineno-66-3" name="__codelineno-66-3" href="#__codelineno-66-3"></a><span class="n">e094</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">struct</span><span class="p">(</span><span class="s">&#39;points&#39;</span><span class="p">,</span><span class="w"> </span><span class="mi">120</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="nb">rand</span><span class="p">(</span><span class="mi">200</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">60</span><span class="p">,</span><span class="w"> </span><span class="s">&#39;clusters&#39;</span><span class="p">,</span><span class="w"> </span><span class="nb">ones</span><span class="p">(</span><span class="mi">200</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="s">&#39;int64&#39;</span><span class="p">));</span>
+<a id="__codelineno-66-4" name="__codelineno-66-4" href="#__codelineno-66-4"></a><span class="n">e095</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">clumerge</span><span class="p">({</span><span class="n">e094</span><span class="p">,</span><span class="w"> </span><span class="n">e091</span><span class="p">});</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-67-1" name="__codelineno-67-1" href="#__codelineno-67-1"></a><span class="n">plot_examples_2d</span><span class="p">(</span><span class="k">...</span>
+<a id="__codelineno-67-2" name="__codelineno-67-2" href="#__codelineno-67-2"></a><span class="w">    </span><span class="n">e091</span><span class="p">,</span><span class="w"> </span><span class="s">&#39;e091: original data set 2&#39;</span><span class="p">,</span><span class="w"> </span><span class="k">...</span>
+<a id="__codelineno-67-3" name="__codelineno-67-3" href="#__codelineno-67-3"></a><span class="w">    </span><span class="n">e094</span><span class="p">,</span><span class="w"> </span><span class="s">&#39;e094: random uniform noise&#39;</span><span class="p">,</span><span class="w"> </span><span class="k">...</span>
+<a id="__codelineno-67-4" name="__codelineno-67-4" href="#__codelineno-67-4"></a><span class="w">    </span><span class="n">e095</span><span class="p">,</span><span class="w"> </span><span class="s">&#39;e095: data set with noise&#39;</span><span class="p">);</span>
+</code></pre></div>
+<p><a href="../img/e091e094e095.png"><img alt="" src="../img/e091e094e095.png" /></a></p>
+<h3 id="merging-with-data-not-generated-with-clugen">Merging with data not generated with <code>clugen()</code><a class="headerlink" href="#merging-with-data-not-generated-with-clugen" title="Permanent link">&para;</a></h3>
+<p>Data generated with <code>clugen()</code> can be merged with other data sets, for example
+data created with one of <a href="https://scikit-learn.org/">scikit-learn</a>'s generators:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-68-1" name="__codelineno-68-1" href="#__codelineno-68-1"></a><span class="n">seed</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">999</span><span class="p">;</span>
+<a id="__codelineno-68-2" name="__codelineno-68-2" href="#__codelineno-68-2"></a>
+<a id="__codelineno-68-3" name="__codelineno-68-3" href="#__codelineno-68-3"></a><span class="c">% Load data generated externally with make_moons() function from scikit-learn</span>
+<a id="__codelineno-68-4" name="__codelineno-68-4" href="#__codelineno-68-4"></a><span class="n">fid</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">fopen</span><span class="p">(</span><span class="s">&#39;docs/moons.csv&#39;</span><span class="p">);</span>
+<a id="__codelineno-68-5" name="__codelineno-68-5" href="#__codelineno-68-5"></a><span class="n">moons</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">textscan</span><span class="p">(</span><span class="n">fid</span><span class="p">,</span><span class="w"> </span><span class="s">&#39;%d,%f,%f&#39;</span><span class="p">);</span>
+<a id="__codelineno-68-6" name="__codelineno-68-6" href="#__codelineno-68-6"></a><span class="nb">fclose</span><span class="p">(</span><span class="n">fid</span><span class="p">);</span>
+<a id="__codelineno-68-7" name="__codelineno-68-7" href="#__codelineno-68-7"></a>
+<a id="__codelineno-68-8" name="__codelineno-68-8" href="#__codelineno-68-8"></a><span class="n">e096</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">struct</span><span class="p">(</span><span class="s">&#39;points&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">moons</span><span class="p">{</span><span class="mi">2</span><span class="p">}</span><span class="w"> </span><span class="n">moons</span><span class="p">{</span><span class="mi">3</span><span class="p">}],</span><span class="w"> </span><span class="s">&#39;clusters&#39;</span><span class="p">,</span><span class="w"> </span><span class="n">moons</span><span class="p">{</span><span class="mi">1</span><span class="p">});</span>
+<a id="__codelineno-68-9" name="__codelineno-68-9" href="#__codelineno-68-9"></a><span class="n">e097</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">clugen</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span><span class="w"> </span><span class="mi">200</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="mi">1</span><span class="w"> </span><span class="mi">1</span><span class="p">],</span><span class="w"> </span><span class="nb">pi</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mi">12</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="mi">1</span><span class="w"> </span><span class="mi">1</span><span class="p">],</span><span class="w"> </span><span class="mf">0.1</span><span class="p">,</span><span class="w"> </span><span class="mf">0.01</span><span class="p">,</span><span class="w"> </span><span class="mf">0.25</span><span class="p">,</span><span class="w"> </span><span class="s">&#39;seed&#39;</span><span class="p">,</span><span class="w"> </span><span class="n">seed</span><span class="p">,</span><span class="w"> </span><span class="k">...</span>
+<a id="__codelineno-68-10" name="__codelineno-68-10" href="#__codelineno-68-10"></a><span class="w">    </span><span class="s">&#39;proj_dist_fn&#39;</span><span class="p">,</span><span class="w"> </span><span class="s">&#39;unif&#39;</span><span class="p">,</span><span class="w"> </span><span class="s">&#39;point_dist_fn&#39;</span><span class="p">,</span><span class="w"> </span><span class="s">&#39;n&#39;</span><span class="p">);</span>
+<a id="__codelineno-68-11" name="__codelineno-68-11" href="#__codelineno-68-11"></a><span class="n">e098</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">clumerge</span><span class="p">({</span><span class="n">e096</span><span class="p">,</span><span class="w"> </span><span class="n">e097</span><span class="p">});</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-69-1" name="__codelineno-69-1" href="#__codelineno-69-1"></a><span class="n">plot_examples_2d</span><span class="p">(</span><span class="k">...</span>
+<a id="__codelineno-69-2" name="__codelineno-69-2" href="#__codelineno-69-2"></a><span class="w">    </span><span class="n">e096</span><span class="p">,</span><span class="w"> </span><span class="s">&#39;e096: generated externally&#39;</span><span class="p">,</span><span class="w"> </span><span class="k">...</span>
+<a id="__codelineno-69-3" name="__codelineno-69-3" href="#__codelineno-69-3"></a><span class="w">    </span><span class="n">e097</span><span class="p">,</span><span class="w"> </span><span class="s">&#39;e097: generated with clugen()&#39;</span><span class="p">,</span><span class="w"> </span><span class="k">...</span>
+<a id="__codelineno-69-4" name="__codelineno-69-4" href="#__codelineno-69-4"></a><span class="w">    </span><span class="n">e098</span><span class="p">,</span><span class="w"> </span><span class="s">&#39;e098: merged data&#39;</span><span class="p">);</span>
+</code></pre></div>
+<p><a href="../img/e096e097e098.png"><img alt="" src="../img/e096e097e098.png" /></a></p>
+<p>We can also hierarchize clusters from different sources:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-70-1" name="__codelineno-70-1" href="#__codelineno-70-1"></a><span class="n">e099</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">struct</span><span class="p">(</span><span class="s">&#39;points&#39;</span><span class="p">,</span><span class="w"> </span><span class="n">e096</span><span class="p">.</span><span class="n">points</span><span class="p">,</span><span class="w"> </span><span class="s">&#39;clusters&#39;</span><span class="p">,</span><span class="w"> </span><span class="nb">ones</span><span class="p">(</span><span class="nb">numel</span><span class="p">(</span><span class="n">e096</span><span class="p">.</span><span class="n">clusters</span><span class="p">),</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="s">&#39;int64&#39;</span><span class="p">));</span>
+<a id="__codelineno-70-2" name="__codelineno-70-2" href="#__codelineno-70-2"></a><span class="n">e100</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">struct</span><span class="p">(</span><span class="s">&#39;points&#39;</span><span class="p">,</span><span class="w"> </span><span class="n">e097</span><span class="p">.</span><span class="n">points</span><span class="p">,</span><span class="w"> </span><span class="s">&#39;clusters&#39;</span><span class="p">,</span><span class="w"> </span><span class="nb">ones</span><span class="p">(</span><span class="nb">numel</span><span class="p">(</span><span class="n">e097</span><span class="p">.</span><span class="n">clusters</span><span class="p">),</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="s">&#39;int64&#39;</span><span class="p">));</span>
+<a id="__codelineno-70-3" name="__codelineno-70-3" href="#__codelineno-70-3"></a><span class="n">e101</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">clumerge</span><span class="p">({</span><span class="n">e099</span><span class="p">,</span><span class="w"> </span><span class="n">e100</span><span class="p">});</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-71-1" name="__codelineno-71-1" href="#__codelineno-71-1"></a><span class="n">plot_examples_2d</span><span class="p">(</span><span class="k">...</span>
+<a id="__codelineno-71-2" name="__codelineno-71-2" href="#__codelineno-71-2"></a><span class="w">    </span><span class="n">e099</span><span class="p">,</span><span class="w"> </span><span class="s">&#39;e099: generated externally&#39;</span><span class="p">,</span><span class="w"> </span><span class="k">...</span>
+<a id="__codelineno-71-3" name="__codelineno-71-3" href="#__codelineno-71-3"></a><span class="w">    </span><span class="n">e100</span><span class="p">,</span><span class="w"> </span><span class="s">&#39;e100: generated with clugen()&#39;</span><span class="p">,</span><span class="w"> </span><span class="k">...</span>
+<a id="__codelineno-71-4" name="__codelineno-71-4" href="#__codelineno-71-4"></a><span class="w">    </span><span class="n">e101</span><span class="p">,</span><span class="w"> </span><span class="s">&#39;e101: merged data&#39;</span><span class="p">);</span>
+</code></pre></div>
+<p><a href="../img/e099e100e101.png"><img alt="" src="../img/e099e100e101.png" /></a></p>
 
 
 
@@ -1461,13 +1588,19 @@ specified at the beginning of each code block.</p>
     <script id="__config" type="application/json">{"base": "..", "features": ["navigation.instant", "navigation.expand", "navigation.indexes", "navigation.tabs", "navigation.tabs.sticky", "toc.integrate"], "search": "../assets/javascripts/workers/search.208ed371.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
     
     
-      <script src="../assets/javascripts/bundle.b4d07000.min.js"></script>
+      <script src="../assets/javascripts/bundle.b425cdc4.min.js"></script>
       
-        <script src="../javascripts/mathjax.js"></script>
+        
+          <script src="../javascripts/mathjax.js"></script>
+        
       
-        <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+        
+          <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+        
       
-        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+        
+          <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+        
       
     
   </body>
