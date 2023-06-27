@@ -1684,7 +1684,7 @@ function test_clumerge_fiedls
                 % related to points without warnings
                 lastwarn('');
                 mds = clumerge(datasets, ...
-                    'fields', {'points', 'clusters', 'projections'});
+                    'fields', {'points', 'projections'});
                 assertTrue(isempty(lastwarn));
 
                 % Check that the number of clusters and points is correct
@@ -1771,6 +1771,60 @@ function test_clumerge_exceptions
         fn = @() clumerge({ds1, ds2});
         assertError(fn);
 
+        % One or more items in `datasets` are not structs
+        fn = @() clumerge({1, 2, 3});
+        assertError(fn);
+
+        % Invalid type in one of the data sets
+        nd = 5;
+        ds1 = struct(...
+            'points', rand(npts, nd), ...
+            'clusters', cell(npts, 1));
+        ds2 = struct(...
+            'points', rand(npts, nd), ...
+            'clusters', int64(randi(10, npts, 1)));
+        fn = @() clumerge({ds1, ds2});
+        assertError(fn);
+        fn = @() clumerge({ds2, ds1});
+        assertError(fn);
+
+        % No common supertype between char and numerical type
+        nd = 6;
+        ds1 = struct(...
+            'points', rand(npts, nd), ...
+            'clusters', int64(randi(10, npts, 1)));
+        ds2 = struct(...
+            'points', char(randi(255, npts, nd)), ...
+            'clusters', int64(randi(10, npts, 1)));
+        fn = @() clumerge({ds1, ds2});
+        assertError(fn);
+
+        % There should be no problem with different compatible types
+        nd = 4;
+        ds1 = struct(...
+            'points', single(rand(npts, nd)), ...
+            'another', int16(randi(1000, npts, 1)), ...
+            'and_another', int16(randi(500, npts, 1)), ...
+            'clusters', int64(randi(10, npts, 1)));
+        ds2 = struct(...
+            'points', rand(npts, nd), ...
+            'another', single(randi(1000, npts, 1)), ...
+            'and_another', int32(randi(500, npts, 1)), ...
+            'clusters', int32(randi(10, npts, 1)));
+        lastwarn('');
+        mds = clumerge({ds1, ds2}, ...
+            'fields', {'points', 'another', 'and_another'});
+        assertTrue(isempty(lastwarn));
+        assertEqual(class(mds.points), 'double');
+        assertEqual(class(mds.another), 'single');
+        assertEqual(class(mds.and_another), 'int64');
+
+        % Some tests done
+        tests_any_done = true;
+
     end;
+
+    % Make sure some tests were performed
+    assertTrue(tests_any_done);
 
 end % test_clumerge_exceptions
