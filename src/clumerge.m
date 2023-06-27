@@ -215,21 +215,28 @@ function t = common_supertype(type1, type2)
 
     if all(type1 == type2)
         t = type1;
-    elseif ~validatestring(type1, validtypes)
+    elseif ~string_in(type1, validtypes)
         error(['Unsupported type `', type1 ,'`']);
-    elseif ~validatestring(type2, validtypes)
+    elseif ~string_in(type2, validtypes)
         error(['Unsupported type `', type2 ,'`']);
-    elseif validatestring('char', type_set)
+    elseif string_in('char', type_set)
         error('No common supertype between char and numerical type')
-    elseif validatestring('double', type_set)
+    elseif string_in('double', type_set)
         t = 'double';
-    elseif validatestring('single', type_set)
+    elseif string_in('single', type_set)
         t = 'single';
     else
         t = 'int64';
     end;
 
 end % function common_supertype()
+
+function b = string_in(str, str_cell)
+
+    r = find(strcmp(str_cell, str));
+    b = numel(r) > 0;
+
+end % function string_in()
 
 % Copyright (c) 2012-2023 Nuno Fachada
 % Distributed under the MIT License (See accompanying file LICENSE or copy
