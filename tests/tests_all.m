@@ -1635,3 +1635,84 @@ function test_clumerge_general
     % Make sure some tests were performed
     assertTrue(tests_any_done);
 end
+
+% Test clumerge with data from clugen() and merging more fields
+function test_clumerge_fiedls
+
+    global seeds num_dims t_ds_cg_n;
+
+    % Any tests performed?
+    tests_any_done = false;
+
+    % Cycle through all test parameters
+    for seed = seeds
+
+        cluseed(seed);
+
+        for nd = num_dims
+
+            for ds_cg_n = t_ds_cg_n + 1
+
+                datasets = cell(ds_cg_n, 1);
+                tclu = 0;
+                tclu_i = 0;
+                tpts = 0;
+
+                % Create data sets with clugen()
+                for i = 1:ds_cg_n
+
+                    lastwarn('');
+                    ds = clugen(nd, ...   % Number of dimensions
+                        randi(10), ...    % Number of clusters
+                        randi(100), ...   % Total points
+                        rand(1, nd), ...  % Average main direction per cluster
+                        rand(1), ...      % Angle dispersion
+                        rand(1, nd), ...  % Average cluster separation
+                        rand(1), ...      % Average line length
+                        rand(1), ...      % Line length dispersion
+                        rand(1), ...      % Lateral dispersion
+                        'allow_empty', true);
+                    assertTrue(isempty(lastwarn));
+
+                    tclu = tclu + numel(unique(ds.clusters));
+                    tpts = tpts + size(ds.points, 1);
+                    tclu_i = tclu_i + size(ds.sizes, 1);
+                    datasets{i, 1} = ds;
+                end;
+
+                % Check that clumerge() is able to merge data set fields
+                % related to points without warnings
+                lastwarn('');
+                mds = clumerge(datasets, ...
+                    'fields', {'points', 'clusters', 'projections'});
+                assertTrue(isempty(lastwarn));
+
+                % Check that the number of clusters and points is correct
+                assertEqual(size(mds.points), [tpts nd]);
+                assertEqual(size(mds.projections), [tpts nd]);
+                assertTrue(max(mds.clusters) == tclu);
+                assertTrue(isinteger(mds.clusters));
+
+                % Check that clumerge() is able to merge data set fields
+                % related to clusters without warnings
+                lastwarn('');
+                mds = clumerge(datasets, ...
+                    'fields', {'sizes', 'centers', 'directions', 'angles', 'lengths'}, ...
+                    'clusters_field', '');
+                assertTrue(isempty(lastwarn));
+                assertEqual(size(mds.sizes), [tclu_i 1]);
+                assertEqual(size(mds.centers), [tclu_i nd]);
+                assertEqual(size(mds.directions), [tclu_i nd]);
+                assertEqual(size(mds.angles), [tclu_i 1]);
+                assertEqual(size(mds.lengths), [tclu_i 1]);
+
+                % Some tests done
+                tests_any_done = true;
+
+            end;
+        end;
+    end;
+
+    % Make sure some tests were performed
+    assertTrue(tests_any_done);
+end
