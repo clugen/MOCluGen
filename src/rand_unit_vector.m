@@ -22,7 +22,7 @@
 %     % ans = 1
 function r = rand_unit_vector(num_dims)
 
-r = rand(num_dims, 1) - 0.5;
+    r = rand(num_dims, 1) - 0.5;
     r = r / norm(r);
 
 end % function
