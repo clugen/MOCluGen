@@ -3,6 +3,7 @@
 [![docs](https://img.shields.io/badge/docs-latest-blue.svg)](https://clugen.github.io/MOCluGen/)
 [![MIT](https://img.shields.io/badge/license-MIT-yellowgreen.svg)](https://tldrlegal.com/license/mit-license)
 [![View MOCluGen on File Exchange](https://www.mathworks.com/matlabcentral/images/matlab-file-exchange.svg)](https://www.mathworks.com/matlabcentral/fileexchange/123960-moclugen)
+[![Open in MATLAB Online](https://www.mathworks.com/images/responsive/global/open-in-matlab-online.svg)](https://matlab.mathworks.com/open/github/v1?repo=clugen/MOCluGen&file=src/live_example.mlx)
 
 # MOCluGen
 
