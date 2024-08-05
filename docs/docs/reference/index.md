@@ -17,9 +17,10 @@ v = rand_unit_vector(3); % Given the same platform, will always return the same 
 Further, the main [`clugen`](clugen) function also provides a `seed` parameter,
 which is passed directly to [`cluseed`](cluseed).
 
-## Main function
+## Main functions
 
 * [`clugen`](clugen) $^\star$
+* [`clumerge`](clumerge)
 
 ## Core functions
 
