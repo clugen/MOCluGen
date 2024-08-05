@@ -9,7 +9,7 @@ jobs:
   docs:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3.3.0
+      - uses: actions/checkout@v4
         with:
           lfs: true
       - name: Install Octave and xvfb
@@ -25,6 +25,6 @@ jobs:
           ./run_moc_in_md.sh docs/examples.md
           mkdocs build
       - name: Deploy to GitHub pages 🚀
-        uses: JamesIves/github-pages-deploy-action@v4.4.1
+        uses: JamesIves/github-pages-deploy-action@v4
         with:
           folder: docs/site

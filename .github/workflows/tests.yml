@@ -30,9 +30,9 @@ jobs:
         if: matrix.config.moc == 'matlab'
         uses: matlab-actions/setup-matlab@v1
       - name: Clone MOCluGen
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Install MOxUnit
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           repository: 'MOxUnit/MOxUnit'
           path: 'MOxUnit'
