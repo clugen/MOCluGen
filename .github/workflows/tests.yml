@@ -38,11 +38,13 @@ jobs:
           path: 'MOxUnit'
       - name: Run tests on Octave
         if: matrix.config.moc == 'octave'
-        run: |
-          export MOXUNIT_PATH=${{ github.workspace }}/MOxUnit/MOxUnit
-          octave --no-gui tests/run_headless.m
+        env:
+          MOXUNIT_PATH: ${{ github.workspace }}/MOxUnit/MOxUnit
+        run: octave --no-gui tests/run_headless.m
       - name: Run tests on MATLAB
         if: matrix.config.moc == 'matlab'
-        run: |
-          export MOXUNIT_PATH=${{ github.workspace }}/MOxUnit/MOxUnit
-          matlab -batch "addpath('tests');run_headless"
+        env:
+          MOXUNIT_PATH: ${{ github.workspace }}/MOxUnit/MOxUnit
+        uses: matlab-actions/run-command@v2
+        with:
+            command: tests/run_headless
