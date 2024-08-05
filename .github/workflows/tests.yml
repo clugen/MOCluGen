@@ -47,4 +47,4 @@ jobs:
           MOXUNIT_PATH: ${{ github.workspace }}/MOxUnit/MOxUnit
         uses: matlab-actions/run-command@v2
         with:
-            command: tests/run_headless
+            command: addpath('tests'), run_headless
